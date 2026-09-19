@@ -84,7 +84,11 @@ fun HomeScreen(
         when (val state = uiState) {
             HomeViewModel.HomeUiState.Loading -> LoadingState(Modifier.fillMaxSize().padding(padding))
             HomeViewModel.HomeUiState.Empty -> EmptyState(Modifier.fillMaxSize().padding(padding), viewModel)
-            is HomeViewModel.HomeUiState.NoContent -> EmptyState(Modifier.fillMaxSize().padding(padding), viewModel)
+            is HomeViewModel.HomeUiState.NoContent -> EmptyState(
+                Modifier.fillMaxSize().padding(padding),
+                viewModel,
+                state.reason,
+            )
             is HomeViewModel.HomeUiState.Error -> ErrorState(Modifier.fillMaxSize().padding(padding), state.message, viewModel)
             is HomeViewModel.HomeUiState.Success -> {
                 val featured = state.sections.asSequence().flatMap { it.second.list.asSequence() }.firstOrNull()
@@ -278,10 +282,11 @@ private fun findCategoryTarget(
 
 @Composable private fun LoadingState(modifier: Modifier) = Box(modifier, contentAlignment = Alignment.Center) { CircularProgressIndicator(color = OrangeAccent) }
 
-@Composable private fun EmptyState(modifier: Modifier, viewModel: HomeViewModel) = Box(modifier, contentAlignment = Alignment.Center) {
+@Composable private fun EmptyState(modifier: Modifier, viewModel: HomeViewModel, reason: String? = null) = Box(modifier, contentAlignment = Alignment.Center) {
     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(24.dp)) {
         Text("Your catalogue is empty", color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold)
         Text("Content sources may still be loading. Refresh and try again.", color = Color.Gray, fontSize = 13.sp, modifier = Modifier.padding(top = 8.dp))
+        reason?.let { Text(it, color = Color.Gray, fontSize = 11.sp, modifier = Modifier.padding(top = 8.dp)) }
         Button(onClick = { viewModel.refresh() }, colors = ButtonDefaults.buttonColors(containerColor = OrangeAccent), modifier = Modifier.padding(top = 16.dp)) { Text("Refresh sources") }
     }
 }
@@ -289,6 +294,7 @@ private fun findCategoryTarget(
 @Composable private fun ErrorState(modifier: Modifier, message: String, viewModel: HomeViewModel) = Box(modifier, contentAlignment = Alignment.Center) {
     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(24.dp)) {
         Text("We could not refresh your catalogue", color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+        Text(message, color = Color.Gray, fontSize = 12.sp, modifier = Modifier.padding(top = 8.dp))
         Text("Check your connection and try again.", color = Color.Gray, fontSize = 13.sp, modifier = Modifier.padding(top = 8.dp))
         Button(onClick = { viewModel.refresh() }, colors = ButtonDefaults.buttonColors(containerColor = OrangeAccent), modifier = Modifier.padding(top = 16.dp)) { Text("Retry") }
     }

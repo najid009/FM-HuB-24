@@ -82,6 +82,15 @@ class ContentRepository @Inject constructor(
                 }.awaitAll().flatten()
 
                 val sections = ContentDeduplicator.dedupeSections(results)
+                val homeProviders = providers.filter { runCatching { it.hasMainPage }.getOrDefault(false) }
+                if (sections.isEmpty() && homeProviders.isNotEmpty()) {
+                    return@withContext Result.failure(
+                        Exception(
+                            "${homeProviders.size} provider(s) loaded, but none returned home content. " +
+                                "The sources may be temporarily unavailable; try again in a moment."
+                        )
+                    )
+                }
                 homeCache = HomeCache(page, System.currentTimeMillis() + HOME_CACHE_TTL_MS, providerNames, sections)
                 Result.success(sections)
             } catch (e: Exception) {
