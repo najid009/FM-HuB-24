@@ -2,6 +2,7 @@ package com.fmhub24.app.ui.screens.search
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.fmhub24.app.data.aggregation.ContentDeduplicator
 import com.fmhub24.app.data.repository.ContentRepository
 import com.fmhub24.app.plugins.cloudstream.SearchResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -63,7 +64,7 @@ class SearchViewModel @Inject constructor(
         _uiState.value = SearchUiState.Loading
         val result = contentRepository.searchAllProviders(query)
         result.onSuccess { items ->
-            val unique = items.distinctBy { "${it.apiName}:${it.url}" }
+            val unique = ContentDeduplicator.dedupe(items)
             _uiState.value = if (unique.isEmpty()) SearchUiState.Empty else SearchUiState.Success(unique)
         }.onFailure { error ->
             _uiState.value = SearchUiState.Error(error.message ?: "Search failed")
@@ -74,5 +75,11 @@ class SearchViewModel @Inject constructor(
         searchJob?.cancel()
         _query.value = ""
         _uiState.value = SearchUiState.Idle
+    }
+
+    fun retry() {
+        val current = _query.value.trim()
+        if (current.length < 2) return
+        viewModelScope.launch { performSearch(current) }
     }
 }

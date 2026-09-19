@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.fmhub24.app.ui.components.LargeContentCard
 import com.fmhub24.app.ui.theme.OrangeAccent
+import com.fmhub24.app.data.aggregation.ContentDeduplicator
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -90,7 +91,7 @@ fun SearchScreen(
                                 modifier = Modifier.padding(top = 16.dp)
                             )
                             Text(
-                                text = "Real-time search via provider.search()",
+                                text = "Try a title, actor or genre",
                                 color = Color.Gray.copy(alpha = 0.6f),
                                 fontSize = 11.sp,
                                 modifier = Modifier.padding(top = 4.dp)
@@ -132,7 +133,15 @@ fun SearchScreen(
                 }
                 is SearchViewModel.SearchUiState.Error -> {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Text(text = state.message, color = Color(0xFFFF5252), fontSize = 14.sp)
+                        Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(24.dp)) {
+                            Text("Search is temporarily unavailable", color = Color.White, fontWeight = FontWeight.Bold)
+                            Text("Please check your connection and try again.", color = Color.Gray, fontSize = 13.sp, modifier = Modifier.padding(top = 8.dp))
+                            Button(
+                                onClick = { viewModel.retry() },
+                                modifier = Modifier.padding(top = 16.dp),
+                                colors = ButtonDefaults.buttonColors(containerColor = OrangeAccent),
+                            ) { Text("Try again") }
+                        }
                     }
                 }
                 is SearchViewModel.SearchUiState.Success -> {
@@ -148,7 +157,7 @@ fun SearchScreen(
                                 modifier = Modifier.padding(bottom = 8.dp)
                             )
                         }
-                        items(state.results) { item ->
+                        items(state.results, key = { ContentDeduplicator.key(it) }) { item ->
                             LargeContentCard(
                                 item = item,
                                 onClick = {

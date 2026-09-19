@@ -1,6 +1,7 @@
 package com.fmhub24.app.data.repository
 
 import android.util.Log
+import com.fmhub24.app.data.aggregation.ContentDeduplicator
 import com.fmhub24.app.plugins.PluginManager
 import com.lagradost.cloudstream3.HomePageList
 import com.lagradost.cloudstream3.HomePageResponse
@@ -41,6 +42,13 @@ class ContentRepository @Inject constructor(
     private val pluginManager: PluginManager,
     private val settingsRepository: SettingsRepository,
 ) {
+    private data class HomeCache(
+        val page: Int,
+        val expiresAt: Long,
+        val providers: List<String>,
+        val sections: List<Pair<String, HomePageList>>,
+    )
+    @Volatile private var homeCache: HomeCache? = null
 
     /** Providers filtered by the user's adult-content setting. */
     private suspend fun visibleProviders(): List<MainAPI> {
@@ -53,40 +61,68 @@ class ContentRepository @Inject constructor(
         }
     }
 
-    suspend fun getMainPageContent(page: Int = 1): Result<List<Pair<String, HomePageList>>> =
+    suspend fun getMainPageContent(page: Int = 1, forceRefresh: Boolean = false): Result<List<Pair<String, HomePageList>>> =
         withContext(Dispatchers.IO) {
             try {
                 val providers = visibleProviders()
                 if (providers.isEmpty()) return@withContext Result.success(emptyList())
+                val providerNames = providers.map { it.name }
+                val cached = homeCache
+                if (!forceRefresh && cached?.page == page && cached.providers == providerNames && cached.expiresAt > System.currentTimeMillis()) {
+                    return@withContext Result.success(cached.sections)
+                }
 
+                val limiter = Semaphore(8)
                 val results = providers.map { provider ->
                     async {
-                        runCatching { provider.mainPageSections(page) }
+                        limiter.withPermit { runCatching { provider.mainPageSections(page) } }
                             .onFailure { Log.d(TAG, "${provider.name}: main page failed: $it") }
                             .getOrDefault(emptyList())
                     }
                 }.awaitAll().flatten()
 
-                Result.success(results)
+                val sections = ContentDeduplicator.dedupeSections(results)
+                homeCache = HomeCache(page, System.currentTimeMillis() + HOME_CACHE_TTL_MS, providerNames, sections)
+                Result.success(sections)
             } catch (e: Exception) {
                 Result.failure(e)
             }
         }
 
-    /** Loads one provider category for the Home screen's See More destination. */
+    /** Loads one category; the aggregated sentinel queries every visible provider. */
     suspend fun getProviderCategory(
         providerName: String,
         categoryName: String,
         page: Int = 1,
     ): Result<HomePageList> = withContext(Dispatchers.IO) {
-        val provider = visibleProviders().firstOrNull { it.name == providerName }
-            ?: return@withContext Result.failure(Exception("Provider not found: $providerName"))
-        val items = provider.mainPageSections(page)
-            .filter { it.second.name.equals(categoryName, ignoreCase = true) }
-            .flatMap { it.second.list }
-            .distinctBy { "${it.apiName}:${it.url}" }
-        Result.success(HomePageList(categoryName, items))
+        val providers = visibleProviders()
+        val items = if (providerName == ContentDeduplicator.AGGREGATED_PROVIDER) {
+            providers.flatMap { provider ->
+                providerCategoryItems(provider, categoryName, page)
+            }
+        } else {
+            val provider = providers.firstOrNull { it.name == providerName }
+                ?: return@withContext Result.failure(Exception("Provider not found: $providerName"))
+            providerCategoryItems(provider, categoryName, page)
+        }
+        Result.success(HomePageList(categoryName, ContentDeduplicator.dedupe(items)))
     }
+
+    private suspend fun providerCategoryItems(
+        provider: MainAPI,
+        categoryName: String,
+        page: Int,
+    ): List<SearchResponse> = runCatching {
+        val sections = provider.mainPageSections(page)
+        val all = sections.flatMap { it.second.list }
+        when (categoryName.trim().lowercase()) {
+            "trending", "all", "home" -> all
+            "movie", "movies", "film", "films" -> all.filter { it.type == TvType.Movie || it.type == TvType.AnimeMovie }
+            "anime", "animation" -> all.filter { it.type == TvType.Anime || it.type == TvType.AnimeMovie || it.type == TvType.OVA }
+            "series", "tv", "tv series", "shows" -> all.filter { it.type == TvType.TvSeries || it.type == TvType.AsianDrama }
+            else -> sections.filter { it.second.name.equals(categoryName, ignoreCase = true) }.flatMap { it.second.list }
+        }
+    }.getOrDefault(emptyList())
 
     /** Requests every `mainPage` entry of [provider] and returns (provider, section) pairs. */
     private suspend fun MainAPI.mainPageSections(page: Int): List<Pair<String, HomePageList>> {
@@ -130,7 +166,7 @@ class ContentRepository @Inject constructor(
                         }
                     }
                 }.awaitAll().flatten()
-                Result.success(results)
+                Result.success(ContentDeduplicator.dedupe(results))
             } catch (e: Exception) {
                 Result.failure(e)
             }
@@ -219,5 +255,6 @@ class ContentRepository @Inject constructor(
 
     private companion object {
         const val TAG = "FMHubContent"
+        const val HOME_CACHE_TTL_MS = 120_000L
     }
 }

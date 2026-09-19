@@ -2,6 +2,7 @@ package com.fmhub24.app.download
 
 import android.app.Notification
 import android.content.Context
+import androidx.core.content.ContextCompat
 import androidx.annotation.OptIn
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.common.util.Util
@@ -71,6 +72,15 @@ class FMHubDownloadService : DownloadService(
                 NoOpCacheEvictor(),
                 StandaloneDatabaseProvider(context.applicationContext)
             ).also { cache = it }
+        }
+
+        /**
+         * HLS is handled by the segment-aware foreground worker. Keeping this
+         * facade here gives callers one download service entry point while the
+         * Media3 DownloadService continues to own VIDEO/DASH cache downloads.
+         */
+        fun enqueueHls(context: Context, job: HlsDownloadService.HlsJob) {
+            ContextCompat.startForegroundService(context, HlsDownloadService.intent(context, job))
         }
 
         private fun notificationHelper(context: Context): DownloadNotificationHelper =

@@ -4,6 +4,9 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fmhub24.app.data.repository.ExtensionRepository
+import com.fmhub24.app.data.remote.SupabaseClient
+import com.fmhub24.app.data.remote.dto.AppNoticeDto
+import com.fmhub24.app.data.remote.dto.AppReleaseDto
 import com.fmhub24.app.util.CrashLog
 import dagger.hilt.android.qualifiers.ApplicationContext
 import com.fmhub24.app.plugins.PluginManager
@@ -20,6 +23,7 @@ class SplashViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val extensionRepository: ExtensionRepository,
     private val pluginManager: PluginManager,
+    private val supabaseClient: SupabaseClient,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<SplashUiState>(SplashUiState.Loading)
@@ -53,9 +57,17 @@ class SplashViewModel @Inject constructor(
      */
     private val _previousCrash = MutableStateFlow<String?>(null)
     val previousCrash: StateFlow<String?> = _previousCrash
+    private val _notice = MutableStateFlow<AppNoticeDto?>(null)
+    val notice: StateFlow<AppNoticeDto?> = _notice
+    private val _latestRelease = MutableStateFlow<AppReleaseDto?>(null)
+    val latestRelease: StateFlow<AppReleaseDto?> = _latestRelease
 
     init {
         fetchAndLoadExtensions()
+        safeLaunch(Dispatchers.IO) {
+            _notice.value = supabaseClient.fetchActiveNotices().getOrNull()?.firstOrNull()
+            _latestRelease.value = supabaseClient.fetchLatestRelease().getOrNull()
+        }
         safeLaunch(Dispatchers.IO) {
             _previousCrash.value = CrashLog.read(context)
         }

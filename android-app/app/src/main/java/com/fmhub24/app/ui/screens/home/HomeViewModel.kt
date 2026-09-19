@@ -41,7 +41,7 @@ class HomeViewModel @Inject constructor(
         loadHomeContent()
     }
 
-    fun loadHomeContent() {
+    fun loadHomeContent(forceRefresh: Boolean = false) {
         safeLaunch {
             _uiState.value = HomeUiState.Loading
 
@@ -57,7 +57,7 @@ class HomeViewModel @Inject constructor(
                 return@safeLaunch
             }
 
-            val result = contentRepository.getMainPageContent()
+            val result = contentRepository.getMainPageContent(forceRefresh = forceRefresh)
             result.onSuccess { sections ->
                 _uiState.value = if (sections.isEmpty()) {
                     HomeUiState.NoContent(
@@ -86,7 +86,7 @@ class HomeViewModel @Inject constructor(
                         extensionRepository.reloadFromCache()
                     }
                 }
-                loadHomeContent()
+                loadHomeContent(forceRefresh = true)
             }
         }
     }

@@ -1,6 +1,9 @@
 package com.fmhub24.app
 
 import android.os.Bundle
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,6 +28,12 @@ class MainActivity : ComponentActivity() {
             val splashScreen = installSplashScreen()
             super.onCreate(savedInstanceState)
 
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+                checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
+            ) {
+                requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), NOTIFICATION_PERMISSION_REQUEST)
+            }
+
             // Keep splash screen for a bit (Compose splash handles real loading)
             splashScreen.setKeepOnScreenCondition { false }
 
@@ -43,5 +52,9 @@ class MainActivity : ComponentActivity() {
             CrashLog.record("MainActivity.onCreate", t)
             setContentView(CrashScreen.view(this, t))
         }
+    }
+
+    private companion object {
+        const val NOTIFICATION_PERMISSION_REQUEST = 2401
     }
 }

@@ -15,6 +15,8 @@ data class DownloadedContent(
     val drmScheme: String? = null,
     val drmLicenseUrl: String? = null,
     val drmKeySetId: String? = null,
+    val requestHeadersJson: String? = null,
+    val referer: String? = null,
     val status: String = "queued",
     val createdAt: Long = System.currentTimeMillis()
 )

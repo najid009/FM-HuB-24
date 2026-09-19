@@ -12,6 +12,7 @@ import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
@@ -29,8 +30,10 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.fmhub24.app.ui.components.ContentCard
+import com.fmhub24.app.data.aggregation.ContentDeduplicator
 import com.fmhub24.app.ui.theme.OrangeAccent
 import com.fmhub24.app.ui.util.yearOrNull
+import com.lagradost.cloudstream3.HomePageList
 
 private val HomeBackground = Color(0xFF0E1014)
 private val SurfaceDark = Color(0xFF1B1E24)
@@ -72,7 +75,7 @@ fun HomeScreen(
                     selected = false,
                     onClick = onNavigateToFavorites,
                     icon = { Icon(Icons.Default.FavoriteBorder, "Favorites") },
-                    label = { Text("Favorites") },
+                    label = { Text("Library") },
                     colors = NavigationBarItemDefaults.colors(unselectedIconColor = Color.White, unselectedTextColor = Color.LightGray, indicatorColor = Color.Transparent)
                 )
             }
@@ -95,10 +98,11 @@ fun HomeScreen(
                             query = query,
                             onQueryChange = { query = it },
                             onSearch = { onNavigateToSearch(query.trim()) },
-                            onSettings = onNavigateToSettings
+                            onSettings = onNavigateToSettings,
+                            onRefresh = { viewModel.refresh() },
                         )
                     }
-                    item { HomeTabs() }
+                    item { HomeTabs(state.sections, onNavigateToCategory) }
                     if (featured != null) {
                         item {
                             FeaturedBanner(
@@ -124,13 +128,13 @@ fun HomeScreen(
                                     Text("All  ›", color = Color.LightGray, fontSize = 14.sp)
                                 }
                             }
-                            ProviderChips(providerName)
+                            ProviderChips(providerName, state.sections, onNavigateToCategory)
                             Spacer(Modifier.height(6.dp))
                             LazyRow(
                                 contentPadding = PaddingValues(horizontal = 20.dp),
                                 horizontalArrangement = Arrangement.spacedBy(12.dp)
                             ) {
-                                items(homeList.list, key = { "${it.apiName}:${it.url}" }) { item ->
+                                items(homeList.list, key = { ContentDeduplicator.key(it) }) { item ->
                                     ContentCard(item = item) { onNavigateToDetails(item.url, item.apiName) }
                                 }
                             }
@@ -143,7 +147,13 @@ fun HomeScreen(
 }
 
 @Composable
-private fun HomeHeader(query: String, onQueryChange: (String) -> Unit, onSearch: () -> Unit, onSettings: () -> Unit) {
+private fun HomeHeader(
+    query: String,
+    onQueryChange: (String) -> Unit,
+    onSearch: () -> Unit,
+    onSettings: () -> Unit,
+    onRefresh: () -> Unit,
+) {
     Column(Modifier.padding(horizontal = 20.dp, vertical = 18.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Box(
@@ -153,6 +163,7 @@ private fun HomeHeader(query: String, onQueryChange: (String) -> Unit, onSearch:
             Spacer(Modifier.width(12.dp))
             Text("FMHuB24", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 21.sp)
             Spacer(Modifier.weight(1f))
+            IconButton(onClick = onRefresh) { Icon(Icons.Default.Refresh, "Refresh catalogue", tint = Color.White) }
             IconButton(onClick = onSettings) { Icon(Icons.Default.Settings, "Settings", tint = Color.White) }
         }
         Spacer(Modifier.height(18.dp))
@@ -178,10 +189,25 @@ private fun HomeHeader(query: String, onQueryChange: (String) -> Unit, onSearch:
 }
 
 @Composable
-private fun HomeTabs() {
-    LazyRow(contentPadding = PaddingValues(horizontal = 20.dp), horizontalArrangement = Arrangement.spacedBy(28.dp)) {
-        items(listOf("Trending", "Movie", "TV", "Cricket", "ShortTV")) { tab ->
-            Text(tab, color = if (tab == "Trending") Color.White else Color.LightGray, fontSize = 17.sp, fontWeight = if (tab == "Trending") FontWeight.Bold else FontWeight.Normal)
+private fun HomeTabs(
+    sections: List<Pair<String, HomePageList>>,
+    onNavigateToCategory: (String, String) -> Unit,
+) {
+    val tabs = listOf("Trending", "Movies", "Anime", "Series")
+    LazyRow(contentPadding = PaddingValues(horizontal = 20.dp), horizontalArrangement = Arrangement.spacedBy(24.dp)) {
+        items(tabs) { tab ->
+            val target = findCategoryTarget(sections, tab)
+            Text(
+                text = tab,
+                color = if (target != null) Color.White else Color.DarkGray,
+                fontSize = 17.sp,
+                fontWeight = if (tab == "Trending") FontWeight.Bold else FontWeight.Normal,
+                modifier = Modifier
+                    .clickable(enabled = target != null) {
+                    target?.let { onNavigateToCategory(it.first, tab) }
+                    }
+                    .padding(vertical = 4.dp),
+            )
         }
     }
 }
@@ -206,28 +232,64 @@ private fun FeaturedBanner(item: com.fmhub24.app.plugins.cloudstream.SearchRespo
 }
 
 @Composable
-private fun ProviderChips(providerName: String) {
+private fun ProviderChips(
+    providerName: String,
+    sections: List<Pair<String, HomePageList>>,
+    onNavigateToCategory: (String, String) -> Unit,
+) {
+    val categories = sections
+        .filter { it.first == providerName }
+        .map { it.second.name }
+        .distinct()
+    if (categories.size < 2) return
+
     LazyRow(contentPadding = PaddingValues(horizontal = 20.dp), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-        items(listOf("Top", "Latest", providerName.take(14))) { label ->
-            Surface(shape = RoundedCornerShape(22.dp), color = if (label == "Top") Color(0xFF30363D) else Color.Transparent) {
+        items(categories) { label ->
+            Surface(
+                modifier = Modifier.clickable {
+                    onNavigateToCategory(providerName, label)
+                },
+                shape = RoundedCornerShape(22.dp),
+                color = if (label == categories.first()) Color(0xFF30363D) else Color.Transparent,
+            ) {
                 Text(label, color = Color.White, fontSize = 13.sp, modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp))
             }
         }
     }
 }
 
+private fun findCategoryTarget(
+    sections: List<Pair<String, HomePageList>>,
+    tab: String,
+): Pair<String, HomePageList>? {
+    if (sections.isEmpty()) return null
+    if (tab == "Trending") return sections.firstOrNull()
+
+    val terms = when (tab) {
+        "Movies" -> listOf("movie", "film")
+        "Anime" -> listOf("anime", "animation")
+        "Series" -> listOf("tv", "series", "show", "drama")
+        else -> listOf(tab.lowercase())
+    }
+    return sections.firstOrNull { (_, list) ->
+        terms.any { term -> list.name.lowercase().contains(term) }
+    } ?: sections.firstOrNull()
+}
+
 @Composable private fun LoadingState(modifier: Modifier) = Box(modifier, contentAlignment = Alignment.Center) { CircularProgressIndicator(color = OrangeAccent) }
 
 @Composable private fun EmptyState(modifier: Modifier, viewModel: HomeViewModel) = Box(modifier, contentAlignment = Alignment.Center) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text("No content available", color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold)
-        Button(onClick = { viewModel.refresh() }, colors = ButtonDefaults.buttonColors(containerColor = OrangeAccent), modifier = Modifier.padding(top = 16.dp)) { Text("Refresh") }
+    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(24.dp)) {
+        Text("Your catalogue is empty", color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+        Text("Content sources may still be loading. Refresh and try again.", color = Color.Gray, fontSize = 13.sp, modifier = Modifier.padding(top = 8.dp))
+        Button(onClick = { viewModel.refresh() }, colors = ButtonDefaults.buttonColors(containerColor = OrangeAccent), modifier = Modifier.padding(top = 16.dp)) { Text("Refresh sources") }
     }
 }
 
 @Composable private fun ErrorState(modifier: Modifier, message: String, viewModel: HomeViewModel) = Box(modifier, contentAlignment = Alignment.Center) {
     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(24.dp)) {
-        Text(message, color = Color(0xFFFF6B6B), fontSize = 14.sp)
+        Text("We could not refresh your catalogue", color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+        Text("Check your connection and try again.", color = Color.Gray, fontSize = 13.sp, modifier = Modifier.padding(top = 8.dp))
         Button(onClick = { viewModel.refresh() }, colors = ButtonDefaults.buttonColors(containerColor = OrangeAccent), modifier = Modifier.padding(top = 16.dp)) { Text("Retry") }
     }
 }

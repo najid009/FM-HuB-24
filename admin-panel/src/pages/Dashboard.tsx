@@ -6,9 +6,10 @@ import UploadForm from '../components/UploadForm';
 import ExtensionTable from '../components/ExtensionTable';
 import EditModal from '../components/EditModal';
 import RepoManager from '../components/RepoManager';
+import AppControlPanel from '../components/AppControlPanel';
 import { Extension } from '../types/extension';
 
-type Tab = 'extensions' | 'repos';
+type Tab = 'extensions' | 'repos' | 'controls';
 
 export default function Dashboard() {
   const queryClient = useQueryClient();
@@ -36,6 +37,7 @@ export default function Dashboard() {
   const tabs: Array<{ id: Tab; label: string; count: number }> = [
     { id: 'extensions', label: 'Extensions', count: extensions?.length ?? 0 },
     { id: 'repos', label: 'Repositories', count: repoCount },
+    { id: 'controls', label: 'Notices & Updates', count: 0 },
   ];
 
   return (
@@ -127,6 +129,7 @@ export default function Dashboard() {
         )}
 
         {tab === 'repos' && <RepoManager />}
+        {tab === 'controls' && <AppControlPanel />}
       </main>
 
       {uploading && (

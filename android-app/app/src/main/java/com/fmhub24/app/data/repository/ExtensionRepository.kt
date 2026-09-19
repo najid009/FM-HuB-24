@@ -1,5 +1,6 @@
 package com.fmhub24.app.data.repository
 
+import android.content.Context
 import android.util.Log
 import com.fmhub24.app.data.local.dao.CachedExtensionDao
 import com.fmhub24.app.data.local.entity.CachedExtension
@@ -15,6 +16,7 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import javax.inject.Inject
 import javax.inject.Singleton
+import dagger.hilt.android.qualifiers.ApplicationContext
 
 /**
  * Syncs the Supabase `extensions` rows into local files, then hands them to [PluginManager].
@@ -24,6 +26,7 @@ import javax.inject.Singleton
  */
 @Singleton
 class ExtensionRepository @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val supabaseClient: SupabaseClient,
     private val cachedExtensionDao: CachedExtensionDao,
     private val extensionDownloader: ExtensionDownloader,
@@ -42,6 +45,7 @@ class ExtensionRepository @Inject constructor(
         remoteExtensions: List<ExtensionDto>,
         onProgress: (String, Int) -> Unit = { _, _ -> {} },
     ): List<CachedExtension> = withContext(Dispatchers.IO) {
+        ensureBundledExtensions()
         // Heal files left writable by an older build (Android 14 refuses those outright).
         extensionDownloader.hardenCachedFiles()
 
@@ -108,7 +112,7 @@ class ExtensionRepository @Inject constructor(
 
         // Anything the admin removed: drop the file and the row.
         for (cached in cachedList) {
-            if (cached.id !in touched && remoteExtensions.none { it.id == cached.id }) {
+            if (!cached.id.startsWith("bundled-") && cached.id !in touched && remoteExtensions.none { it.id == cached.id }) {
                 extensionDownloader.deleteExtension(cached.localFilePath)
                 cachedExtensionDao.delete(cached.id)
             }
@@ -119,6 +123,7 @@ class ExtensionRepository @Inject constructor(
 
     /** Load everything the user has enabled; results land in [PluginManager]. */
     suspend fun loadEnabled(): List<CachedExtension> = withContext(Dispatchers.IO) {
+        ensureBundledExtensions()
         val toLoad = cachedExtensionDao.getEnabled()
         pluginManager.loadExtensions(toLoad)
         toLoad.forEach { cached ->
@@ -155,6 +160,35 @@ class ExtensionRepository @Inject constructor(
         pluginManager.clear()
         cachedExtensionDao.getAll().forEach { extensionDownloader.deleteExtension(it.localFilePath) }
         cachedExtensionDao.clearAll()
+    }
+
+    private suspend fun ensureBundledExtensions() {
+        val directory = extensionDownloader.provideExtensionsDir()
+        val target = File(directory, "Animedubhindi.cs3")
+        if (!target.exists()) {
+            runCatching {
+                directory.mkdirs()
+                context.assets.open("extensions/Animedubhindi.cs3").use { input ->
+                    target.outputStream().use { output -> input.copyTo(output) }
+                }
+                target.setReadOnly()
+            }.onFailure { Log.w(TAG, "Could not install bundled Animedubhindi", it) }
+        }
+        if (target.exists()) {
+            cachedExtensionDao.insert(
+                CachedExtension(
+                    id = "bundled-animedubhindi",
+                    name = "Animedubhindi",
+                    version = 8,
+                    localFilePath = target.absolutePath,
+                    fileUrl = "bundled://Animedubhindi.cs3",
+                    status = "active",
+                    enabled = true,
+                    pluginClassName = "com.animedubhindi.AnimedubhindiProvider",
+                    sizeBytes = target.length(),
+                )
+            )
+        }
     }
 
     private companion object {

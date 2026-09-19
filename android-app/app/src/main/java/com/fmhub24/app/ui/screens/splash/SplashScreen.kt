@@ -1,5 +1,7 @@
 package com.fmhub24.app.ui.screens.splash
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.rememberScrollState
@@ -17,6 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -25,6 +28,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.fmhub24.app.ui.theme.CyanAccent
 import com.fmhub24.app.ui.theme.OrangeAccent
+import com.fmhub24.app.BuildConfig
 import kotlinx.coroutines.delay
 
 // OptIn kept even where the clipboard API is already stable: it costs a warning at worst and keeps
@@ -37,7 +41,17 @@ fun SplashScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val previousCrash by viewModel.previousCrash.collectAsState()
+    val notice by viewModel.notice.collectAsState()
+    val latestRelease by viewModel.latestRelease.collectAsState()
+    val context = LocalContext.current
+    var showNotice by remember { mutableStateOf(false) }
+    var showUpdate by remember { mutableStateOf(false) }
     var showContent by remember { mutableStateOf(false) }
+
+    LaunchedEffect(notice) { if (notice != null) showNotice = true }
+    LaunchedEffect(latestRelease) {
+        if (latestRelease?.version_code ?: 0 > BuildConfig.VERSION_CODE) showUpdate = true
+    }
 
     // Logo animation
     val infiniteTransition = rememberInfiniteTransition(label = "pulse")
@@ -56,12 +70,14 @@ fun SplashScreen(
         showContent = true
     }
 
-    LaunchedEffect(uiState) {
+    LaunchedEffect(uiState, latestRelease) {
         when (uiState) {
             is SplashViewModel.SplashUiState.Success,
             is SplashViewModel.SplashUiState.Empty -> {
-                delay(800)
-                onNavigateToHome()
+                if (latestRelease?.let { it.is_required && it.version_code > BuildConfig.VERSION_CODE } != true) {
+                    delay(800)
+                    onNavigateToHome()
+                }
             }
             is SplashViewModel.SplashUiState.Error -> {
                 delay(2000)
@@ -128,7 +144,7 @@ fun SplashScreen(
             )
 
             Text(
-                text = "Unlimited Streaming",
+                text = "Free Movies 24 • Watch what you love",
                 color = Color.Gray,
                 fontSize = 14.sp,
                 modifier = Modifier.padding(top = 4.dp)
@@ -308,5 +324,32 @@ fun SplashScreen(
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 32.dp)
         )
+
+        if (showNotice) {
+            notice?.let { item ->
+                AlertDialog(
+                    onDismissRequest = { showNotice = false },
+                    title = { Text(item.title) },
+                    text = { Text(item.message) },
+                    confirmButton = { TextButton(onClick = { showNotice = false }) { Text("OK") } },
+                )
+            }
+        }
+        if (showUpdate) {
+            latestRelease?.let { release ->
+                val required = release.is_required && release.version_code > BuildConfig.VERSION_CODE
+                AlertDialog(
+                    onDismissRequest = { if (!required) showUpdate = false },
+                    title = { Text("Update available: ${release.version_name}") },
+                    text = { Text(release.release_notes ?: "A newer FMHub24 version is available.") },
+                    confirmButton = {
+                        TextButton(onClick = {
+                            context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(release.download_url)))
+                        }) { Text("Update") }
+                    },
+                    dismissButton = if (required) null else ({ TextButton(onClick = { showUpdate = false }) { Text("Later") } }),
+                )
+            }
+        }
     }
 }

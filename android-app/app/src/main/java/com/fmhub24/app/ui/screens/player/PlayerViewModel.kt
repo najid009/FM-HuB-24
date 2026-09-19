@@ -90,11 +90,13 @@ class PlayerViewModel @Inject constructor(
                 linkCallback = { links.add(it) }
             )
             result.onSuccess {
-                val playable = links.filter { it.type != ExtractorLinkType.TORRENT }
+                val playable = links
+                    .filter { it.type != ExtractorLinkType.TORRENT && it.type != ExtractorLinkType.MAGNET }
+                    .distinctBy { "${it.type}:${it.url}" }
                 if (playable.isEmpty()) {
                     _uiState.value = PlayerUiState.Error(
-                        if (links.isEmpty()) "No playable links found via loadLinks()"
-                        else "Only torrent/magnet links returned (${links.size})."
+                        if (links.isEmpty()) "No playable links found"
+                        else "Only unsupported download links were returned (${links.size})."
                     )
                 } else {
                     val sorted = playable.sortedWith(
@@ -137,17 +139,36 @@ class PlayerViewModel @Inject constructor(
         if (state is PlayerUiState.Success) _uiState.value = state.copy(selectedLink = link)
     }
 
+    /**
+     * Tries the next provider/quality link after a playback failure. This only
+     * walks links already returned by the authorized provider; it does not
+     * re-resolve or bypass protected streams.
+     */
+    fun nextFallback(failed: ExtractorLink): ExtractorLink? {
+        val state = _uiState.value as? PlayerUiState.Success ?: return null
+        val failedIndex = state.links.indexOfFirst { it.url == failed.url }
+        val next = state.links
+            .drop((failedIndex + 1).coerceAtLeast(0))
+            .firstOrNull { it.url != failed.url }
+            ?: return null
+        _uiState.value = state.copy(selectedLink = next)
+        return next
+    }
+
     fun downloadSelected(link: ExtractorLink) {
         safeLaunch {
-            _downloadState.value = "Downloading…"
+            _downloadState.value = "Adding to downloads…"
             downloadRepository.enqueue(
                 sourceUrl = link.url,
                 name = currentName,
                 posterUrl = currentPoster,
                 apiName = currentApiName,
                 episodeName = currentEpisodeName,
+                streamType = link.type,
+                headers = link.headers,
+                referer = link.referer,
                 drm = DrmConfig.from(link),
-            ).onSuccess { _downloadState.value = "Downloaded for offline viewing" }
+            ).onSuccess { _downloadState.value = "Added to downloads" }
                 .onFailure { _downloadState.value = it.message ?: "Download failed" }
         }
     }

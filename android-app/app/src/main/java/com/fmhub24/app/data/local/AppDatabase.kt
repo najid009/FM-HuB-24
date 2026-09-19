@@ -15,7 +15,7 @@ import com.fmhub24.app.data.local.entity.WatchProgress
 
 @Database(
     entities = [Favorite::class, WatchProgress::class, CachedExtension::class, DownloadedContent::class],
-    version = 4,
+    version = 5,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -87,6 +87,13 @@ abstract class AppDatabase : RoomDatabase() {
                 db.execSQL("ALTER TABLE downloaded_content ADD COLUMN drmScheme TEXT")
                 db.execSQL("ALTER TABLE downloaded_content ADD COLUMN drmLicenseUrl TEXT")
                 db.execSQL("ALTER TABLE downloaded_content ADD COLUMN drmKeySetId TEXT")
+            }
+        }
+
+        val MIGRATION_4_5 = object : Migration(4, 5) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE downloaded_content ADD COLUMN requestHeadersJson TEXT")
+                db.execSQL("ALTER TABLE downloaded_content ADD COLUMN referer TEXT")
             }
         }
     }

@@ -2,6 +2,8 @@ package com.fmhub24.app.data.remote
 
 import com.fmhub24.app.BuildConfig
 import com.fmhub24.app.data.remote.dto.ExtensionDto
+import com.fmhub24.app.data.remote.dto.AppNoticeDto
+import com.fmhub24.app.data.remote.dto.AppReleaseDto
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
@@ -79,6 +81,20 @@ class SupabaseClient @Inject constructor() {
             Result.success(result)
         } catch (e: Exception) {
             Result.failure(e)
+        }
+    }
+
+    suspend fun fetchActiveNotices(): Result<List<AppNoticeDto>> = withContext(Dispatchers.IO) {
+        if (!isConfigured()) return@withContext Result.success(emptyList())
+        runCatching {
+            api.getActiveNotices(apiKey = anonKey, auth = "Bearer $anonKey")
+        }
+    }
+
+    suspend fun fetchLatestRelease(): Result<AppReleaseDto?> = withContext(Dispatchers.IO) {
+        if (!isConfigured()) return@withContext Result.success(null)
+        runCatching {
+            api.getLatestRelease(apiKey = anonKey, auth = "Bearer $anonKey").firstOrNull()
         }
     }
 

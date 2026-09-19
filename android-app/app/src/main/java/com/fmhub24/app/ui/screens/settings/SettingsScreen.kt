@@ -134,6 +134,13 @@ fun SettingsScreen(
             }
 
             item {
+                SettingsSection(title = "App update") {
+                    Text("Current version ${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})", color = Color.White, fontSize = 14.sp)
+                    Text("New releases are checked when the app opens. Required updates must be installed before continuing.", color = Color.Gray, fontSize = 11.sp, modifier = Modifier.padding(top = 6.dp))
+                }
+            }
+
+            item {
                 SettingsSection(title = "About") {
                     Text(
                         text = "FMHuB24 shows real, up-to-date content only — no demo or placeholder entries. If a title is missing, it simply is not available right now; pull to refresh and try again.",
@@ -203,6 +210,7 @@ private fun ExtensionsSection(viewModel: SettingsViewModel) {
     val extensions by viewModel.extensions.collectAsState()
     val loadState by viewModel.loadState.collectAsState()
     val providers by viewModel.providers.collectAsState()
+    var showResetConfirm by remember { mutableStateOf(false) }
 
     SettingsSection(title = "Status") {
         Row(
@@ -263,9 +271,28 @@ private fun ExtensionsSection(viewModel: SettingsViewModel) {
 
         if (extensions.isNotEmpty()) {
             Spacer(modifier = Modifier.height(12.dp))
-            TextButton(onClick = { viewModel.clearExtensions() }) {
+            TextButton(onClick = { showResetConfirm = true }) {
                 Text("Reset", color = Color(0xFFFF5252), fontSize = 12.sp)
             }
         }
+    }
+
+    if (showResetConfirm) {
+        AlertDialog(
+            onDismissRequest = { showResetConfirm = false },
+            title = { Text("Remove all content sources?") },
+            text = { Text("Downloaded source files will be removed from this device. You can refresh them again later.") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showResetConfirm = false
+                        viewModel.clearExtensions()
+                    }
+                ) { Text("Remove", color = Color(0xFFFF5252)) }
+            },
+            dismissButton = {
+                TextButton(onClick = { showResetConfirm = false }) { Text("Cancel") }
+            },
+        )
     }
 }

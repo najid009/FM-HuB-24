@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.fmhub24.app.data.aggregation.ContentDeduplicator
 import com.fmhub24.app.ui.components.ContentCard
 import com.fmhub24.app.ui.theme.OrangeAccent
 
@@ -48,12 +49,28 @@ fun CategoryScreen(
                 CircularProgressIndicator(color = OrangeAccent)
             }
             is CategoryViewModel.UiState.Error -> Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) {
-                Text(current.message, color = Color(0xFFFF5252), modifier = Modifier.padding(24.dp))
+                Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(24.dp)) {
+                    Text("This category is temporarily unavailable", color = Color.White, style = MaterialTheme.typography.titleMedium)
+                    Text("Please try again or go back to another category.", color = Color.Gray, modifier = Modifier.padding(top = 8.dp))
+                    Button(
+                        onClick = { viewModel.load(providerName, categoryName) },
+                        modifier = Modifier.padding(top = 16.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = OrangeAccent),
+                    ) { Text("Try again") }
+                }
             }
             is CategoryViewModel.UiState.Success -> {
                 if (current.list.list.isEmpty()) {
                     Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) {
-                        Text("No content in this category", color = Color.Gray)
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text("Nothing here yet", color = Color.White, style = MaterialTheme.typography.titleMedium)
+                            Text("This source did not return any items for this category.", color = Color.Gray, modifier = Modifier.padding(top = 8.dp))
+                            Button(
+                                onClick = { viewModel.load(providerName, categoryName) },
+                                modifier = Modifier.padding(top = 16.dp),
+                                colors = ButtonDefaults.buttonColors(containerColor = OrangeAccent),
+                            ) { Text("Refresh") }
+                        }
                     }
                 } else {
                     LazyVerticalGrid(
@@ -63,7 +80,7 @@ fun CategoryScreen(
                         horizontalArrangement = Arrangement.spacedBy(12.dp),
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        items(current.list.list, key = { "${it.apiName}:${it.url}" }) { item ->
+                        items(current.list.list, key = { ContentDeduplicator.key(it) }) { item ->
                             ContentCard(item = item, modifier = Modifier.fillMaxWidth()) {
                                 onNavigateToDetails(item.url, item.apiName)
                             }

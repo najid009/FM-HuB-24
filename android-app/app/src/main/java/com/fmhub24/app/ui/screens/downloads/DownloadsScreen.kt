@@ -55,6 +55,7 @@ fun DownloadsScreen(
                 items(downloads, key = { it.id }) { item ->
                     Card(
                         onClick = { if (item.status.startsWith("completed")) onPlayOffline(item) },
+                        enabled = item.status.startsWith("completed"),
                         colors = CardDefaults.cardColors(containerColor = Color(0xFF151515)),
                         shape = RoundedCornerShape(12.dp)
                     ) {
@@ -69,7 +70,11 @@ fun DownloadsScreen(
                                 Text(item.name, color = Color.White, maxLines = 2)
                                 item.episodeName?.let { Text(it, color = Color.Gray, modifier = Modifier.padding(top = 4.dp)) }
                                 Text(
-                                    if (item.status.startsWith("completed")) "Available offline" else "Download ${item.status}",
+                                    when {
+                                        item.status.startsWith("completed") -> "Available offline • Tap to play"
+                                        item.status.startsWith("failed") -> "Download failed • Try again later"
+                                        else -> "Preparing for offline viewing"
+                                    },
                                     color = if (item.status.startsWith("completed")) Color(0xFF64DD8A) else Color(0xFFFFC107),
                                     modifier = Modifier.padding(top = 6.dp)
                                 )

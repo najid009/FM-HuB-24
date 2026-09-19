@@ -1,15 +1,20 @@
 package com.fmhub24.app.ui.screens.details
 
+import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -18,6 +23,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -37,6 +43,7 @@ fun DetailsScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val isFavorite by viewModel.isFavorite.collectAsState()
+    val context = LocalContext.current
 
     LaunchedEffect(url, apiName) {
         viewModel.loadDetails(url, apiName)
@@ -77,7 +84,7 @@ fun DetailsScreen(
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         CircularProgressIndicator(color = OrangeAccent)
                         Text(
-                            text = "Loading real data via provider.load()...",
+                            text = "Preparing details...",
                             color = Color.Gray,
                             fontSize = 12.sp,
                             modifier = Modifier.padding(top = 12.dp)
@@ -94,7 +101,7 @@ fun DetailsScreen(
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(32.dp)) {
                         Text(text = "Failed to load", color = Color.White, fontWeight = FontWeight.Bold)
-                        Text(text = state.message, color = Color.Gray, fontSize = 13.sp, modifier = Modifier.padding(top = 8.dp))
+                        Text(text = "This title is temporarily unavailable. Please try again.", color = Color.Gray, fontSize = 13.sp, modifier = Modifier.padding(top = 8.dp))
                         Button(
                             onClick = { viewModel.loadDetails(url, apiName) },
                             modifier = Modifier.padding(top = 16.dp),
@@ -115,6 +122,7 @@ fun DetailsScreen(
                 val seasons = allEpisodes.map { it.season ?: 1 }.distinct().sorted()
                 var selectedSeason by remember(data) { mutableStateOf(seasons.firstOrNull() ?: 1) }
                 val visibleEpisodes = allEpisodes.filter { (it.season ?: 1) == selectedSeason }
+                val firstEpisode = visibleEpisodes.firstOrNull() ?: allEpisodes.firstOrNull()
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
@@ -122,8 +130,9 @@ fun DetailsScreen(
                         .background(Color.Black)
                 ) {
                     item {
-                        // Poster header
-                        Box(modifier = Modifier.fillMaxWidth().height(420.dp)) {
+                        // Screenshot-aligned top player stage. Playback itself remains in the
+                        // real PlayerScreen; this stage never pretends that a link is loaded.
+                        Box(modifier = Modifier.fillMaxWidth().height(300.dp)) {
                             AsyncImage(
                                 model = data.posterUrl,
                                 contentDescription = data.name,
@@ -136,37 +145,53 @@ fun DetailsScreen(
                                     .background(
                                         Brush.verticalGradient(
                                             colors = listOf(Color.Transparent, Color.Black),
-                                            startY = 200f
+                                            startY = 120f
                                         )
                                     )
                             )
-                            // Title overlay
+                            Surface(
+                                modifier = Modifier.align(Alignment.Center),
+                                shape = RoundedCornerShape(50),
+                                color = if (data is MovieLoadResponse || firstEpisode != null) OrangeAccent else Color(0xFF3A3A3A),
+                                shadowElevation = 8.dp,
+                                enabled = data is MovieLoadResponse || firstEpisode != null,
+                                onClick = {
+                                    if (data is MovieLoadResponse) {
+                                        onNavigateToPlayer(data.url, data.apiName, data.name, data.posterUrl, data.dataUrl, null)
+                                    } else if (firstEpisode != null) {
+                                        onNavigateToPlayer(data.url, data.apiName, data.name, data.posterUrl ?: firstEpisode.posterUrl, firstEpisode.data, firstEpisode.name)
+                                    }
+                                }
+                            ) {
+                                Icon(
+                                    Icons.Default.PlayArrow,
+                                    contentDescription = if (data is MovieLoadResponse || firstEpisode != null) "Play" else "Playback unavailable",
+                                    tint = if (data is MovieLoadResponse || firstEpisode != null) Color.Black else Color.Gray,
+                                    modifier = Modifier.padding(18.dp).size(32.dp)
+                                )
+                            }
+                            // Title and compact metadata overlay
                             Column(
                                 modifier = Modifier
                                     .align(Alignment.BottomStart)
-                                    .padding(20.dp)
+                                    .padding(horizontal = 20.dp, vertical = 18.dp)
                             ) {
                                 Text(
                                     text = data.name,
                                     color = Color.White,
-                                    fontSize = 24.sp,
+                                    fontSize = 22.sp,
                                     fontWeight = FontWeight.Bold,
-                                    lineHeight = 28.sp
+                                    lineHeight = 27.sp,
+                                    maxLines = 2,
                                 )
                                 Row(
                                     modifier = Modifier.padding(top = 8.dp),
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    data.year?.let {
-                                        Box(
-                                            modifier = Modifier
-                                                .background(Color.White.copy(alpha = 0.15f), RoundedCornerShape(4.dp))
-                                                .padding(horizontal = 6.dp, vertical = 2.dp)
-                                        ) {
-                                            Text(text = it.toString(), color = Color.White, fontSize = 12.sp)
-                                        }
-                                        Spacer(modifier = Modifier.width(8.dp))
-                                    }
+                                    Icon(Icons.Default.Info, contentDescription = null, tint = Color.LightGray, modifier = Modifier.size(14.dp))
+                                    Spacer(modifier = Modifier.width(5.dp))
+                                    data.year?.let { Text(it.toString(), color = Color.LightGray, fontSize = 12.sp) }
+                                    Spacer(modifier = Modifier.width(8.dp))
                                     Box(
                                         modifier = Modifier
                                             .background(OrangeAccent.copy(alpha = 0.2f), RoundedCornerShape(4.dp))
@@ -175,7 +200,7 @@ fun DetailsScreen(
                                         Text(text = data.type.name, color = OrangeAccent, fontSize = 12.sp)
                                     }
                                     Spacer(modifier = Modifier.width(8.dp))
-                                    Text(text = data.apiName, color = Color.Gray, fontSize = 12.sp)
+                                    Text(text = if (allEpisodes.isNotEmpty()) "${allEpisodes.size} episodes" else data.apiName, color = Color.LightGray, fontSize = 12.sp)
                                 }
                             }
                         }
@@ -183,6 +208,105 @@ fun DetailsScreen(
 
                     item {
                         Column(modifier = Modifier.padding(20.dp)) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            ) {
+                                DetailAction(
+                                    icon = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                                    label = if (isFavorite) "Saved" else "Add to list",
+                                    selected = isFavorite,
+                                    onClick = { viewModel.toggleFavorite() },
+                                    modifier = Modifier.weight(1f),
+                                )
+                                DetailAction(
+                                    icon = Icons.Default.Share,
+                                    label = "Share",
+                                    onClick = {
+                                        context.startActivity(
+                                            Intent.createChooser(
+                                                Intent(Intent.ACTION_SEND).apply {
+                                                    type = "text/plain"
+                                                    putExtra(Intent.EXTRA_TEXT, data.url)
+                                                },
+                                                "Share ${data.name}"
+                                            )
+                                        )
+                                    },
+                                    modifier = Modifier.weight(1f),
+                                )
+                                DetailAction(
+                                    icon = Icons.Default.Download,
+                                    label = "Download",
+                                    enabled = data is MovieLoadResponse || firstEpisode != null,
+                                    onClick = {
+                                        if (data is MovieLoadResponse) {
+                                            onNavigateToPlayer(data.url, data.apiName, data.name, data.posterUrl, data.dataUrl, null)
+                                        } else if (firstEpisode != null) {
+                                            onNavigateToPlayer(data.url, data.apiName, data.name, data.posterUrl ?: firstEpisode.posterUrl, firstEpisode.data, firstEpisode.name)
+                                        }
+                                    },
+                                    modifier = Modifier.weight(1f),
+                                )
+                            }
+                            if (data !is MovieLoadResponse && firstEpisode == null) {
+                                Text(
+                                    text = "No playable episode is available from this source yet.",
+                                    color = Color(0xFFFFB86B),
+                                    fontSize = 12.sp,
+                                    modifier = Modifier.padding(top = 8.dp),
+                                )
+                            }
+                            Spacer(modifier = Modifier.height(20.dp))
+
+                            if (allEpisodes.isNotEmpty()) {
+                                Text(
+                                    text = "Resources",
+                                    color = Color.White,
+                                    fontSize = 20.sp,
+                                    fontWeight = FontWeight.Bold,
+                                )
+                                Text(
+                                    text = "Available from ${data.apiName}",
+                                    color = Color.Gray,
+                                    fontSize = 12.sp,
+                                    modifier = Modifier.padding(top = 3.dp),
+                                )
+                                Spacer(modifier = Modifier.height(10.dp))
+                                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                    OutlinedButton(
+                                        onClick = {},
+                                        enabled = false,
+                                        shape = RoundedCornerShape(10.dp),
+                                        contentPadding = PaddingValues(horizontal = 12.dp),
+                                    ) { Text("Audio: Auto", fontSize = 12.sp) }
+                                }
+                                Spacer(modifier = Modifier.height(12.dp))
+                                LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                    items(visibleEpisodes, key = { "chip-${it.data}" }) { episode ->
+                                        FilterChip(
+                                            selected = episode == firstEpisode,
+                                            onClick = {
+                                                onNavigateToPlayer(
+                                                    data.url,
+                                                    data.apiName,
+                                                    data.name,
+                                                    data.posterUrl ?: episode.posterUrl,
+                                                    episode.data,
+                                                    episode.name ?: "Episode ${episode.episode}",
+                                                )
+                                            },
+                                            label = { Text("${episode.episode ?: 0}") },
+                                            colors = FilterChipDefaults.filterChipColors(
+                                                selectedContainerColor = OrangeAccent.copy(alpha = .25f),
+                                                selectedLabelColor = OrangeAccent,
+                                            ),
+                                        )
+                                    }
+                                }
+                                Spacer(modifier = Modifier.height(20.dp))
+                            }
+
                             // Plot
                             data.plot?.let { plot ->
                                 Text(
@@ -308,6 +432,32 @@ fun DetailsScreen(
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun DetailAction(
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    label: String,
+    modifier: Modifier = Modifier,
+    selected: Boolean = false,
+    enabled: Boolean = true,
+    onClick: () -> Unit,
+) {
+    FilledTonalButton(
+        onClick = onClick,
+        enabled = enabled,
+        modifier = modifier.height(48.dp),
+        contentPadding = PaddingValues(horizontal = 8.dp),
+        colors = ButtonDefaults.filledTonalButtonColors(
+            containerColor = if (selected) OrangeAccent.copy(alpha = .22f) else Color(0xFF242424),
+            contentColor = if (selected) OrangeAccent else Color.White,
+        ),
+        shape = RoundedCornerShape(14.dp),
+    ) {
+        Icon(icon, contentDescription = null, modifier = Modifier.size(18.dp))
+        Spacer(modifier = Modifier.width(5.dp))
+        Text(label, maxLines = 1, fontSize = 11.sp)
     }
 }
 

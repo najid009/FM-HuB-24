@@ -6,6 +6,8 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -16,6 +18,8 @@ import androidx.compose.material.icons.filled.Fullscreen
 import androidx.compose.material.icons.filled.FullscreenExit
 import androidx.compose.material.icons.filled.FastForward
 import androidx.compose.material.icons.filled.FastRewind
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.LockOpen
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Settings
@@ -24,6 +28,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
@@ -70,8 +75,11 @@ fun PlayerScreen(
     val view = LocalView.current
     var exoPlayer by remember { mutableStateOf<ExoPlayer?>(null) }
     var isFullscreen by rememberSaveable { mutableStateOf(false) }
+    var controlsLocked by rememberSaveable { mutableStateOf(false) }
     var currentEpisodeTitle by remember { mutableStateOf(episodeName) }
     var autoNext by rememberSaveable { mutableStateOf(true) }
+    var activeLink by remember { mutableStateOf<ExtractorLink?>(null) }
+    var playbackSpeed by rememberSaveable { mutableFloatStateOf(1f) }
 
     LaunchedEffect(url, apiName, episodeData) {
         currentEpisodeTitle = episodeName
@@ -84,8 +92,10 @@ fun PlayerScreen(
     }
 
     fun startLink(link: ExtractorLink, resumePosition: Long = 0L) {
+        activeLink = link
         releasePlayer()
         exoPlayer = createPlayer(context, link).apply {
+            setPlaybackSpeed(playbackSpeed)
             setMediaItem(buildMediaItem(link))
             prepare()
             if (resumePosition > 1000) seekTo(resumePosition)
@@ -102,6 +112,17 @@ fun PlayerScreen(
         }
     }
 
+    fun cyclePlaybackSpeed() {
+        val next = when (playbackSpeed) {
+            1f -> 1.25f
+            1.25f -> 1.5f
+            1.5f -> 2f
+            else -> 1f
+        }
+        playbackSpeed = next
+        exoPlayer?.setPlaybackSpeed(next)
+    }
+
     LaunchedEffect(uiState) {
         val state = uiState
         if (state is PlayerViewModel.PlayerUiState.Success && exoPlayer == null) {
@@ -113,6 +134,13 @@ fun PlayerScreen(
     DisposableEffect(exoPlayer) {
         val player = exoPlayer ?: return@DisposableEffect onDispose { }
         val listener = object : Player.Listener {
+            override fun onPlayerError(error: androidx.media3.common.PlaybackException) {
+                val failedLink = activeLink ?: return
+                val nextLink = viewModel.nextFallback(failedLink) ?: return
+                val position = player.currentPosition.coerceAtLeast(0L)
+                startLink(nextLink, position)
+            }
+
             override fun onPlaybackStateChanged(playbackState: Int) {
                 if (playbackState == Player.STATE_ENDED && autoNext) {
                     val next = viewModel.nextEpisodeTarget()
@@ -171,6 +199,10 @@ fun PlayerScreen(
                 onRetry = { viewModel.loadLinks(url, apiName, name, posterUrl, episodeData, episodeName) },
                 onFullscreen = { setFullscreen(false) },
                 onAudioSettings = { player -> showAudioTrackDialog(context, player) },
+                playbackSpeed = playbackSpeed,
+                onPlaybackSpeedChange = ::cyclePlaybackSpeed,
+                controlsLocked = controlsLocked,
+                onToggleLock = { controlsLocked = !controlsLocked },
                 isFullscreen = true
             )
         }
@@ -204,6 +236,10 @@ fun PlayerScreen(
                     onRetry = { viewModel.loadLinks(url, apiName, name, posterUrl, episodeData, episodeName) },
                     onFullscreen = { setFullscreen(true) },
                     onAudioSettings = { player -> showAudioTrackDialog(context, player) },
+                    playbackSpeed = playbackSpeed,
+                    onPlaybackSpeedChange = ::cyclePlaybackSpeed,
+                    controlsLocked = controlsLocked,
+                    onToggleLock = { controlsLocked = !controlsLocked },
                     isFullscreen = false
                 )
                 when (val state = uiState) {
@@ -230,7 +266,7 @@ fun PlayerScreen(
                             item {
                                 Button(
                                     onClick = { state.selectedLink?.let(viewModel::downloadSelected) },
-                                    enabled = state.selectedLink != null && downloadState != "Downloading…",
+                                    enabled = state.selectedLink != null && downloadState?.contains("Adding") != true,
                                     modifier = Modifier.fillMaxWidth(),
                                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF242424)),
                                     shape = RoundedCornerShape(10.dp)
@@ -287,9 +323,30 @@ private fun PlayerSurface(
     onRetry: () -> Unit,
     onFullscreen: () -> Unit,
     onAudioSettings: (ExoPlayer) -> Unit,
+    playbackSpeed: Float,
+    onPlaybackSpeedChange: () -> Unit,
+    controlsLocked: Boolean,
+    onToggleLock: () -> Unit,
     isFullscreen: Boolean
 ) {
-    Box(modifier.background(Color.Black), contentAlignment = Alignment.Center) {
+    var controlsVisible by rememberSaveable(player) { mutableStateOf(true) }
+    var position by remember(player) { mutableLongStateOf(0L) }
+
+    LaunchedEffect(player, controlsVisible, controlsLocked) {
+        while (player != null) {
+            position = player.currentPosition.coerceAtLeast(0L)
+            delay(if (controlsVisible && !controlsLocked) 500L else 1_000L)
+        }
+    }
+
+    Box(
+        modifier = modifier
+            .background(Color.Black)
+            .clickable(enabled = player != null && !controlsLocked) {
+                controlsVisible = !controlsVisible
+            },
+        contentAlignment = Alignment.Center
+    ) {
         when (uiState) {
             is PlayerViewModel.PlayerUiState.Loading -> CircularProgressIndicator(color = OrangeAccent)
             is PlayerViewModel.PlayerUiState.Error -> Column(
@@ -310,9 +367,7 @@ private fun PlayerSurface(
                     AndroidView(
                         factory = { ctx ->
                             PlayerView(ctx).apply {
-                                useController = true
-                                controllerShowTimeoutMs = 3500
-                                controllerHideOnTouch = true
+                                useController = false
                                 this.player = player
                                 layoutParams = FrameLayout.LayoutParams(
                                     ViewGroup.LayoutParams.MATCH_PARENT,
@@ -323,73 +378,135 @@ private fun PlayerSurface(
                         update = { it.player = player },
                         modifier = Modifier.fillMaxSize()
                     )
-                    if (isFullscreen) {
+
+                    if (controlsVisible && !controlsLocked) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(
+                                    Brush.verticalGradient(
+                                        listOf(
+                                            Color.Black.copy(alpha = .62f),
+                                            Color.Transparent,
+                                            Color.Black.copy(alpha = .82f)
+                                        )
+                                    )
+                                )
+                        )
+                    }
+
+                    if (controlsVisible || controlsLocked) {
                         Row(
-                            modifier = Modifier.align(Alignment.TopCenter).fillMaxWidth().background(Color.Black.copy(alpha = .58f)).padding(horizontal = 18.dp, vertical = 10.dp),
+                            modifier = Modifier
+                                .align(Alignment.TopCenter)
+                                .fillMaxWidth()
+                                .padding(horizontal = 18.dp, vertical = 10.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            IconButton(onClick = onFullscreen) {
-                                Icon(Icons.Default.ArrowBack, "Exit fullscreen", tint = Color.White)
+                            IconButton(onClick = onFullscreen, enabled = !controlsLocked) {
+                                Icon(Icons.Default.ArrowBack, "Back", tint = Color.White)
                             }
                             Column(Modifier.weight(1f)) {
                                 Text(title, color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold, maxLines = 1)
                                 episodeTitle?.let { Text(it, color = Color.LightGray, fontSize = 12.sp, maxLines = 1) }
                             }
-                            IconButton(onClick = { onAudioSettings(player) }) { Icon(Icons.Default.Settings, "Settings", tint = Color.White) }
+                            if (isFullscreen) {
+                                TextButton(onClick = onToggleLock) {
+                                    Icon(
+                                        if (controlsLocked) Icons.Default.Lock else Icons.Default.LockOpen,
+                                        contentDescription = if (controlsLocked) "Unlock controls" else "Lock controls",
+                                        tint = Color.White
+                                    )
+                                    Spacer(Modifier.width(4.dp))
+                                    Text(if (controlsLocked) "Unlock" else "Lock", color = Color.White)
+                                }
+                            }
+                            IconButton(onClick = { onAudioSettings(player) }, enabled = !controlsLocked) {
+                                Icon(Icons.Default.Settings, "Settings", tint = Color.White)
+                            }
                         }
                     }
-                    Row(
-                        modifier = Modifier.align(Alignment.Center),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(28.dp)
-                    ) {
-                        IconButton(onClick = { player.seekBack() }) {
-                            Icon(Icons.Default.FastRewind, contentDescription = "Rewind 10 seconds", tint = Color.White, modifier = Modifier.size(42.dp))
-                        }
-                        IconButton(
-                            onClick = {
-                                if (player.isPlaying) player.pause() else player.play()
-                            },
-                            modifier = Modifier.size(72.dp)
+
+                    if (controlsVisible && !controlsLocked) {
+                        Row(
+                            modifier = Modifier.align(Alignment.Center),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(if (isFullscreen) 44.dp else 28.dp)
                         ) {
-                            Icon(
-                                if (player.isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
-                                contentDescription = "Play or pause",
-                                tint = Color.White,
-                                modifier = Modifier.size(58.dp)
-                            )
+                            PlayerControlButton(Icons.Default.FastRewind, "Rewind 10 seconds") { player.seekBack() }
+                            PlayerControlButton(
+                                icon = if (player.isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
+                                description = "Play or pause",
+                                large = true
+                            ) { if (player.isPlaying) player.pause() else player.play() }
+                            PlayerControlButton(Icons.Default.FastForward, "Forward 10 seconds") { player.seekForward() }
                         }
-                        IconButton(onClick = { player.seekForward() }) {
-                            Icon(Icons.Default.FastForward, contentDescription = "Forward 10 seconds", tint = Color.White, modifier = Modifier.size(42.dp))
-                        }
-                    }
-                    Row(
-                        modifier = Modifier
-                            .align(Alignment.BottomEnd)
-                            .padding(end = 12.dp, bottom = 48.dp)
-                            .background(Color.Black.copy(alpha = 0.65f), RoundedCornerShape(24.dp))
-                            .padding(horizontal = 2.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        IconButton(onClick = { onAudioSettings(player) }) {
-                            Icon(
-                                Icons.Default.Settings,
-                                contentDescription = "Audio and subtitle settings",
-                                tint = Color.White
-                            )
-                        }
-                        IconButton(onClick = onFullscreen) {
-                            Icon(
-                                if (isFullscreen) Icons.Default.FullscreenExit else Icons.Default.Fullscreen,
-                                contentDescription = "Fullscreen",
-                                tint = Color.White
-                            )
+
+                        Column(
+                            modifier = Modifier
+                                .align(Alignment.BottomCenter)
+                                .fillMaxWidth()
+                                .padding(horizontal = 18.dp, vertical = 10.dp)
+                        ) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Text(formatTime(position), color = Color.White, fontSize = 12.sp)
+                                Slider(
+                                    value = position.toFloat().coerceIn(0f, player.duration.coerceAtLeast(1L).toFloat()),
+                                    onValueChange = { player.seekTo(it.toLong()) },
+                                    valueRange = 0f..player.duration.coerceAtLeast(1L).toFloat(),
+                                    modifier = Modifier.weight(1f).padding(horizontal = 8.dp),
+                                    colors = SliderDefaults.colors(
+                                        thumbColor = Color.White,
+                                        activeTrackColor = Color.White,
+                                        inactiveTrackColor = Color.White.copy(alpha = .35f)
+                                    )
+                                )
+                                Text(formatTime(player.duration), color = Color.White, fontSize = 12.sp)
+                            }
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                IconButton(onClick = onToggleLock) {
+                                    Icon(
+                                        if (controlsLocked) Icons.Default.Lock else Icons.Default.LockOpen,
+                                        "Lock controls",
+                                        tint = Color.White
+                                    )
+                                }
+                                Spacer(Modifier.weight(1f))
+                                TextButton(onClick = { onAudioSettings(player) }) { Text("Language", color = Color.White) }
+                                TextButton(onClick = onPlaybackSpeedChange) { Text("${playbackSpeed}x", color = Color.White) }
+                                TextButton(onClick = onFullscreen) {
+                                    Icon(
+                                        if (isFullscreen) Icons.Default.FullscreenExit else Icons.Default.Fullscreen,
+                                        "Fullscreen",
+                                        tint = Color.White
+                                    )
+                                }
+                            }
                         }
                     }
                 }
             }
         }
     }
+}
+
+@Composable
+private fun PlayerControlButton(
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    description: String,
+    large: Boolean = false,
+    onClick: () -> Unit,
+) {
+    IconButton(onClick = onClick, modifier = Modifier.size(if (large) 78.dp else 58.dp)) {
+        Crossfade(targetState = icon, label = "playerControlIcon") { targetIcon ->
+            Icon(targetIcon, description, tint = Color.White, modifier = Modifier.size(if (large) 58.dp else 38.dp))
+        }
+    }
+}
+
+private fun formatTime(milliseconds: Long): String {
+    val totalSeconds = (milliseconds / 1_000L).coerceAtLeast(0L)
+    return "%02d:%02d".format(totalSeconds / 60L, totalSeconds % 60L)
 }
 
 @Composable

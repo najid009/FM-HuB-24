@@ -16,6 +16,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.datasource.cache.CacheDataSource
+import androidx.media3.datasource.DefaultDataSource
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
 import com.fmhub24.app.download.FMHubDownloadService
@@ -35,12 +36,16 @@ fun OfflinePlayerScreen(
     val player = remember(sourceUrl, drmKeySetId) {
         // No upstream factory is configured deliberately: a missing segment fails instead of
         // silently using the network and pretending that offline playback works.
-        val cacheDataSourceFactory = CacheDataSource.Factory()
-            .setCache(FMHubDownloadService.downloadCache(context))
-            .setUpstreamDataSourceFactory(null)
-            .setFlags(CacheDataSource.FLAG_BLOCK_ON_CACHE)
+        val dataSourceFactory = if (sourceUrl.startsWith("http://") || sourceUrl.startsWith("https://")) {
+            CacheDataSource.Factory()
+                .setCache(FMHubDownloadService.downloadCache(context))
+                .setUpstreamDataSourceFactory(null)
+                .setFlags(CacheDataSource.FLAG_BLOCK_ON_CACHE)
+        } else {
+            DefaultDataSource.Factory(context)
+        }
         ExoPlayer.Builder(context)
-            .setMediaSourceFactory(androidx.media3.exoplayer.source.DefaultMediaSourceFactory(cacheDataSourceFactory))
+            .setMediaSourceFactory(androidx.media3.exoplayer.source.DefaultMediaSourceFactory(dataSourceFactory))
             .build()
             .apply {
                 setMediaItem(buildOfflineMediaItem(sourceUrl, drmKeySetId, drmLicenseUrl, drmScheme))
@@ -71,7 +76,12 @@ fun OfflinePlayerScreen(
 }
 
 private fun buildOfflineMediaItem(url: String, keySetId: String, licenseUrl: String, scheme: String): MediaItem {
-    val builder = MediaItem.Builder().setUri(url)
+    val uri = if (url.startsWith("http://") || url.startsWith("https://")) {
+        android.net.Uri.parse(url)
+    } else {
+        android.net.Uri.fromFile(java.io.File(url))
+    }
+    val builder = MediaItem.Builder().setUri(uri)
     if (keySetId.isNotBlank() && licenseUrl.isNotBlank() && scheme.isNotBlank()) {
         val drm = MediaItem.DrmConfiguration.Builder(UUID.fromString(scheme))
             .setLicenseUri(android.net.Uri.parse(licenseUrl))

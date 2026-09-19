@@ -1,0 +1,14 @@
+# Android/Gradle
+android-app/.gradle/
+android-app/app/build/
+android-app/plugin-api/build/
+android-app/local.properties
+*.jks
+*.keystore
+
+# Admin panel
+admin-panel/node_modules/
+admin-panel/dist/
+
+# Local deliverables
+releases/

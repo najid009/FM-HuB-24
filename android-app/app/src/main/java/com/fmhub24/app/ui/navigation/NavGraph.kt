@@ -1,5 +1,10 @@
 package com.fmhub24.app.ui.navigation
 
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -59,7 +64,11 @@ fun NavGraph(navController: NavHostController) {
             arguments = listOf(
                 navArgument("providerName") { type = NavType.StringType },
                 navArgument("categoryName") { type = NavType.StringType }
-            )
+            ),
+            enterTransition = { slideInHorizontally(tween(240)) { it / 3 } + fadeIn(tween(240)) },
+            exitTransition = { fadeOut(tween(180)) },
+            popEnterTransition = { fadeIn(tween(180)) },
+            popExitTransition = { slideOutHorizontally(tween(220)) { it / 3 } + fadeOut(tween(220)) },
         ) { backStackEntry ->
             CategoryScreen(
                 providerName = backStackEntry.arguments?.getString("providerName") ?: "",
@@ -73,7 +82,11 @@ fun NavGraph(navController: NavHostController) {
 
         composable(
             route = Screen.Search.route,
-            arguments = listOf(navArgument("query") { type = NavType.StringType; defaultValue = "" })
+            arguments = listOf(navArgument("query") { type = NavType.StringType; defaultValue = "" }),
+            enterTransition = { fadeIn(tween(220)) + slideInHorizontally(tween(220)) { it / 4 } },
+            exitTransition = { fadeOut(tween(160)) },
+            popEnterTransition = { fadeIn(tween(160)) },
+            popExitTransition = { slideOutHorizontally(tween(200)) { it / 4 } + fadeOut(tween(200)) },
         ) { backStackEntry ->
             SearchScreen(
                 initialQuery = backStackEntry.arguments?.getString("query").orEmpty(),
@@ -88,7 +101,7 @@ fun NavGraph(navController: NavHostController) {
             DownloadsScreen(
                 onNavigateBack = { navController.popBackStack() },
                 onPlayOffline = { item ->
-                    navController.navigate(Screen.OfflinePlayer.createRoute(item.sourceUrl, item.name, item.drmKeySetId, item.drmLicenseUrl, item.drmScheme))
+                    navController.navigate(Screen.OfflinePlayer.createRoute(item.localPath, item.name, item.drmKeySetId, item.drmLicenseUrl, item.drmScheme))
                 }
             )
         }
@@ -118,7 +131,11 @@ fun NavGraph(navController: NavHostController) {
             arguments = listOf(
                 navArgument("url") { type = NavType.StringType },
                 navArgument("apiName") { type = NavType.StringType }
-            )
+            ),
+            enterTransition = { slideInHorizontally(tween(260)) { it / 3 } + fadeIn(tween(260)) },
+            exitTransition = { fadeOut(tween(180)) },
+            popEnterTransition = { fadeIn(tween(180)) },
+            popExitTransition = { slideOutHorizontally(tween(240)) { it / 3 } + fadeOut(tween(240)) },
         ) { backStackEntry ->
             // NavController already decodes path arguments once - do NOT decode again.
             val url = backStackEntry.arguments?.getString("url") ?: ""
@@ -145,7 +162,11 @@ fun NavGraph(navController: NavHostController) {
                 navArgument("posterUrl") { type = NavType.StringType; nullable = true },
                 navArgument("episodeData") { type = NavType.StringType; nullable = true; defaultValue = null },
                 navArgument("episodeName") { type = NavType.StringType; nullable = true; defaultValue = null },
-            )
+            ),
+            enterTransition = { fadeIn(tween(180)) },
+            exitTransition = { fadeOut(tween(160)) },
+            popEnterTransition = { fadeIn(tween(160)) },
+            popExitTransition = { fadeOut(tween(180)) },
         ) { backStackEntry ->
             // NavController already decodes arguments once - do NOT decode again.
             val url = backStackEntry.arguments?.getString("url") ?: ""
