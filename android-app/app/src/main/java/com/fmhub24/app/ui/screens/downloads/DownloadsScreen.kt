@@ -25,7 +25,7 @@ import coil.compose.AsyncImage
 fun DownloadsScreen(
     viewModel: DownloadsViewModel = hiltViewModel(),
     onNavigateBack: () -> Unit,
-    onPlayOffline: (String, String) -> Unit
+    onPlayOffline: (com.fmhub24.app.data.local.entity.DownloadedContent) -> Unit
 ) {
     val downloads by viewModel.downloads.collectAsState()
     Scaffold(
@@ -54,7 +54,7 @@ fun DownloadsScreen(
             ) {
                 items(downloads, key = { it.id }) { item ->
                     Card(
-                        onClick = { onPlayOffline(item.sourceUrl, item.name) },
+                        onClick = { if (item.status.startsWith("completed")) onPlayOffline(item) },
                         colors = CardDefaults.cardColors(containerColor = Color(0xFF151515)),
                         shape = RoundedCornerShape(12.dp)
                     ) {
@@ -68,7 +68,11 @@ fun DownloadsScreen(
                             Column(Modifier.weight(1f).padding(horizontal = 12.dp)) {
                                 Text(item.name, color = Color.White, maxLines = 2)
                                 item.episodeName?.let { Text(it, color = Color.Gray, modifier = Modifier.padding(top = 4.dp)) }
-                                Text("Available offline", color = Color(0xFF64DD8A), modifier = Modifier.padding(top = 6.dp))
+                                Text(
+                                    if (item.status.startsWith("completed")) "Available offline" else "Download ${item.status}",
+                                    color = if (item.status.startsWith("completed")) Color(0xFF64DD8A) else Color(0xFFFFC107),
+                                    modifier = Modifier.padding(top = 6.dp)
+                                )
                             }
                             IconButton(onClick = { viewModel.delete(item) }) {
                                 Icon(Icons.Default.Delete, contentDescription = "Delete download", tint = Color(0xFFFF6B6B))

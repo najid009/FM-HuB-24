@@ -44,6 +44,7 @@ import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
 import androidx.media3.ui.PlayerView
 import androidx.media3.ui.TrackSelectionDialogBuilder
+import com.fmhub24.app.media.DrmConfig
 import com.fmhub24.app.plugins.cloudstream.ExtractorLink
 import com.fmhub24.app.ui.components.LargeContentCard
 import com.fmhub24.app.ui.theme.OrangeAccent
@@ -85,7 +86,7 @@ fun PlayerScreen(
     fun startLink(link: ExtractorLink, resumePosition: Long = 0L) {
         releasePlayer()
         exoPlayer = createPlayer(context, link).apply {
-            setMediaItem(MediaItem.fromUri(link.url))
+            setMediaItem(buildMediaItem(link))
             prepare()
             if (resumePosition > 1000) seekTo(resumePosition)
             playWhenReady = true
@@ -164,6 +165,8 @@ fun PlayerScreen(
             PlayerSurface(
                 uiState = uiState,
                 player = exoPlayer,
+                title = name,
+                episodeTitle = currentEpisodeTitle,
                 modifier = Modifier.fillMaxSize(),
                 onRetry = { viewModel.loadLinks(url, apiName, name, posterUrl, episodeData, episodeName) },
                 onFullscreen = { setFullscreen(false) },
@@ -195,6 +198,8 @@ fun PlayerScreen(
                 PlayerSurface(
                     uiState = uiState,
                     player = exoPlayer,
+                    title = name,
+                    episodeTitle = currentEpisodeTitle,
                     modifier = Modifier.fillMaxWidth().aspectRatio(16f / 9f),
                     onRetry = { viewModel.loadLinks(url, apiName, name, posterUrl, episodeData, episodeName) },
                     onFullscreen = { setFullscreen(true) },
@@ -276,6 +281,8 @@ fun PlayerScreen(
 private fun PlayerSurface(
     uiState: PlayerViewModel.PlayerUiState,
     player: ExoPlayer?,
+    title: String,
+    episodeTitle: String?,
     modifier: Modifier,
     onRetry: () -> Unit,
     onFullscreen: () -> Unit,
@@ -316,6 +323,21 @@ private fun PlayerSurface(
                         update = { it.player = player },
                         modifier = Modifier.fillMaxSize()
                     )
+                    if (isFullscreen) {
+                        Row(
+                            modifier = Modifier.align(Alignment.TopCenter).fillMaxWidth().background(Color.Black.copy(alpha = .58f)).padding(horizontal = 18.dp, vertical = 10.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            IconButton(onClick = onFullscreen) {
+                                Icon(Icons.Default.ArrowBack, "Exit fullscreen", tint = Color.White)
+                            }
+                            Column(Modifier.weight(1f)) {
+                                Text(title, color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold, maxLines = 1)
+                                episodeTitle?.let { Text(it, color = Color.LightGray, fontSize = 12.sp, maxLines = 1) }
+                            }
+                            IconButton(onClick = { onAudioSettings(player) }) { Icon(Icons.Default.Settings, "Settings", tint = Color.White) }
+                        }
+                    }
                     Row(
                         modifier = Modifier.align(Alignment.Center),
                         verticalAlignment = Alignment.CenterVertically,
@@ -426,4 +448,16 @@ private fun createPlayer(context: android.content.Context, link: ExtractorLink):
         .setTrackSelector(trackSelector)
         .setMediaSourceFactory(mediaSourceFactory)
         .build()
+}
+
+private fun buildMediaItem(link: ExtractorLink): MediaItem {
+    val builder = MediaItem.Builder().setUri(link.url)
+    DrmConfig.from(link)?.let { drm ->
+        val drmBuilder = MediaItem.DrmConfiguration.Builder(drm.scheme, android.net.Uri.parse(drm.licenseUrl))
+            .setLicenseRequestHeaders(drm.licenseHeaders)
+            .setMultiSession(true)
+        drm.offlineKeySetId?.let(drmBuilder::setKeySetId)
+        builder.setDrmConfiguration(drmBuilder.build())
+    }
+    return builder.build()
 }

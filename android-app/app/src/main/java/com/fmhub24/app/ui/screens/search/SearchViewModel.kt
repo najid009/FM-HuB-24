@@ -54,6 +54,10 @@ class SearchViewModel @Inject constructor(
         }
     }
 
+    fun setInitialQuery(value: String) {
+        if (value.isNotBlank() && _query.value != value) _query.value = value
+    }
+
     private suspend fun performSearch(query: String) {
         searchJob?.cancel()
         _uiState.value = SearchUiState.Loading

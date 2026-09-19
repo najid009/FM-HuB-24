@@ -23,10 +23,12 @@ import com.fmhub24.app.ui.theme.OrangeAccent
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchScreen(
+    initialQuery: String = "",
     viewModel: SearchViewModel = hiltViewModel(),
     onNavigateBack: () -> Unit,
     onNavigateToDetails: (String, String) -> Unit
 ) {
+    LaunchedEffect(initialQuery) { viewModel.setInitialQuery(initialQuery) }
     val query by viewModel.query.collectAsState()
     val uiState by viewModel.uiState.collectAsState()
 

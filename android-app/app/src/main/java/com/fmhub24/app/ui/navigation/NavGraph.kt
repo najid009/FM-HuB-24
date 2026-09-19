@@ -36,8 +36,8 @@ fun NavGraph(navController: NavHostController) {
                 onNavigateToDetails = { url, apiName ->
                     navController.navigate(Screen.Details.createRoute(url, apiName))
                 },
-                onNavigateToSearch = {
-                    navController.navigate(Screen.Search.route)
+                onNavigateToSearch = { query ->
+                    navController.navigate(Screen.Search.createRoute(query))
                 },
                 onNavigateToFavorites = {
                     navController.navigate(Screen.Favorites.route)
@@ -71,8 +71,12 @@ fun NavGraph(navController: NavHostController) {
             )
         }
 
-        composable(Screen.Search.route) {
+        composable(
+            route = Screen.Search.route,
+            arguments = listOf(navArgument("query") { type = NavType.StringType; defaultValue = "" })
+        ) { backStackEntry ->
             SearchScreen(
+                initialQuery = backStackEntry.arguments?.getString("query").orEmpty(),
                 onNavigateBack = { navController.popBackStack() },
                 onNavigateToDetails = { url, apiName ->
                     navController.navigate(Screen.Details.createRoute(url, apiName))
@@ -83,8 +87,8 @@ fun NavGraph(navController: NavHostController) {
         composable(Screen.Downloads.route) {
             DownloadsScreen(
                 onNavigateBack = { navController.popBackStack() },
-                onPlayOffline = { path, title ->
-                    navController.navigate(Screen.OfflinePlayer.createRoute(path, title))
+                onPlayOffline = { item ->
+                    navController.navigate(Screen.OfflinePlayer.createRoute(item.sourceUrl, item.name, item.drmKeySetId, item.drmLicenseUrl, item.drmScheme))
                 }
             )
         }
@@ -93,12 +97,18 @@ fun NavGraph(navController: NavHostController) {
             route = Screen.OfflinePlayer.route,
             arguments = listOf(
                 navArgument("path") { type = NavType.StringType },
-                navArgument("title") { type = NavType.StringType }
+                navArgument("title") { type = NavType.StringType },
+                navArgument("drmKeySetId") { type = NavType.StringType; defaultValue = "" },
+                navArgument("drmLicenseUrl") { type = NavType.StringType; defaultValue = "" },
+                navArgument("drmScheme") { type = NavType.StringType; defaultValue = "" }
             )
         ) { backStackEntry ->
             OfflinePlayerScreen(
                 sourceUrl = backStackEntry.arguments?.getString("path") ?: "",
                 title = backStackEntry.arguments?.getString("title") ?: "Offline video",
+                drmKeySetId = backStackEntry.arguments?.getString("drmKeySetId").orEmpty(),
+                drmLicenseUrl = backStackEntry.arguments?.getString("drmLicenseUrl").orEmpty(),
+                drmScheme = backStackEntry.arguments?.getString("drmScheme").orEmpty(),
                 onNavigateBack = { navController.popBackStack() }
             )
         }

@@ -9,12 +9,22 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import javax.inject.Inject
 
 @HiltViewModel
 class DownloadsViewModel @Inject constructor(
     private val downloadRepository: DownloadRepository
 ) : ViewModel() {
+    init {
+        viewModelScope.launch {
+            while (isActive) {
+                downloadRepository.syncStatuses()
+                delay(1500)
+            }
+        }
+    }
     val downloads: StateFlow<List<DownloadedContent>> = downloadRepository.observeDownloads()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 

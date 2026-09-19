@@ -6,6 +6,7 @@ import com.fmhub24.app.data.repository.ContentRepository
 import com.fmhub24.app.data.repository.DownloadRepository
 import com.fmhub24.app.data.repository.SettingsRepository
 import com.fmhub24.app.data.repository.WatchProgressRepository
+import com.fmhub24.app.media.DrmConfig
 import com.fmhub24.app.plugins.cloudstream.AnimeLoadResponse
 import com.fmhub24.app.plugins.cloudstream.Episode
 import com.fmhub24.app.plugins.cloudstream.ExtractorLink
@@ -145,6 +146,7 @@ class PlayerViewModel @Inject constructor(
                 posterUrl = currentPoster,
                 apiName = currentApiName,
                 episodeName = currentEpisodeName,
+                drm = DrmConfig.from(link),
             ).onSuccess { _downloadState.value = "Downloaded for offline viewing" }
                 .onFailure { _downloadState.value = it.message ?: "Download failed" }
         }

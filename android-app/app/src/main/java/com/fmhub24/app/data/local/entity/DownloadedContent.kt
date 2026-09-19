@@ -12,6 +12,9 @@ data class DownloadedContent(
     val episodeName: String?,
     val localPath: String,
     val sourceUrl: String,
-    val status: String = "completed",
+    val drmScheme: String? = null,
+    val drmLicenseUrl: String? = null,
+    val drmKeySetId: String? = null,
+    val status: String = "queued",
     val createdAt: Long = System.currentTimeMillis()
 )

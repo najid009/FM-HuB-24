@@ -41,7 +41,7 @@ private val Mint = Color(0xFF24F39A)
 fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
     onNavigateToDetails: (String, String) -> Unit,
-    onNavigateToSearch: () -> Unit,
+    onNavigateToSearch: (String) -> Unit,
     onNavigateToFavorites: () -> Unit,
     onNavigateToSettings: () -> Unit,
     onNavigateToCategory: (String, String) -> Unit,
@@ -94,10 +94,7 @@ fun HomeScreen(
                         HomeHeader(
                             query = query,
                             onQueryChange = { query = it },
-                            onSearch = {
-                                if (query.isNotBlank()) onNavigateToSearch()
-                                else onNavigateToSearch()
-                            },
+                            onSearch = { onNavigateToSearch(query.trim()) },
                             onSettings = onNavigateToSettings
                         )
                     }

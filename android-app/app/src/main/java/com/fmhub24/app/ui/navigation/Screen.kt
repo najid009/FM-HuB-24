@@ -3,7 +3,9 @@ package com.fmhub24.app.ui.navigation
 sealed class Screen(val route: String) {
     object Splash : Screen("splash")
     object Home : Screen("home")
-    object Search : Screen("search")
+    object Search : Screen("search?query={query}") {
+        fun createRoute(query: String = ""): String = "search?query=${encodeNavSegment(query)}"
+    }
     object Favorites : Screen("favorites")
     object Settings : Screen("settings")
     object Category : Screen("category/{providerName}/{categoryName}") {
@@ -11,9 +13,9 @@ sealed class Screen(val route: String) {
             "category/${encodeNavSegment(providerName)}/${encodeNavSegment(categoryName)}"
     }
     object Downloads : Screen("downloads")
-    object OfflinePlayer : Screen("offline-player/{path}/{title}") {
-        fun createRoute(path: String, title: String): String =
-            "offline-player/${encodeNavSegment(path)}/${encodeNavSegment(title)}"
+    object OfflinePlayer : Screen("offline-player/{path}/{title}?drmKeySetId={drmKeySetId}&drmLicenseUrl={drmLicenseUrl}&drmScheme={drmScheme}") {
+        fun createRoute(path: String, title: String, drmKeySetId: String? = null, drmLicenseUrl: String? = null, drmScheme: String? = null): String =
+            "offline-player/${encodeNavSegment(path)}/${encodeNavSegment(title)}?drmKeySetId=${encodeNavSegment(drmKeySetId.orEmpty())}&drmLicenseUrl=${encodeNavSegment(drmLicenseUrl.orEmpty())}&drmScheme=${encodeNavSegment(drmScheme.orEmpty())}"
     }
     object Details : Screen("details/{url}/{apiName}") {
         fun createRoute(url: String, apiName: String): String {
