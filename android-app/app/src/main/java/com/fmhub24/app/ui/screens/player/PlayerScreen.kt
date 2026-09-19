@@ -14,6 +14,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Fullscreen
 import androidx.compose.material.icons.filled.FullscreenExit
+import androidx.compose.material.icons.filled.FastForward
+import androidx.compose.material.icons.filled.FastRewind
+import androidx.compose.material.icons.filled.Pause
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -312,6 +316,31 @@ private fun PlayerSurface(
                         update = { it.player = player },
                         modifier = Modifier.fillMaxSize()
                     )
+                    Row(
+                        modifier = Modifier.align(Alignment.Center),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(28.dp)
+                    ) {
+                        IconButton(onClick = { player.seekBack() }) {
+                            Icon(Icons.Default.FastRewind, contentDescription = "Rewind 10 seconds", tint = Color.White, modifier = Modifier.size(42.dp))
+                        }
+                        IconButton(
+                            onClick = {
+                                if (player.isPlaying) player.pause() else player.play()
+                            },
+                            modifier = Modifier.size(72.dp)
+                        ) {
+                            Icon(
+                                if (player.isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
+                                contentDescription = "Play or pause",
+                                tint = Color.White,
+                                modifier = Modifier.size(58.dp)
+                            )
+                        }
+                        IconButton(onClick = { player.seekForward() }) {
+                            Icon(Icons.Default.FastForward, contentDescription = "Forward 10 seconds", tint = Color.White, modifier = Modifier.size(42.dp))
+                        }
+                    }
                     Row(
                         modifier = Modifier
                             .align(Alignment.BottomEnd)
