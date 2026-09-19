@@ -87,14 +87,14 @@ android {
     }
 
     signingConfigs {
-        // We just use SIGNING_KEY_ALIAS here since it won't change
-        // so won't kill the configuration cache.
+        // GitHub Actions writes the user-owned keystore to this temporary directory.
+        // Never commit the keystore or any of these values to the repository.
         if (System.getenv("SIGNING_KEY_ALIAS") != null) {
-            create("prerelease") {
-                val tmpFilePath = System.getProperty("user.home") + "/work/_temp/keystore/"
-                val prereleaseStoreFile: File? = File(tmpFilePath).listFiles()?.first()
-
-                storeFile = prereleaseStoreFile?.let { file(it) }
+            create("fmhubRelease") {
+                val tmpFilePath = System.getenv("FMHUB_KEYSTORE_PATH")
+                    ?: (System.getProperty("user.home") + "/work/_temp/keystore/")
+                val store = File(tmpFilePath).let { if (it.isFile) it else it.listFiles()?.firstOrNull() }
+                storeFile = store?.let { file(it) }
                 storePassword = System.getenv("SIGNING_STORE_PASSWORD")
                 keyAlias = System.getenv("SIGNING_KEY_ALIAS")
                 keyPassword = System.getenv("SIGNING_KEY_PASSWORD")
@@ -128,6 +128,16 @@ android {
         )
         buildConfigField(
             "String",
+            "FMHUB_CATALOG_CONFIG_URL",
+            "\"" + (System.getenv("FMHUB_CATALOG_CONFIG_URL") ?: localProperties["fmhub.catalog.config.url"] ?: "") + "\""
+        )
+        buildConfigField(
+            "String",
+            "FMHUB_TMDB_TRENDING_URL",
+            "\"" + (System.getenv("FMHUB_TMDB_TRENDING_URL") ?: localProperties["fmhub.tmdb.trending.url"] ?: "") + "\""
+        )
+        buildConfigField(
+            "String",
             "SIMKL_CLIENT_ID",
             "\"" + (System.getenv("SIMKL_CLIENT_ID") ?: localProperties["simkl.id"]) + "\""
         )
@@ -154,6 +164,9 @@ android {
             isDebuggable = false
             isMinifyEnabled = false
             isShrinkResources = false
+            if (signingConfigs.names.contains("fmhubRelease")) {
+                signingConfig = signingConfigs.getByName("fmhubRelease")
+            }
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -177,8 +190,8 @@ android {
         create("prerelease") {
             dimension = "state"
             applicationIdSuffix = ".prerelease"
-            if (signingConfigs.names.contains("prerelease")) {
-                signingConfig = signingConfigs.getByName("prerelease")
+            if (signingConfigs.names.contains("fmhubRelease")) {
+                signingConfig = signingConfigs.getByName("fmhubRelease")
             } else {
                 logger.warn("No prerelease signing config!")
             }

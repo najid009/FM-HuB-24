@@ -89,6 +89,7 @@ import com.lagradost.cloudstream3.network.initClient
 import com.lagradost.cloudstream3.plugins.PluginManager
 import com.lagradost.cloudstream3.plugins.PluginManager.___DO_NOT_CALL_FROM_A_PLUGIN_loadAllOnlinePlugins
 import com.lagradost.cloudstream3.plugins.PluginManager.loadSinglePlugin
+import com.lagradost.cloudstream3.plugins.FMHubCatalogSync
 import com.lagradost.cloudstream3.plugins.FMHubRepositorySync
 import com.lagradost.cloudstream3.receivers.VideoDownloadRestartReceiver
 import com.lagradost.cloudstream3.services.SubscriptionWorkManager
@@ -1352,6 +1353,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
             ioSafe {
                 // Admin-approved repositories are merged before online plugins are loaded. The
                 // sync is fail-open, so an unavailable control endpoint cannot blank the home page.
+                FMHubCatalogSync.sync()
                 FMHubRepositorySync.sync()
 
                 DataStoreHelper.currentHomePage?.let { homeApi ->

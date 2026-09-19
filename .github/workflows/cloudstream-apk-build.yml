@@ -5,6 +5,7 @@ on:
   push:
     paths:
       - 'android-app-cloudstream/**'
+      - 'supabase/functions/tmdb-trending/**'
       - '.github/workflows/cloudstream-apk-build.yml'
 
 permissions:
@@ -16,7 +17,7 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 60
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -36,23 +37,40 @@ jobs:
           yes | sdkmanager --licenses >/dev/null || true
           sdkmanager "platforms;android-36" "build-tools;36.0.0" "platform-tools"
 
-      - name: Configure Android SDK
+      - name: Configure Android SDK and release keystore
         working-directory: android-app-cloudstream
-        run: echo "sdk.dir=$ANDROID_HOME" > local.properties
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+        run: |
+          echo "sdk.dir=$ANDROID_HOME" > local.properties
+          mkdir -p "$HOME/work/_temp/keystore"
+          test -n "$ANDROID_KEYSTORE_BASE64" || { echo "ANDROID_KEYSTORE_BASE64 is missing"; exit 1; }
+          echo "$ANDROID_KEYSTORE_BASE64" | base64 --decode > "$HOME/work/_temp/keystore/fmhub24-release.jks"
+          chmod 600 "$HOME/work/_temp/keystore/fmhub24-release.jks"
 
-      - name: Build stable debug APK
+      - name: Build signed stable release APK
         working-directory: android-app-cloudstream
-        run: ./gradlew :app:assembleStableDebug --no-daemon --stacktrace
+        env:
+          SIGNING_STORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          SIGNING_KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          SIGNING_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          FMHUB_KEYSTORE_PATH: ${{ runner.temp }}/keystore/fmhub24-release.jks
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          FMHUB_REPOSITORY_CONFIG_URL: ${{ secrets.FMHUB_REPOSITORY_CONFIG_URL }}
+          FMHUB_CATALOG_CONFIG_URL: ${{ secrets.FMHUB_CATALOG_CONFIG_URL }}
+          FMHUB_TMDB_TRENDING_URL: ${{ secrets.FMHUB_TMDB_TRENDING_URL }}
+        run: ./gradlew :app:assembleStableRelease --no-daemon --stacktrace
 
-      - name: Rename APK for download
+      - name: Prepare APK artifact
         run: |
           mkdir -p artifact
-          cp android-app-cloudstream/app/build/outputs/apk/stable/debug/*.apk artifact/FMHuB24-cloudstream-debug.apk
-          sha256sum artifact/FMHuB24-cloudstream-debug.apk | tee artifact/SHA256SUMS.txt
+          cp android-app-cloudstream/app/build/outputs/apk/stable/release/*.apk artifact/FMHuB24-release.apk
+          sha256sum artifact/FMHuB24-release.apk | tee artifact/SHA256SUMS.txt
 
-      - name: Upload FMHuB24 APK artifact
+      - name: Upload signed FMHuB24 APK
         uses: actions/upload-artifact@v4
         with:
-          name: fmhub24-cloudstream-debug-apk
+          name: fmhub24-signed-release-apk
           path: artifact/
           retention-days: 30
