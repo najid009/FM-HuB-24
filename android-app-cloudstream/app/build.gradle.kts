@@ -53,7 +53,9 @@ abstract class GenerateGitHashTask : DefaultTask() {
 }
 
 val generateGitHash = tasks.register<GenerateGitHashTask>("generateGitHash") {
-    val gitDir = layout.projectDirectory.dir("../.git")
+    // The fork is vendored under FM-HuB-24/android-app-cloudstream, so the parent
+    // repository's .git directory is two levels above this app module.
+    val gitDir = layout.projectDirectory.dir("../../.git")
 
     headFile.set(gitDir.file("HEAD"))
     headsDir.set(gitDir.dir("refs/heads"))
