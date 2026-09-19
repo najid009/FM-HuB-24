@@ -15,7 +15,7 @@
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:roundIcon="@mipmap/ic_launcher_round"
-        android:label="FMHub24 • Free Movies 24"
+        android:label="FMHuB24"
         android:supportsRtl="true"
         android:theme="@style/Theme.FMHub24"
         tools:targetApi="31">
@@ -23,7 +23,7 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:label="FMHub24 • Free Movies 24"
+            android:label="FMHuB24"
             android:theme="@style/Theme.FMHub24.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

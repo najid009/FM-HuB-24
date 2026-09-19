@@ -20,6 +20,8 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.foundation.Image
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -29,6 +31,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.fmhub24.app.ui.theme.CyanAccent
 import com.fmhub24.app.ui.theme.OrangeAccent
 import com.fmhub24.app.BuildConfig
+import com.fmhub24.app.R
 import kotlinx.coroutines.delay
 
 // OptIn kept even where the clipboard API is already stable: it costs a warning at worst and keeps
@@ -103,36 +106,11 @@ fun SplashScreen(
             verticalArrangement = Arrangement.Center,
             modifier = Modifier.alpha(if (showContent) 1f else 0f)
         ) {
-            // Logo
-            Box(
-                modifier = Modifier
-                    .size(120.dp)
-                    .scale(scale)
-                    .background(
-                        Brush.linearGradient(
-                            colors = listOf(OrangeAccent, Color(0xFFEA580C))
-                        ),
-                        shape = RoundedCornerShape(28.dp)
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
-                Row(verticalAlignment = Alignment.Bottom) {
-                    Text(
-                        text = "FM",
-                        color = Color.White,
-                        fontSize = 42.sp,
-                        fontWeight = FontWeight.Black,
-                        letterSpacing = (-1).sp
-                    )
-                    Text(
-                        text = "24",
-                        color = Color.White.copy(alpha = 0.9f),
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(bottom = 6.dp, start = 2.dp)
-                    )
-                }
-            }
+            Image(
+                painter = painterResource(R.drawable.ic_launcher_foreground),
+                contentDescription = "FMHuB24 logo",
+                modifier = Modifier.size(120.dp).scale(scale)
+            )
 
             Spacer(modifier = Modifier.height(24.dp))
 
