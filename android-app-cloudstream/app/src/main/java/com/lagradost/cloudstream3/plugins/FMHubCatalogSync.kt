@@ -3,8 +3,6 @@ package com.lagradost.cloudstream3.plugins
 import android.util.Log
 import com.lagradost.cloudstream3.BuildConfig
 import com.lagradost.cloudstream3.app
-import com.lagradost.cloudstream3.utils.DataStore.getKey
-import com.lagradost.cloudstream3.utils.DataStore.setKey
 import org.json.JSONObject
 
 /**
@@ -14,17 +12,16 @@ import org.json.JSONObject
  */
 object FMHubCatalogSync {
     private const val TAG = "FMHubCatalogSync"
-    private const val PREFS = "fmhub24_catalog"
-    private const val CATALOG_JSON = "catalog_json"
-    private const val TRENDING_JSON = "trending_json"
+    @Volatile private var catalogPayload: String? = null
+    @Volatile private var trendingPayload: String? = null
 
     suspend fun sync() {
-        syncEndpoint(BuildConfig.FMHUB_CATALOG_CONFIG_URL, CATALOG_JSON)
-        syncEndpoint(BuildConfig.FMHUB_TMDB_TRENDING_URL, TRENDING_JSON)
+        syncEndpoint(BuildConfig.FMHUB_CATALOG_CONFIG_URL, "catalog")
+        syncEndpoint(BuildConfig.FMHUB_TMDB_TRENDING_URL, "trending")
     }
 
-    fun cachedCatalog(): JSONObject? = readJson(CATALOG_JSON)
-    fun cachedTrending(): JSONObject? = readJson(TRENDING_JSON)
+    fun cachedCatalog(): JSONObject? = catalogPayload?.let(::JSONObject)
+    fun cachedTrending(): JSONObject? = trendingPayload?.let(::JSONObject)
 
     private suspend fun syncEndpoint(url: String, key: String) {
         val endpoint = url.trim()
@@ -37,12 +34,8 @@ object FMHubCatalogSync {
             val payload = app.get(endpoint, timeout = 15).text
             val json = JSONObject(payload)
             if (json.optBoolean("success", true) || json.has("categories") || json.has("items")) {
-                app.setKey(PREFS, key, payload)
+                if (key == "catalog") catalogPayload = payload else trendingPayload = payload
             }
         }.onFailure { error -> Log.w(TAG, "Could not sync $key", error) }
     }
-
-    private fun readJson(key: String): JSONObject? = runCatching {
-        app.getKey<String>(PREFS, key)?.let(::JSONObject)
-    }.getOrNull()
 }
