@@ -27,6 +27,7 @@ class DetailsViewModel @Inject constructor(
     val isFavorite: StateFlow<Boolean> = _isFavorite
 
     private val _watchProgress = MutableStateFlow<Long?>(null)
+    private var favoriteUrl: String = ""
 
     sealed class DetailsUiState {
         object Loading : DetailsUiState()
@@ -37,6 +38,7 @@ class DetailsViewModel @Inject constructor(
     fun loadDetails(url: String, apiName: String) {
         safeLaunch {
             _uiState.value = DetailsUiState.Loading
+            favoriteUrl = url
 
             // Check favorite
             launch {
@@ -67,10 +69,10 @@ class DetailsViewModel @Inject constructor(
             if (currentState is DetailsUiState.Success) {
                 val data = currentState.data
                 if (_isFavorite.value) {
-                    favoriteRepository.removeFavorite(data.url)
+                    favoriteRepository.removeFavorite(favoriteUrl.ifBlank { data.url })
                 } else {
                     favoriteRepository.addFavoriteFromLoad(
-                        url = data.url,
+                        url = favoriteUrl.ifBlank { data.url },
                         name = data.name,
                         posterUrl = data.posterUrl,
                         apiName = data.apiName,

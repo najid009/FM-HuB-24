@@ -107,6 +107,14 @@ fun DetailsScreen(
             }
             is DetailsViewModel.DetailsUiState.Success -> {
                 val data = state.data
+                val allEpisodes = when (data) {
+                    is TvSeriesLoadResponse -> data.episodes
+                    is AnimeLoadResponse -> data.episodes.values.flatten()
+                    else -> emptyList()
+                }
+                val seasons = allEpisodes.map { it.season ?: 1 }.distinct().sorted()
+                var selectedSeason by remember(data) { mutableStateOf(seasons.firstOrNull() ?: 1) }
+                val visibleEpisodes = allEpisodes.filter { (it.season ?: 1) == selectedSeason }
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
@@ -238,23 +246,21 @@ fun DetailsScreen(
                                         Text(text = "Play", fontSize = 16.sp, fontWeight = FontWeight.Bold)
                                     }
                                 }
-                                is TvSeriesLoadResponse -> {
+                                is TvSeriesLoadResponse, is AnimeLoadResponse -> {
                                     Text(
-                                        text = "Episodes (${data.episodes.size})",
+                                        text = "Episodes (${visibleEpisodes.size})",
                                         color = Color.White,
                                         fontWeight = FontWeight.Bold,
                                         fontSize = 16.sp,
                                         modifier = Modifier.padding(bottom = 12.dp)
                                     )
-                                }
-                                is AnimeLoadResponse -> {
-                                    Text(
-                                        text = "Episodes",
-                                        color = Color.White,
-                                        fontWeight = FontWeight.Bold,
-                                        fontSize = 16.sp,
-                                        modifier = Modifier.padding(bottom = 12.dp)
-                                    )
+                                    if (seasons.size > 1) {
+                                        SeasonSelector(
+                                            seasons = seasons,
+                                            selectedSeason = selectedSeason,
+                                            onSeasonSelected = { selectedSeason = it }
+                                        )
+                                    }
                                 }
                                 else -> {
                                     // Generic LoadResponse - try to play if possible
@@ -277,50 +283,64 @@ fun DetailsScreen(
                         }
                     }
 
-                    // Episodes list for series
-                    when (data) {
-                        is TvSeriesLoadResponse -> {
-                            items(data.episodes) { episode ->
-                                EpisodeItem(
-                                    episode = episode,
-                                    onClick = {
-                                        onNavigateToPlayer(
-                                            data.url,
-                                            data.apiName,
-                                            data.name,
-                                            data.posterUrl ?: episode.posterUrl,
-                                            episode.data,
-                                            episode.name ?: "Episode ${episode.episode}"
-                                        )
-                                    }
-                                )
-                            }
+                    // Episodes list for the selected season.
+                    if (allEpisodes.isNotEmpty()) {
+                        items(visibleEpisodes) { episode ->
+                            EpisodeItem(
+                                episode = episode,
+                                onClick = {
+                                    onNavigateToPlayer(
+                                        data.url,
+                                        data.apiName,
+                                        data.name,
+                                        data.posterUrl ?: episode.posterUrl,
+                                        episode.data,
+                                        episode.name ?: "Episode ${episode.episode}"
+                                    )
+                                }
+                            )
                         }
-                        is AnimeLoadResponse -> {
-                            val allEpisodes = data.episodes.values.flatten()
-                            items(allEpisodes) { episode ->
-                                EpisodeItem(
-                                    episode = episode,
-                                    onClick = {
-                                        onNavigateToPlayer(
-                                            data.url,
-                                            data.apiName,
-                                            data.name,
-                                            data.posterUrl ?: episode.posterUrl,
-                                            episode.data,
-                                            episode.name ?: "Episode ${episode.episode}"
-                                        )
-                                    }
-                                )
-                            }
-                        }
-                        else -> {}
                     }
 
                     item {
                         Spacer(modifier = Modifier.height(32.dp))
                     }
                 }
+            }
+        }
+    }
+}
+
+@Composable
+private fun SeasonSelector(
+    seasons: List<Int>,
+    selectedSeason: Int,
+    onSeasonSelected: (Int) -> Unit
+) {
+    var expanded by remember { mutableStateOf(false) }
+    Box(modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp)) {
+        OutlinedButton(
+            onClick = { expanded = true },
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(10.dp),
+            colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.White)
+        ) {
+            Text(text = "Season $selectedSeason", modifier = Modifier.weight(1f))
+            Text(text = "▾", color = OrangeAccent)
+        }
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+            modifier = Modifier.background(Color(0xFF1A1A1A))
+        ) {
+            seasons.forEach { season ->
+                DropdownMenuItem(
+                    text = { Text("Season $season", color = Color.White) },
+                    onClick = {
+                        onSeasonSelected(season)
+                        expanded = false
+                    }
+                )
             }
         }
     }

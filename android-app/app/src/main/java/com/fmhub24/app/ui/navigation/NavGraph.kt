@@ -103,6 +103,9 @@ fun NavGraph(navController: NavHostController) {
                 posterUrl = poster,
                 episodeData = epData,
                 episodeName = epName,
+                onNavigateToDetails = { detailUrl, detailApiName ->
+                    navController.navigate(Screen.Details.createRoute(detailUrl, detailApiName))
+                },
                 onNavigateBack = { navController.popBackStack() }
             )
         }

@@ -1,21 +1,25 @@
 package com.fmhub24.app.ui.screens.player
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.fmhub24.app.data.repository.ContentRepository
 import com.fmhub24.app.data.repository.SettingsRepository
 import com.fmhub24.app.data.repository.WatchProgressRepository
+import com.fmhub24.app.plugins.cloudstream.AnimeLoadResponse
+import com.fmhub24.app.plugins.cloudstream.Episode
 import com.fmhub24.app.plugins.cloudstream.ExtractorLink
 import com.fmhub24.app.plugins.cloudstream.ExtractorLinkType
+import com.fmhub24.app.plugins.cloudstream.SearchResponse
 import com.fmhub24.app.plugins.cloudstream.SubtitleFile
+import com.fmhub24.app.plugins.cloudstream.TvSeriesLoadResponse
+import com.fmhub24.app.util.safeLaunch
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import com.fmhub24.app.util.safeLaunch
 
 @HiltViewModel
 class PlayerViewModel @Inject constructor(
@@ -23,11 +27,9 @@ class PlayerViewModel @Inject constructor(
     private val watchProgressRepository: WatchProgressRepository,
     settingsRepository: SettingsRepository
 ) : ViewModel() {
-
     private val _uiState = MutableStateFlow<PlayerUiState>(PlayerUiState.Loading)
     val uiState: StateFlow<PlayerUiState> = _uiState
 
-    /** Mirrors the persisted "Resume playback" setting from Settings. */
     val resumeEnabled: StateFlow<Boolean> = settingsRepository.resumePlayback
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), true)
 
@@ -36,17 +38,22 @@ class PlayerViewModel @Inject constructor(
         data class Success(
             val links: List<ExtractorLink>,
             val subtitles: List<SubtitleFile>,
-            val selectedLink: ExtractorLink? = null
+            val selectedLink: ExtractorLink? = null,
+            val recommendations: List<SearchResponse> = emptyList()
         ) : PlayerUiState()
         data class Error(val message: String) : PlayerUiState()
     }
 
-    private var currentUrl: String = ""
-    private var currentApiName: String = ""
-    private var currentName: String = ""
+    data class EpisodeTarget(val data: String, val name: String)
+
+    private var loadJob: Job? = null
+    private var currentUrl = ""
+    private var currentApiName = ""
+    private var currentName = ""
     private var currentPoster: String? = null
     private var currentEpisodeData: String? = null
     private var currentEpisodeName: String? = null
+    private var episodeQueue: List<Episode> = emptyList()
 
     fun loadLinks(
         url: String,
@@ -62,54 +69,73 @@ class PlayerViewModel @Inject constructor(
         currentPoster = posterUrl
         currentEpisodeData = episodeData
         currentEpisodeName = episodeName
-
-        safeLaunch {
+        loadJob?.cancel()
+        loadJob = safeLaunch {
             _uiState.value = PlayerUiState.Loading
+            launch { loadEpisodeQueue() }
+            val recommendations = loadRecommendations()
 
-            val dataToLoad = episodeData ?: url
             val links = mutableListOf<ExtractorLink>()
             val subtitles = mutableListOf<SubtitleFile>()
-
             val result = contentRepository.loadLinks(
-                data = dataToLoad,
+                data = episodeData ?: url,
                 apiName = apiName,
-                subtitleCallback = { sub -> subtitles.add(sub) },
-                linkCallback = { link -> links.add(link) }
+                subtitleCallback = { subtitles.add(it) },
+                linkCallback = { links.add(it) }
             )
-
             result.onSuccess {
-                // TORRENT links carry a magnet/info-hash in `url`; ExoPlayer cannot open them, so
-                // they must not be auto-selected — that is what looks like "player shows black
-                // screen" when a provider returns one first.
                 val playable = links.filter { it.type != ExtractorLinkType.TORRENT }
                 if (playable.isEmpty()) {
                     _uiState.value = PlayerUiState.Error(
-                        if (links.isEmpty()) {
-                            "No playable links found via loadLinks()"
-                        } else {
-                            "Only torrent/magnet links returned (${links.size}) — the built-in player cannot open them. Pick another provider or an external player."
-                        }
+                        if (links.isEmpty()) "No playable links found via loadLinks()"
+                        else "Only torrent/magnet links returned (${links.size})."
                     )
                 } else {
-                    // Sort by quality descending
-                    val sorted = playable.sortedByDescending { it.quality }
+                    val sorted = playable.sortedWith(
+                        compareByDescending<ExtractorLink> { it.quality }.thenBy { it.name }
+                    )
                     _uiState.value = PlayerUiState.Success(
                         links = sorted,
                         subtitles = subtitles,
-                        selectedLink = sorted.firstOrNull()
+                        selectedLink = sorted.firstOrNull(),
+                        recommendations = recommendations
                     )
                 }
-            }.onFailure { e ->
-                _uiState.value = PlayerUiState.Error(e.message ?: "Failed to load links")
+            }.onFailure { error ->
+                _uiState.value = PlayerUiState.Error(error.message ?: "Failed to load links")
             }
         }
     }
 
+    private suspend fun loadEpisodeQueue() {
+        val response = contentRepository.loadContent(currentUrl, currentApiName).getOrNull()
+        episodeQueue = when (response) {
+            is TvSeriesLoadResponse -> response.episodes
+            is AnimeLoadResponse -> response.episodes.values.flatten()
+            else -> emptyList()
+        }.filter { it.data.isNotBlank() }
+            .sortedWith(compareBy({ it.season ?: 1 }, { it.episode ?: 0 }))
+    }
+
+    private suspend fun loadRecommendations(): List<SearchResponse> {
+        return contentRepository.getMainPageContent()
+            .getOrDefault(emptyList())
+            .flatMap { it.second.list }
+            .filter { it.url != currentUrl }
+            .distinctBy { "${it.apiName}:${it.url}" }
+            .take(12)
+    }
+
     fun selectLink(link: ExtractorLink) {
-        val current = _uiState.value
-        if (current is PlayerUiState.Success) {
-            _uiState.value = current.copy(selectedLink = link)
-        }
+        val state = _uiState.value
+        if (state is PlayerUiState.Success) _uiState.value = state.copy(selectedLink = link)
+    }
+
+    fun nextEpisodeTarget(): EpisodeTarget? {
+        val currentData = currentEpisodeData ?: return null
+        val index = episodeQueue.indexOfFirst { it.data == currentData }
+        val next = episodeQueue.getOrNull(index + 1) ?: return null
+        return EpisodeTarget(next.data, next.name ?: "Episode ${next.episode ?: ""}")
     }
 
     fun saveProgress(position: Long, duration: Long) {
@@ -129,13 +155,7 @@ class PlayerViewModel @Inject constructor(
 
     suspend fun getResumePosition(): Long {
         val progress = watchProgressRepository.getProgress(currentUrl)
-        // If episode-specific, check episode data
-        return if (currentEpisodeData != null) {
-            // For episodes, we save progress per main url + episodeData
-            // Simplified: return progress if episode matches
-            if (progress?.episodeData == currentEpisodeData) progress?.position ?: 0L else 0L
-        } else {
-            progress?.position ?: 0L
-        }
+        return if (currentEpisodeData != null && progress?.episodeData != currentEpisodeData) 0L
+        else progress?.position ?: 0L
     }
 }
