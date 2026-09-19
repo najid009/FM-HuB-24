@@ -4,11 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fmhub24.app.data.local.entity.DownloadedContent
 import com.fmhub24.app.data.repository.DownloadRepository
+import com.fmhub24.app.util.safeLaunch
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import javax.inject.Inject
@@ -18,9 +19,15 @@ class DownloadsViewModel @Inject constructor(
     private val downloadRepository: DownloadRepository
 ) : ViewModel() {
     init {
-        viewModelScope.launch {
+        safeLaunch {
             while (isActive) {
-                downloadRepository.syncStatuses()
+                try {
+                    downloadRepository.syncStatuses()
+                } catch (error: CancellationException) {
+                    throw error
+                } catch (_: Exception) {
+                    // A stopped/removed download must not kill the polling loop.
+                }
                 delay(1500)
             }
         }
@@ -29,6 +36,6 @@ class DownloadsViewModel @Inject constructor(
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     fun delete(item: DownloadedContent) {
-        viewModelScope.launch { downloadRepository.delete(item) }
+        safeLaunch { downloadRepository.delete(item) }
     }
 }

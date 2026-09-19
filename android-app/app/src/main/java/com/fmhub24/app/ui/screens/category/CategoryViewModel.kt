@@ -1,13 +1,12 @@
 package com.fmhub24.app.ui.screens.category
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.fmhub24.app.data.repository.ContentRepository
 import com.fmhub24.app.plugins.cloudstream.HomePageList
+import com.fmhub24.app.util.safeLaunch
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -24,7 +23,9 @@ class CategoryViewModel @Inject constructor(
     }
 
     fun load(providerName: String, categoryName: String) {
-        viewModelScope.launch {
+        safeLaunch(onError = { error ->
+            _uiState.value = UiState.Error(error.message ?: "Could not load this category")
+        }) {
             _uiState.value = UiState.Loading
             contentRepository.getProviderCategory(providerName, categoryName)
                 .onSuccess { _uiState.value = UiState.Success(it) }

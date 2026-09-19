@@ -1,10 +1,10 @@
 package com.fmhub24.app.ui.screens.search
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.fmhub24.app.data.aggregation.ContentDeduplicator
 import com.fmhub24.app.data.repository.ContentRepository
 import com.fmhub24.app.plugins.cloudstream.SearchResponse
+import com.fmhub24.app.util.safeLaunch
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.FlowPreview
@@ -14,7 +14,6 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @OptIn(FlowPreview::class)
@@ -38,7 +37,9 @@ class SearchViewModel @Inject constructor(
     }
 
     init {
-        viewModelScope.launch {
+        safeLaunch(onError = { error ->
+            _uiState.value = SearchUiState.Error(error.message ?: "Search failed")
+        }) {
             _query
                 .debounce(350)
                 .distinctUntilChanged()
@@ -80,6 +81,8 @@ class SearchViewModel @Inject constructor(
     fun retry() {
         val current = _query.value.trim()
         if (current.length < 2) return
-        viewModelScope.launch { performSearch(current) }
+        safeLaunch(onError = { error ->
+            _uiState.value = SearchUiState.Error(error.message ?: "Search failed")
+        }) { performSearch(current) }
     }
 }
