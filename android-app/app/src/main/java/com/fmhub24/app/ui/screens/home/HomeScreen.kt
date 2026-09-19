@@ -1,29 +1,40 @@
 package com.fmhub24.app.ui.screens.home
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Download
+import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.AsyncImage
 import com.fmhub24.app.ui.components.ContentCard
 import com.fmhub24.app.ui.theme.OrangeAccent
+import com.fmhub24.app.ui.util.yearOrNull
+
+private val HomeBackground = Color(0xFF0E1014)
+private val SurfaceDark = Color(0xFF1B1E24)
+private val Mint = Color(0xFF24F39A)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -37,239 +48,93 @@ fun HomeScreen(
     onNavigateToDownloads: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    var isRefreshing by remember { mutableStateOf(false) }
+    var query by remember { mutableStateOf("") }
 
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Box(
-                            modifier = Modifier
-                                .size(36.dp)
-                                .background(
-                                    Brush.linearGradient(listOf(OrangeAccent, Color(0xFFEA580C))),
-                                    RoundedCornerShape(10.dp)
-                                ),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = "FM",
-                                color = Color.White,
-                                fontWeight = FontWeight.Black,
-                                fontSize = 14.sp
-                            )
-                        }
-                        Spacer(modifier = Modifier.width(10.dp))
-                        Column {
-                            Text(
-                                text = "FMHuB24",
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 18.sp
-                            )
-                            Text(
-                                text = "${viewModel.getProviderCount()} providers",
-                                fontSize = 11.sp,
-                                color = Color.Gray
-                            )
-                        }
-                    }
-                },
-                actions = {
-                    IconButton(onClick = onNavigateToSearch) {
-                        Icon(Icons.Default.Search, contentDescription = "Search", tint = Color.White)
-                    }
-                    IconButton(onClick = onNavigateToFavorites) {
-                        Icon(Icons.Default.Favorite, contentDescription = "Favorites", tint = Color.White)
-                    }
-                    IconButton(onClick = onNavigateToDownloads) {
-                        Icon(Icons.Default.Download, contentDescription = "Downloads", tint = Color.White)
-                    }
-                    IconButton(onClick = onNavigateToSettings) {
-                        Icon(Icons.Default.Settings, contentDescription = "Settings", tint = Color.White)
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color(0xFF0A0A0A)
+        containerColor = HomeBackground,
+        bottomBar = {
+            NavigationBar(containerColor = Color(0xFF20252B), contentColor = Color.White) {
+                NavigationBarItem(
+                    selected = true,
+                    onClick = { },
+                    icon = { Icon(Icons.Default.Home, "Home") },
+                    label = { Text("Home") },
+                    colors = NavigationBarItemDefaults.colors(selectedIconColor = Mint, selectedTextColor = Color.White, indicatorColor = Color.Transparent)
                 )
-            )
-        },
-        containerColor = Color.Black
+                NavigationBarItem(
+                    selected = false,
+                    onClick = onNavigateToDownloads,
+                    icon = { Icon(Icons.Default.Download, "Downloads") },
+                    label = { Text("Downloads") },
+                    colors = NavigationBarItemDefaults.colors(unselectedIconColor = Color.White, unselectedTextColor = Color.LightGray, indicatorColor = Color.Transparent)
+                )
+                NavigationBarItem(
+                    selected = false,
+                    onClick = onNavigateToFavorites,
+                    icon = { Icon(Icons.Default.FavoriteBorder, "Favorites") },
+                    label = { Text("Favorites") },
+                    colors = NavigationBarItemDefaults.colors(unselectedIconColor = Color.White, unselectedTextColor = Color.LightGray, indicatorColor = Color.Transparent)
+                )
+            }
+        }
     ) { padding ->
-
         when (val state = uiState) {
-            is HomeViewModel.HomeUiState.Loading -> {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(padding),
-                    contentAlignment = Alignment.Center
-                ) {
-                    // Deliberately a bare spinner: the app must not narrate how it works.
-                    CircularProgressIndicator(color = OrangeAccent)
-                }
-            }
-
-            is HomeViewModel.HomeUiState.Empty -> {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(padding),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.padding(32.dp)
-                    ) {
-                        Text(text = "📭", fontSize = 48.sp)
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Text(
-                            text = "No content available",
-                            color = Color.White,
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Text(
-                            text = "Nothing to show yet. Check your internet connection and try again.",
-                            color = Color.Gray,
-                            fontSize = 13.sp,
-                            modifier = Modifier.padding(top = 8.dp),
-                            lineHeight = 18.sp
-                        )
-                        Spacer(modifier = Modifier.height(24.dp))
-                        Button(
-                            onClick = { viewModel.refresh() },
-                            colors = ButtonDefaults.buttonColors(containerColor = OrangeAccent)
-                        ) {
-                            Text("Refresh")
-                        }
-                    }
-                }
-            }
-
-            is HomeViewModel.HomeUiState.NoContent -> {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(padding),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.padding(32.dp)
-                    ) {
-                        Text(text = "\ud83d\udd0c", fontSize = 44.sp)
-                        Spacer(modifier = Modifier.height(12.dp))
-                        Text(
-                            text = "Nothing to show right now",
-                            color = Color.White,
-                            fontSize = 17.sp,
-                            fontWeight = FontWeight.Bold,
-                            textAlign = TextAlign.Center
-                        )
-                        // `state.reason` is kept in the view model (and written to the app's log
-                        // file) but never rendered: it names classes and files, not user-facing ideas.
-                        Text(
-                            text = "The catalogue may be slow, or its site changed. Try again in a moment.",
-                            color = Color.Gray.copy(alpha = 0.7f),
-                            fontSize = 12.sp,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.padding(top = 12.dp),
-                            lineHeight = 17.sp
-                        )
-                        Spacer(modifier = Modifier.height(20.dp))
-                        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                            Button(
-                                onClick = { viewModel.refresh() },
-                                colors = ButtonDefaults.buttonColors(containerColor = OrangeAccent)
-                            ) {
-                                Text("Retry")
-                            }
-                            OutlinedButton(onClick = onNavigateToSettings) {
-                                Text("Settings", color = OrangeAccent)
-                            }
-                        }
-                    }
-                }
-            }
-
-            is HomeViewModel.HomeUiState.Error -> {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(padding),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(32.dp)) {
-                        Text(text = "⚠️", fontSize = 40.sp)
-                        Text(
-                            text = state.message,
-                            color = Color(0xFFFF5252),
-                            fontSize = 14.sp,
-                            modifier = Modifier.padding(top = 16.dp)
-                        )
-                        Button(
-                            onClick = { viewModel.refresh() },
-                            modifier = Modifier.padding(top = 16.dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = OrangeAccent)
-                        ) {
-                            Text("Retry")
-                        }
-                    }
-                }
-            }
-
+            HomeViewModel.HomeUiState.Loading -> LoadingState(Modifier.fillMaxSize().padding(padding))
+            HomeViewModel.HomeUiState.Empty -> EmptyState(Modifier.fillMaxSize().padding(padding), viewModel)
+            is HomeViewModel.HomeUiState.NoContent -> EmptyState(Modifier.fillMaxSize().padding(padding), viewModel)
+            is HomeViewModel.HomeUiState.Error -> ErrorState(Modifier.fillMaxSize().padding(padding), state.message, viewModel)
             is HomeViewModel.HomeUiState.Success -> {
+                val featured = state.sections.asSequence().flatMap { it.second.list.asSequence() }.firstOrNull()
                 LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(padding)
-                        .background(Color.Black),
-                    contentPadding = PaddingValues(bottom = 16.dp)
+                    modifier = Modifier.fillMaxSize().padding(padding).background(HomeBackground),
+                    contentPadding = PaddingValues(bottom = 18.dp),
+                    verticalArrangement = Arrangement.spacedBy(20.dp)
                 ) {
-                    items(state.sections) { (providerName, homeList) ->
-                        Column(modifier = Modifier.padding(top = 20.dp)) {
+                    item {
+                        HomeHeader(
+                            query = query,
+                            onQueryChange = { query = it },
+                            onSearch = {
+                                if (query.isNotBlank()) onNavigateToSearch()
+                                else onNavigateToSearch()
+                            },
+                            onSettings = onNavigateToSettings
+                        )
+                    }
+                    item { HomeTabs() }
+                    if (featured != null) {
+                        item {
+                            FeaturedBanner(
+                                item = featured,
+                                onClick = { onNavigateToDetails(featured.url, featured.apiName) }
+                            )
+                        }
+                    }
+                    items(state.sections, key = { "${it.first}:${it.second.name}" }) { (providerName, homeList) ->
+                        Column {
                             Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 16.dp),
+                                modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text(
-                                    text = homeList.name,
+                                    homeList.name,
                                     color = Color.White,
+                                    fontSize = 21.sp,
                                     fontWeight = FontWeight.Bold,
-                                    fontSize = 18.sp,
                                     modifier = Modifier.weight(1f)
                                 )
-                                TextButton(
-                                    onClick = { onNavigateToCategory(providerName, homeList.name) },
-                                    contentPadding = PaddingValues(horizontal = 8.dp, vertical = 0.dp)
-                                ) {
-                                    Text("See More", color = OrangeAccent, fontSize = 12.sp)
+                                TextButton(onClick = { onNavigateToCategory(providerName, homeList.name) }) {
+                                    Text("All  ›", color = Color.LightGray, fontSize = 14.sp)
                                 }
                             }
-
-                            Text(
-                                text = providerName,
-                                color = Color.Gray,
-                                fontSize = 10.sp,
-                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 2.dp)
-                            )
-
-                            Spacer(modifier = Modifier.height(12.dp))
-
+                            ProviderChips(providerName)
+                            Spacer(Modifier.height(6.dp))
                             LazyRow(
-                                contentPadding = PaddingValues(horizontal = 16.dp),
+                                contentPadding = PaddingValues(horizontal = 20.dp),
                                 horizontalArrangement = Arrangement.spacedBy(12.dp)
                             ) {
-                                items(homeList.list) { item ->
-                                    ContentCard(
-                                        item = item,
-                                        onClick = {
-                                            onNavigateToDetails(item.url, item.apiName)
-                                        }
-                                    )
+                                items(homeList.list, key = { "${it.apiName}:${it.url}" }) { item ->
+                                    ContentCard(item = item) { onNavigateToDetails(item.url, item.apiName) }
                                 }
                             }
                         }
@@ -277,5 +142,95 @@ fun HomeScreen(
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun HomeHeader(query: String, onQueryChange: (String) -> Unit, onSearch: () -> Unit, onSettings: () -> Unit) {
+    Column(Modifier.padding(horizontal = 20.dp, vertical = 18.dp)) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Box(
+                modifier = Modifier.size(42.dp).clip(RoundedCornerShape(50)).background(Mint),
+                contentAlignment = Alignment.Center
+            ) { Text("FM", color = Color(0xFF07120D), fontWeight = FontWeight.Black, fontSize = 14.sp) }
+            Spacer(Modifier.width(12.dp))
+            Text("FMHuB24", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 21.sp)
+            Spacer(Modifier.weight(1f))
+            IconButton(onClick = onSettings) { Icon(Icons.Default.Settings, "Settings", tint = Color.White) }
+        }
+        Spacer(Modifier.height(18.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth().height(54.dp).clip(RoundedCornerShape(12.dp)).background(Color(0xFF81776F)).padding(horizontal = 14.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(Icons.Default.Search, "Search", tint = Color.White, modifier = Modifier.size(25.dp))
+            androidx.compose.foundation.text.BasicTextField(
+                value = query,
+                onValueChange = onQueryChange,
+                singleLine = true,
+                textStyle = LocalTextStyle.current.copy(color = Color.White, fontSize = 16.sp),
+                modifier = Modifier.weight(1f).padding(horizontal = 12.dp),
+                decorationBox = { inner ->
+                    if (query.isEmpty()) Text("Search movies, series...", color = Color.White.copy(alpha = .85f), fontSize = 16.sp)
+                    inner()
+                }
+            )
+            TextButton(onClick = onSearch) { Text("Search", color = Mint, fontWeight = FontWeight.Bold, fontSize = 15.sp) }
+        }
+    }
+}
+
+@Composable
+private fun HomeTabs() {
+    LazyRow(contentPadding = PaddingValues(horizontal = 20.dp), horizontalArrangement = Arrangement.spacedBy(28.dp)) {
+        items(listOf("Trending", "Movie", "TV", "Cricket", "ShortTV")) { tab ->
+            Text(tab, color = if (tab == "Trending") Color.White else Color.LightGray, fontSize = 17.sp, fontWeight = if (tab == "Trending") FontWeight.Bold else FontWeight.Normal)
+        }
+    }
+}
+
+@Composable
+private fun FeaturedBanner(item: com.fmhub24.app.plugins.cloudstream.SearchResponse, onClick: () -> Unit) {
+    Box(
+        modifier = Modifier.fillMaxWidth().height(275.dp).padding(horizontal = 20.dp).clip(RoundedCornerShape(18.dp)).clickable(onClick = onClick)
+    ) {
+        AsyncImage(model = item.posterUrl, contentDescription = item.name, modifier = Modifier.fillMaxSize(), contentScale = ContentScale.Crop)
+        Box(Modifier.fillMaxSize().background(Brush.verticalGradient(listOf(Color.Transparent, Color.Black.copy(alpha = .88f)))))
+        Row(Modifier.align(Alignment.BottomStart).fillMaxWidth().padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
+            Column(Modifier.weight(1f)) {
+                Text(item.name, color = Color.White, fontSize = 20.sp, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                Text("${item.yearOrNull ?: ""}  •  ${item.type?.name ?: "Series"}", color = Color.LightGray, fontSize = 13.sp, modifier = Modifier.padding(top = 5.dp))
+            }
+            FloatingActionButton(onClick = onClick, containerColor = Mint, contentColor = Color.Black, modifier = Modifier.size(48.dp)) {
+                Icon(Icons.Default.PlayArrow, "Play")
+            }
+        }
+    }
+}
+
+@Composable
+private fun ProviderChips(providerName: String) {
+    LazyRow(contentPadding = PaddingValues(horizontal = 20.dp), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+        items(listOf("Top", "Latest", providerName.take(14))) { label ->
+            Surface(shape = RoundedCornerShape(22.dp), color = if (label == "Top") Color(0xFF30363D) else Color.Transparent) {
+                Text(label, color = Color.White, fontSize = 13.sp, modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp))
+            }
+        }
+    }
+}
+
+@Composable private fun LoadingState(modifier: Modifier) = Box(modifier, contentAlignment = Alignment.Center) { CircularProgressIndicator(color = OrangeAccent) }
+
+@Composable private fun EmptyState(modifier: Modifier, viewModel: HomeViewModel) = Box(modifier, contentAlignment = Alignment.Center) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Text("No content available", color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+        Button(onClick = { viewModel.refresh() }, colors = ButtonDefaults.buttonColors(containerColor = OrangeAccent), modifier = Modifier.padding(top = 16.dp)) { Text("Refresh") }
+    }
+}
+
+@Composable private fun ErrorState(modifier: Modifier, message: String, viewModel: HomeViewModel) = Box(modifier, contentAlignment = Alignment.Center) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(24.dp)) {
+        Text(message, color = Color(0xFFFF6B6B), fontSize = 14.sp)
+        Button(onClick = { viewModel.refresh() }, colors = ButtonDefaults.buttonColors(containerColor = OrangeAccent), modifier = Modifier.padding(top = 16.dp)) { Text("Retry") }
     }
 }
