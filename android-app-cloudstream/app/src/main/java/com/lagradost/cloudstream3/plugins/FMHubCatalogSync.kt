@@ -3,6 +3,8 @@ package com.lagradost.cloudstream3.plugins
 import android.util.Log
 import com.lagradost.cloudstream3.BuildConfig
 import com.lagradost.cloudstream3.app
+import com.lagradost.cloudstream3.utils.getKey
+import com.lagradost.cloudstream3.utils.setKey
 import org.json.JSONObject
 
 /**
@@ -35,12 +37,12 @@ object FMHubCatalogSync {
             val payload = app.get(endpoint, timeout = 15).text
             val json = JSONObject(payload)
             if (json.optBoolean("success", true) || json.has("categories") || json.has("items")) {
-                app.getSharedPreferences(PREFS, 0).edit().putString(key, payload).apply()
+                app.setKey(PREFS, key, payload)
             }
         }.onFailure { error -> Log.w(TAG, "Could not sync $key", error) }
     }
 
     private fun readJson(key: String): JSONObject? = runCatching {
-        app.getSharedPreferences(PREFS, 0).getString(key, null)?.let(::JSONObject)
+        app.getKey<String>(PREFS, key)?.let(::JSONObject)
     }.getOrNull()
 }
