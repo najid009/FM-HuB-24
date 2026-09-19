@@ -1,6 +1,7 @@
 package com.fmhub24.app.ui.screens.player
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.fmhub24.app.data.repository.ContentRepository
 import com.fmhub24.app.data.repository.SettingsRepository
 import com.fmhub24.app.data.repository.WatchProgressRepository

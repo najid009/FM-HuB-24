@@ -56,6 +56,11 @@ jobs:
           sdkmanager "platforms;android-36" "build-tools;36.0.0" "platform-tools" || true
           echo "sdk.dir=$ANDROID_HOME" > android-app/local.properties
 
+      - name: Grant execute permission for Gradle wrappers
+        run: |
+          chmod +x android-app/gradlew
+          chmod +x extensions/gradlew
+
       # ---------------------------------------------------------------- plugin API
       # Extensions compile against com.fmhub24.pluginapi:plugin-api, resolved from mavenLocal.
       # Publish it first, in the same job, or the extension build cannot resolve the contract.
