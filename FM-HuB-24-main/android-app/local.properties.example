@@ -1,0 +1,5 @@
+sdk.dir=/path/to/Android/Sdk
+# Supabase - get from Supabase Dashboard > Project Settings > API
+# Never commit real keys, use local.properties only
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_ANON_KEY=your-anon-key-here

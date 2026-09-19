@@ -1,0 +1,62 @@
+package com.fmhub24.app.data.local
+
+import androidx.room.Database
+import androidx.room.RoomDatabase
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
+import com.fmhub24.app.data.local.dao.CachedExtensionDao
+import com.fmhub24.app.data.local.dao.FavoriteDao
+import com.fmhub24.app.data.local.dao.WatchProgressDao
+import com.fmhub24.app.data.local.entity.CachedExtension
+import com.fmhub24.app.data.local.entity.Favorite
+import com.fmhub24.app.data.local.entity.WatchProgress
+
+@Database(
+    entities = [Favorite::class, WatchProgress::class, CachedExtension::class],
+    version = 2,
+    exportSchema = false
+)
+abstract class AppDatabase : RoomDatabase() {
+    abstract fun favoriteDao(): FavoriteDao
+    abstract fun watchProgressDao(): WatchProgressDao
+    abstract fun cachedExtensionDao(): CachedExtensionDao
+
+    companion object {
+        /**
+         * v1 -> v2: the cache row now carries everything the loader needs to decide and explain —
+         * `fileUrl` (re-download source), `status`, the user's own `enabled` switch, and the
+         * manifest/hash fields that turn "0 providers" into a named cause.
+         *
+         * Rebuilt rather than ALTERed, and deliberately lossy: `cached_extensions` is a
+         * description of downloadable, re-derivable state, while v1 rows cannot supply the new
+         * NOT NULL `fileUrl` at all. Dropping it costs one re-download on next launch; a partial
+         * ALTER would either fail Room's schema identity check or leave rows the loader cannot use.
+         * Favorites and watch progress are untouched by this migration.
+         */
+        val MIGRATION_1_2 = object : Migration(1, 2) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("DROP TABLE IF EXISTS cached_extensions")
+                db.execSQL(
+                    """
+                    CREATE TABLE IF NOT EXISTS cached_extensions (
+                        id TEXT NOT NULL PRIMARY KEY,
+                        name TEXT NOT NULL,
+                        version INTEGER NOT NULL,
+                        localFilePath TEXT NOT NULL,
+                        loadedAt INTEGER NOT NULL,
+                        fileUrl TEXT NOT NULL,
+                        status TEXT NOT NULL,
+                        enabled INTEGER NOT NULL,
+                        pluginClassName TEXT,
+                        apiVersion INTEGER,
+                        fileHash TEXT,
+                        sizeBytes INTEGER,
+                        sourceRepoUrl TEXT,
+                        lastError TEXT
+                    )
+                    """.trimIndent()
+                )
+            }
+        }
+    }
+}

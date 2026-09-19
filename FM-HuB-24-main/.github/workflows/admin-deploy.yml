@@ -1,0 +1,127 @@
+name: Admin Panel Deploy
+
+on:
+  push:
+    branches: [ main, arena/* ]
+    paths:
+      - 'admin-panel/**'
+      - '.github/workflows/admin-deploy.yml'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'admin-panel/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: admin-panel
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: admin-panel/package-lock.json
+
+      - name: Create .env file
+        run: |
+          echo "VITE_SUPABASE_URL=${{ secrets.SUPABASE_URL || 'https://placeholder.supabase.co' }}" > .env
+          echo "VITE_SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY || 'placeholder-key' }}" >> .env
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.SUPABASE_URL || 'https://placeholder.supabase.co' }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY || 'placeholder-key' }}
+          GITHUB_PAGES: 'true'
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: admin-panel/dist
+
+      - name: Upload dist as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: admin-panel-dist
+          path: admin-panel/dist
+          retention-days: 7
+
+  # The real site. `github-pages` is a protected environment in this repo and its branch policy only
+  # allows main, so anything else gets "Branch ... is not allowed to deploy to github-pages due to
+  # environment protection rules" — a hard failure, not a skip. Gate it on main here instead.
+  deploy-pages:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    needs: build
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+  # Everything that is not main: the panel is built and the dist is kept twice — as a downloadable
+  # artifact and on the `gh-pages` branch — and the job summary says how to actually publish it.
+  # (The branch push only *serves* the site if Settings → Pages is switched from "GitHub Actions" to
+  # "Deploy from a branch: gh-pages / (root)"; while build_type is `workflow`, the environment route
+  # above is the only one that publishes.)
+  deploy-gh-pages-branch:
+    if: (github.event_name == 'push' && github.ref != 'refs/heads/main') || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    needs: build
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download dist
+        uses: actions/download-artifact@v4
+        with:
+          name: admin-panel-dist
+          path: admin-panel/dist
+
+      - name: Deploy to gh-pages branch
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: admin-panel/dist
+          publish_branch: gh-pages
+          force_orphan: true
+
+      - name: Say how to publish this build
+        run: |
+          repo=$(printf %s "${GITHUB_REPOSITORY#*/}" | tr '[:upper:]' '[:lower:]')
+          {
+            echo '### Panel built, not published'
+            echo
+            echo 'This repo deploys Pages through the protected `github-pages` environment, and that'
+            echo "environment only accepts **main** — a run from `${GITHUB_REF_NAME}` cannot publish it."
+            echo
+            echo 'Pick one:'
+            echo
+            echo "1. **Merge this branch** (recommended: it ships the app, the extensions and this panel together). The push to main deploys this exact build to https://${{ github.repository_owner }}.github.io/${repo}/"
+            echo '2. Or allow this branch: **Settings -> Environments -> github-pages -> Deployment branches -> add `arena/*`**. That lowers the protection, so use it only while testing.'
+            echo
+            echo 'The build is also attached to this run as the artifact **admin-panel-dist**: download and unzip it, then serve the folder as-is (any static host) to click through the panel right now.'
+          } >> "$GITHUB_STEP_SUMMARY"

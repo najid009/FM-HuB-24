@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  body{width:360px;margin:0;padding:10px 12px;background:#0b1220;color:#e2e8f0;
+       font:12px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace}
+  h4{margin:0 0 8px;color:#22d3ee;font-size:12px;letter-spacing:.3px}
+  .row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+  button{flex:1;background:#132038;color:#e2e8f0;border:1px solid #2a3c5f;border-radius:8px;
+         padding:6px 8px;cursor:pointer;font:inherit}
+  button:hover{border-color:#22d3ee}
+  .k{color:#94a3b8}
+  .item{border-top:1px solid #1f2b45;padding:6px 0}
+  .tag{display:inline-block;background:#132038;border:1px solid #2a3c5f;border-radius:6px;
+       padding:0 5px;margin:1px 3px 1px 0;font-size:11px}
+  #status{min-height:16px;color:#94a3b8}
+  .warn{color:#fbbf24}
+</style>
+</head>
+<body>
+  <h4>FMHub Site Scanner</h4>
+  <div class="row">
+    <button id="scan">Scan this page</button>
+    <button id="dl">Download all</button>
+  </div>
+  <div class="row">
+    <button id="copy">Copy all</button>
+    <button id="clear">Clear</button>
+    <button id="unhide">Un-hide sites</button>
+  </div>
+  <div id="status"></div>
+  <div id="list"></div>
+  <p class="k">Scan home, a search-results page, a series page and an episode page (start the
+  video first). Then send the downloaded JSON. Everything stays local in your browser.</p>
+  <script src="popup.js"></script>
+</body>
+</html>

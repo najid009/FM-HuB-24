@@ -1,0 +1,54 @@
+{
+  "manifest_version": 3,
+  "name": "FMHub Site Scanner",
+  "version": "1.0.0",
+  "description": "Read-only page inspector for building FMHub/CloudStream providers: finds list and detail selectors, episode links, player iframes, media URLs (m3u8/mp4) and the AJAX calls behind them. Everything stays in your browser - nothing is uploaded.",
+  "permissions": [
+    "webRequest",
+    "webNavigation",
+    "tabs",
+    "storage",
+    "clipboardWrite"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ],
+      "js": [
+        "analyzer.js",
+        "main.js"
+      ],
+      "all_frames": true,
+      "run_at": "document_idle",
+      "world": "MAIN"
+    },
+    {
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ],
+      "js": [
+        "ui.js"
+      ],
+      "all_frames": true,
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_title": "FMHub Site Scanner",
+    "default_popup": "popup.html"
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}

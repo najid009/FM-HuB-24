@@ -1,0 +1,4082 @@
+{
+ "source": {
+  "repo": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/refs/heads/builds/plugins.json",
+  "entries": 86
+ },
+ "summary": {
+  "HOST-COMPAT": 58,
+  "NEEDS-ENTRY-SHIM": 28
+ },
+ "rebuildableCount": 0,
+ "rows": [
+  {
+   "provider": "AllMovieLandProvider",
+   "internalName": "AllMovieLandProvider",
+   "language": "hi",
+   "tvTypes": [
+    "Movie",
+    "TvSeries",
+    "Cartoon"
+   ],
+   "version": 25,
+   "repoStatus": 1,
+   "requiresResources": false,
+   "pluginClassName": "com.phisher98.AllMovieLandProviderPlugin",
+   "dexMethod": "DEFLATED",
+   "dexSize": 242188,
+   "fileSize": 96001,
+   "fileHash": "sha256-76967d2992879b09511d35b0e1e44ec46610ee494516fb851d22dadab7775d15",
+   "hosts": [
+    "mapi.elochkaigolochla.com",
+    "omg10.com"
+   ],
+   "hostCount": 2,
+   "extendsPlugin": false,
+   "extendsBasePlugin": true,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)"
+   },
+   "embedRefs": [],
+   "hostProvidedRefs": [],
+   "mediaHints": [],
+   "verdict": "HOST-COMPAT",
+   "why": "loads, but its code calls app-only types (CloudStreamApp, CommonActivity) - those paths throw unless the host provides a matching type",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/AllMovieLandProvider.cs3"
+  },
+  {
+   "provider": "AllWish",
+   "internalName": "AllWish",
+   "language": "en",
+   "tvTypes": [
+    "All"
+   ],
+   "version": 18,
+   "repoStatus": 1,
+   "requiresResources": false,
+   "pluginClassName": "com.allwish.AllWishPlugin",
+   "dexMethod": "DEFLATED",
+   "dexSize": 192100,
+   "fileSize": 83663,
+   "fileHash": "sha256-aad6c98914cba66fc6fd45788b5d6efbbfa76c22b14b91e35c8a806785cf967e",
+   "hosts": [
+    "all-wish.me",
+    "megaplay.buzz",
+    "omg10.com",
+    "player.sgsgsgsr.site",
+    "vidwish.live"
+   ],
+   "hostCount": 5,
+   "extendsPlugin": false,
+   "extendsBasePlugin": true,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)"
+   },
+   "embedRefs": [],
+   "hostProvidedRefs": [],
+   "mediaHints": [
+    "m3u8"
+   ],
+   "verdict": "HOST-COMPAT",
+   "why": "loads, but its code calls app-only types (CloudStreamApp, CommonActivity) - those paths throw unless the host provides a matching type",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/AllWish.cs3"
+  },
+  {
+   "provider": "Anichi",
+   "internalName": "Anichi",
+   "language": "en",
+   "tvTypes": [
+    "AnimeMovie",
+    "Anime",
+    "OVA"
+   ],
+   "version": 27,
+   "repoStatus": 1,
+   "requiresResources": false,
+   "pluginClassName": "com.Anichi.AnichiPlugin",
+   "dexMethod": "DEFLATED",
+   "dexSize": 558476,
+   "fileSize": 220279,
+   "fileHash": "sha256-9ff65e6380ad99687e0d3c1185466958d0249ec9d678e5edbf5ae9b19664661b",
+   "hosts": [
+    "api.allanime.day",
+    "ok.ru",
+    "allanime.day",
+    "watchanime.uns.bio",
+    "mp4upload.com",
+    "mkissa.to"
+   ],
+   "hostCount": 32,
+   "extendsPlugin": true,
+   "extendsBasePlugin": false,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity",
+    "com.lagradost.cloudstream3.plugins.Plugin"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)",
+    "com.lagradost.cloudstream3.plugins.Plugin": "base class of *bundled* extensions; a .cs3 must extend BasePlugin instead"
+   },
+   "embedRefs": [
+    "com.lagradost.cloudstream3.extractors.StreamWishExtractor",
+    "com.lagradost.cloudstream3.extractors.VidStack"
+   ],
+   "hostProvidedRefs": [],
+   "mediaHints": [
+    "m3u8",
+    "mp4"
+   ],
+   "verdict": "NEEDS-ENTRY-SHIM",
+   "why": "the entry class itself extends com.lagradost.cloudstream3.plugins.Plugin (app module), so loadClass fails with \"Didn't find class\" before anything runs",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/Anichi.cs3"
+  },
+  {
+   "provider": "AniDb",
+   "internalName": "AniDb",
+   "language": "en",
+   "tvTypes": [
+    "Anime",
+    "AnimeMovie",
+    "OVA"
+   ],
+   "version": 15,
+   "repoStatus": 1,
+   "requiresResources": true,
+   "pluginClassName": "com.anidb.AniDbPlugin",
+   "dexMethod": "DEFLATED",
+   "dexSize": 213496,
+   "fileSize": 93281,
+   "fileHash": "sha256-9d7bc29db53f13b735d66b81d49b87f10f0aa532a19ad78bf3f14a76d53a2a18",
+   "hosts": [
+    "anidb.app",
+    "omg10.com"
+   ],
+   "hostCount": 2,
+   "extendsPlugin": true,
+   "extendsBasePlugin": false,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity",
+    "com.lagradost.cloudstream3.plugins.Plugin"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)",
+    "com.lagradost.cloudstream3.plugins.Plugin": "base class of *bundled* extensions; a .cs3 must extend BasePlugin instead"
+   },
+   "embedRefs": [],
+   "hostProvidedRefs": [
+    "com.lagradost.cloudstream3.utils.DataStore"
+   ],
+   "mediaHints": [
+    "m3u8"
+   ],
+   "verdict": "NEEDS-ENTRY-SHIM",
+   "why": "the entry class itself extends com.lagradost.cloudstream3.plugins.Plugin (app module), so loadClass fails with \"Didn't find class\" before anything runs",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/AniDb.cs3"
+  },
+  {
+   "provider": "Anikage",
+   "internalName": "Anikage",
+   "language": "en",
+   "tvTypes": [
+    "AnimeMovie",
+    "Anime",
+    "OVA"
+   ],
+   "version": 8,
+   "repoStatus": 1,
+   "requiresResources": false,
+   "pluginClassName": "com.anikage.AnikagePlugin",
+   "dexMethod": "DEFLATED",
+   "dexSize": 168880,
+   "fileSize": 70504,
+   "fileHash": "sha256-f0c88a4316bfd05e82026dfb63d965434ee632dd218283e85513d8e2bc1fd6f0",
+   "hosts": [
+    "anikage.cc",
+    "og.bakayaro.live",
+    "omg10.com"
+   ],
+   "hostCount": 3,
+   "extendsPlugin": false,
+   "extendsBasePlugin": true,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)"
+   },
+   "embedRefs": [],
+   "hostProvidedRefs": [],
+   "mediaHints": [],
+   "verdict": "HOST-COMPAT",
+   "why": "loads, but its code calls app-only types (CloudStreamApp, CommonActivity) - those paths throw unless the host provides a matching type",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/Anikage.cs3"
+  },
+  {
+   "provider": "AniKoto",
+   "internalName": "AniKoto",
+   "language": "en",
+   "tvTypes": [
+    "Anime",
+    "AnimeMovie"
+   ],
+   "version": 4,
+   "repoStatus": 1,
+   "requiresResources": false,
+   "pluginClassName": "com.anikoto.AnikotoPlugin",
+   "dexMethod": "DEFLATED",
+   "dexSize": 188136,
+   "fileSize": 82239,
+   "fileHash": "sha256-61d31bde3dc3c084ecf527fbb7f1543e0810bc81c703fec4a9e30ed124cbd04f",
+   "hosts": [
+    "anikototv.to",
+    "megaplay.buzz",
+    "mewcdn.online",
+    "omg10.com",
+    "vidtube.site",
+    "vidwish.live"
+   ],
+   "hostCount": 6,
+   "extendsPlugin": false,
+   "extendsBasePlugin": true,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)"
+   },
+   "embedRefs": [],
+   "hostProvidedRefs": [],
+   "mediaHints": [
+    "m3u8"
+   ],
+   "verdict": "HOST-COMPAT",
+   "why": "loads, but its code calls app-only types (CloudStreamApp, CommonActivity) - those paths throw unless the host provides a matching type",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/AniKoto.cs3"
+  },
+  {
+   "provider": "Anilight",
+   "internalName": "Anilight",
+   "language": "en",
+   "tvTypes": [
+    "AnimeMovie",
+    "Anime",
+    "OVA"
+   ],
+   "version": 3,
+   "repoStatus": 1,
+   "requiresResources": false,
+   "pluginClassName": "com.anilight.AnilightPlugin",
+   "dexMethod": "DEFLATED",
+   "dexSize": 175932,
+   "fileSize": 70890,
+   "fileHash": "sha256-4a615a623d68307e829db9a09e17d3ce1e9e1a36de1c3e2bbef538a855e2bc11",
+   "hosts": [
+    "api.anilight.live",
+    "anilight.live",
+    "omg10.com"
+   ],
+   "hostCount": 3,
+   "extendsPlugin": false,
+   "extendsBasePlugin": true,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)"
+   },
+   "embedRefs": [],
+   "hostProvidedRefs": [],
+   "mediaHints": [
+    "m3u8"
+   ],
+   "verdict": "HOST-COMPAT",
+   "why": "loads, but its code calls app-only types (CloudStreamApp, CommonActivity) - those paths throw unless the host provides a matching type",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/Anilight.cs3"
+  },
+  {
+   "provider": "Animeav1",
+   "internalName": "Animeav1",
+   "language": "mx",
+   "tvTypes": [
+    "Movie",
+    "Anime",
+    "AnimeMovie"
+   ],
+   "version": 9,
+   "repoStatus": 1,
+   "requiresResources": false,
+   "pluginClassName": "com.Animeav1.Animeav1Provider",
+   "dexMethod": "DEFLATED",
+   "dexSize": 133244,
+   "fileSize": 58030,
+   "fileHash": "sha256-13f6735390ce0f54fcd0c5964f6564e62ddc5c4711165bdb2807183d9a3d2f5d",
+   "hosts": [
+    "animeav1.com",
+    "animeav1.uns.bio",
+    "cdn.animeav1.com",
+    "omg10.com",
+    "player.zilla-networks.com"
+   ],
+   "hostCount": 5,
+   "extendsPlugin": false,
+   "extendsBasePlugin": true,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)"
+   },
+   "embedRefs": [
+    "com.lagradost.cloudstream3.extractors.VidStack"
+   ],
+   "hostProvidedRefs": [],
+   "mediaHints": [],
+   "verdict": "HOST-COMPAT",
+   "why": "loads, but its code calls app-only types (CloudStreamApp, CommonActivity) - those paths throw unless the host provides a matching type",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/Animeav1.cs3"
+  },
+  {
+   "provider": "AnimeCloud",
+   "internalName": "AnimeCloud",
+   "language": "de",
+   "tvTypes": [
+    "Anime"
+   ],
+   "version": 11,
+   "repoStatus": 1,
+   "requiresResources": false,
+   "pluginClassName": "com.animecloud.AnimecloudProvider",
+   "dexMethod": "DEFLATED",
+   "dexSize": 186108,
+   "fileSize": 74984,
+   "fileHash": "sha256-d5163aef20264d413577ad972017c1c078bfb0b222b8275cad65348e90582828",
+   "hosts": [
+    "fireani.me",
+    "luluvdo.com",
+    "omg10.com"
+   ],
+   "hostCount": 3,
+   "extendsPlugin": false,
+   "extendsBasePlugin": true,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)"
+   },
+   "embedRefs": [],
+   "hostProvidedRefs": [],
+   "mediaHints": [],
+   "verdict": "HOST-COMPAT",
+   "why": "loads, but its code calls app-only types (CloudStreamApp, CommonActivity) - those paths throw unless the host provides a matching type",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/AnimeCloud.cs3"
+  },
+  {
+   "provider": "AnimeDekhoProvider",
+   "internalName": "AnimeDekhoProvider",
+   "language": "hi",
+   "tvTypes": [
+    "AnimeMovie",
+    "Anime",
+    "Cartoon"
+   ],
+   "version": 70,
+   "repoStatus": 1,
+   "requiresResources": false,
+   "pluginClassName": "com.phisher98.AnimeDekhoPlugin",
+   "dexMethod": "DEFLATED",
+   "dexSize": 267512,
+   "fileSize": 110927,
+   "fileHash": "sha256-75f365b027ea358a04683fa4d7b0588a21b118cb80424f404ce3be0597d29e24",
+   "hosts": [
+    "onepace.me",
+    "playhydrax.com",
+    "abyssplayer.com",
+    "animedekho.app",
+    "animedekho.co",
+    "animezia.cloud"
+   ],
+   "hostCount": 22,
+   "extendsPlugin": false,
+   "extendsBasePlugin": true,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)"
+   },
+   "embedRefs": [
+    "com.lagradost.cloudstream3.extractors.FileMoon",
+    "com.lagradost.cloudstream3.extractors.FilemoonV2",
+    "com.lagradost.cloudstream3.extractors.Filesim",
+    "com.lagradost.cloudstream3.extractors.Krakenfiles",
+    "com.lagradost.cloudstream3.extractors.StreamTape",
+    "com.lagradost.cloudstream3.extractors.StreamWishExtractor",
+    "com.lagradost.cloudstream3.extractors.VidHidePro",
+    "com.lagradost.cloudstream3.extractors.VidStack",
+    "com.lagradost.cloudstream3.extractors.VidhideExtractor",
+    "com.lagradost.cloudstream3.extractors.Vidmoly",
+    "com.lagradost.cloudstream3.extractors.Voe"
+   ],
+   "hostProvidedRefs": [],
+   "mediaHints": [],
+   "verdict": "HOST-COMPAT",
+   "why": "loads, but its code calls app-only types (CloudStreamApp, CommonActivity) - those paths throw unless the host provides a matching type",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/AnimeDekhoProvider.cs3"
+  },
+  {
+   "provider": "Animedubhindi",
+   "internalName": "Animedubhindi",
+   "language": "hi",
+   "tvTypes": [
+    "AnimeMovie",
+    "Anime",
+    "Cartoon"
+   ],
+   "version": 8,
+   "repoStatus": 1,
+   "requiresResources": false,
+   "pluginClassName": "com.animedubhindi.AnimedubhindiProvider",
+   "dexMethod": "DEFLATED",
+   "dexSize": 223608,
+   "fileSize": 92140,
+   "fileHash": "sha256-edf3c7c32ad325460c88677c12f3c4f53e729e593c90fb4807aafe94c6750b91",
+   "hosts": [
+    "api.gofile.io",
+    "gofile.io",
+    "hubcloud.foo",
+    "new.gdflix",
+    "new1.gdflix",
+    "new15.gdflix"
+   ],
+   "hostCount": 14,
+   "extendsPlugin": false,
+   "extendsBasePlugin": true,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)"
+   },
+   "embedRefs": [
+    "com.lagradost.cloudstream3.extractors.FileMoon"
+   ],
+   "hostProvidedRefs": [],
+   "mediaHints": [],
+   "verdict": "HOST-COMPAT",
+   "why": "loads, but its code calls app-only types (CloudStreamApp, CommonActivity) - those paths throw unless the host provides a matching type",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/Animedubhindi.cs3"
+  },
+  {
+   "provider": "Animekhor",
+   "internalName": "Animekhor",
+   "language": "zh",
+   "tvTypes": [
+    "AnimeMovie",
+    "Anime"
+   ],
+   "version": 13,
+   "repoStatus": 1,
+   "requiresResources": false,
+   "pluginClassName": "com.Animekhor.AnimenosubProvider",
+   "dexMethod": "DEFLATED",
+   "dexSize": 147056,
+   "fileSize": 62173,
+   "fileHash": "sha256-5781e4e1a8eed09fc680f73372889410f7fa53de25e7c603a6cdbb23eaf1b1d6",
+   "hosts": [
+    "animekhor.org",
+    "animekhor.p2pstream.vip",
+    "donghuaworld.com",
+    "embedwish.com",
+    "filelions.live",
+    "omg10.com"
+   ],
+   "hostCount": 11,
+   "extendsPlugin": false,
+   "extendsBasePlugin": true,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)"
+   },
+   "embedRefs": [
+    "com.lagradost.cloudstream3.extractors.Dailymotion",
+    "com.lagradost.cloudstream3.extractors.EmturbovidExtractor",
+    "com.lagradost.cloudstream3.extractors.Mp4Upload",
+    "com.lagradost.cloudstream3.extractors.StreamWishExtractor",
+    "com.lagradost.cloudstream3.extractors.VidHidePro",
+    "com.lagradost.cloudstream3.extractors.VidStack",
+    "com.lagradost.cloudstream3.extractors.VidhideExtractor"
+   ],
+   "hostProvidedRefs": [],
+   "mediaHints": [
+    "m3u8"
+   ],
+   "verdict": "HOST-COMPAT",
+   "why": "loads, but its code calls app-only types (CloudStreamApp, CommonActivity) - those paths throw unless the host provides a matching type",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/Animekhor.cs3"
+  },
+  {
+   "provider": "Animenosub",
+   "internalName": "Animenosub",
+   "language": "en",
+   "tvTypes": [
+    "AnimeMovie",
+    "Anime",
+    "Cartoon"
+   ],
+   "version": 11,
+   "repoStatus": 1,
+   "requiresResources": false,
+   "pluginClassName": "com.Animenosub.AnimenosubProvider",
+   "dexMethod": "DEFLATED",
+   "dexSize": 132544,
+   "fileSize": 57635,
+   "fileHash": "sha256-5d6ba70cecf6e4796cbf6b991836fc526b156defdf240169c9b16de3704b84af",
+   "hosts": [
+    "animenosub.to",
+    "animenosub.upn.one",
+    "filemoon.sx",
+    "omg10.com",
+    "vtbe.to",
+    "waaw.to"
+   ],
+   "hostCount": 7,
+   "extendsPlugin": false,
+   "extendsBasePlugin": true,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)"
+   },
+   "embedRefs": [
+    "com.lagradost.cloudstream3.extractors.Filesim",
+    "com.lagradost.cloudstream3.extractors.StreamSB",
+    "com.lagradost.cloudstream3.extractors.StreamWishExtractor"
+   ],
+   "hostProvidedRefs": [],
+   "mediaHints": [],
+   "verdict": "HOST-COMPAT",
+   "why": "loads, but its code calls app-only types (CloudStreamApp, CommonActivity) - those paths throw unless the host provides a matching type",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/Animenosub.cs3"
+  },
+  {
+   "provider": "AnimePahe",
+   "internalName": "AnimePahe",
+   "language": "en",
+   "tvTypes": [
+    "AnimeMovie",
+    "Anime",
+    "OVA"
+   ],
+   "version": 39,
+   "repoStatus": 1,
+   "requiresResources": true,
+   "pluginClassName": "com.phisher98.AnimePaheProviderPlugin",
+   "dexMethod": "DEFLATED",
+   "dexSize": 273524,
+   "fileSize": 117214,
+   "fileHash": "sha256-f39e2fc245042e933ec91da01e74b8f105e7ba80e6e4b6706c8f6aaaa754f592",
+   "hosts": [
+    "kwik.cx",
+    "animepahe.com",
+    "animepahe.org",
+    "animepahe.pw",
+    "omg10.com",
+    "pahe.win"
+   ],
+   "hostCount": 6,
+   "extendsPlugin": true,
+   "extendsBasePlugin": false,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity",
+    "com.lagradost.cloudstream3.plugins.Plugin"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)",
+    "com.lagradost.cloudstream3.plugins.Plugin": "base class of *bundled* extensions; a .cs3 must extend BasePlugin instead"
+   },
+   "embedRefs": [],
+   "hostProvidedRefs": [
+    "com.lagradost.cloudstream3.utils.DataStore"
+   ],
+   "mediaHints": [
+    "m3u8",
+    "mp4"
+   ],
+   "verdict": "NEEDS-ENTRY-SHIM",
+   "why": "the entry class itself extends com.lagradost.cloudstream3.plugins.Plugin (app module), so loadClass fails with \"Didn't find class\" before anything runs",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/AnimePahe.cs3"
+  },
+  {
+   "provider": "Animesalt",
+   "internalName": "Animesalt",
+   "language": "hi",
+   "tvTypes": [
+    "AnimeMovie",
+    "Anime",
+    "Cartoon"
+   ],
+   "version": 15,
+   "repoStatus": 1,
+   "requiresResources": false,
+   "pluginClassName": "com.phisher98.AnimesaltProvider",
+   "dexMethod": "DEFLATED",
+   "dexSize": 191840,
+   "fileSize": 82424,
+   "fileHash": "sha256-7c7823d355513b7cb32d37bfc7d7a0784b2c8dabf18c9daf59cdb22cc844e560",
+   "hosts": [
+    "playhydrax.com",
+    "abyssplayer.com",
+    "animesalt.cx",
+    "as-cdn26.top",
+    "beta.awstream.net",
+    "enc-dec.app"
+   ],
+   "hostCount": 14,
+   "extendsPlugin": false,
+   "extendsBasePlugin": true,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)"
+   },
+   "embedRefs": [
+    "com.lagradost.cloudstream3.extractors.Filesim"
+   ],
+   "hostProvidedRefs": [],
+   "mediaHints": [
+    "m3u8"
+   ],
+   "verdict": "HOST-COMPAT",
+   "why": "loads, but its code calls app-only types (CloudStreamApp, CommonActivity) - those paths throw unless the host provides a matching type",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/Animesalt.cs3"
+  },
+  {
+   "provider": "Animexin",
+   "internalName": "Animexin",
+   "language": "en",
+   "tvTypes": [
+    "AnimeMovie",
+    "Anime",
+    "Cartoon"
+   ],
+   "version": 15,
+   "repoStatus": 1,
+   "requiresResources": true,
+   "pluginClassName": "com.Animexin.AnimexinPlugin",
+   "dexMethod": "DEFLATED",
+   "dexSize": 180692,
+   "fileSize": 79739,
+   "fileHash": "sha256-b49173260c50f75cbb82258fc706958fe615a7ad723c2a76fa536cb9c69a363f",
+   "hosts": [
+    "animexin.dev",
+    "filemoon.sx",
+    "omg10.com",
+    "vtbe.to",
+    "waaw.to",
+    "wishfast.top"
+   ],
+   "hostCount": 6,
+   "extendsPlugin": true,
+   "extendsBasePlugin": false,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity",
+    "com.lagradost.cloudstream3.plugins.Plugin"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)",
+    "com.lagradost.cloudstream3.plugins.Plugin": "base class of *bundled* extensions; a .cs3 must extend BasePlugin instead"
+   },
+   "embedRefs": [
+    "com.lagradost.cloudstream3.extractors.Dailymotion",
+    "com.lagradost.cloudstream3.extractors.Filesim",
+    "com.lagradost.cloudstream3.extractors.StreamSB",
+    "com.lagradost.cloudstream3.extractors.StreamWishExtractor"
+   ],
+   "hostProvidedRefs": [
+    "com.lagradost.cloudstream3.utils.DataStore"
+   ],
+   "mediaHints": [],
+   "verdict": "NEEDS-ENTRY-SHIM",
+   "why": "the entry class itself extends com.lagradost.cloudstream3.plugins.Plugin (app module), so loadClass fails with \"Didn't find class\" before anything runs",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/Animexin.cs3"
+  },
+  {
+   "provider": "Anineko",
+   "internalName": "Anineko",
+   "language": "en",
+   "tvTypes": [
+    "Anime",
+    "AnimeMovie",
+    "OVA"
+   ],
+   "version": 6,
+   "repoStatus": 1,
+   "requiresResources": false,
+   "pluginClassName": "com.anineko.AninekoPlugin",
+   "dexMethod": "DEFLATED",
+   "dexSize": 190848,
+   "fileSize": 82659,
+   "fileHash": "sha256-ac5ca447945cff89abfbcfc082b4ec05676026f8a626df8e652d02c47aaa0be0",
+   "hosts": [
+    "anineko.to",
+    "bibiemb.xyz",
+    "kitsu.io",
+    "omg10.com",
+    "otakuhg.site",
+    "otakuvid.online"
+   ],
+   "hostCount": 8,
+   "extendsPlugin": false,
+   "extendsBasePlugin": true,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)"
+   },
+   "embedRefs": [
+    "com.lagradost.cloudstream3.extractors.DoodLaExtractor",
+    "com.lagradost.cloudstream3.extractors.StreamWishExtractor"
+   ],
+   "hostProvidedRefs": [],
+   "mediaHints": [
+    "m3u8"
+   ],
+   "verdict": "HOST-COMPAT",
+   "why": "loads, but its code calls app-only types (CloudStreamApp, CommonActivity) - those paths throw unless the host provides a matching type",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/Anineko.cs3"
+  },
+  {
+   "provider": "AniSnatch",
+   "internalName": "AniSnatch",
+   "language": "en",
+   "tvTypes": [
+    "Anime",
+    "AnimeMovie",
+    "OVA"
+   ],
+   "version": 1,
+   "repoStatus": 1,
+   "requiresResources": false,
+   "pluginClassName": "com.AniSnatch.AniSnatchPlugin",
+   "dexMethod": "DEFLATED",
+   "dexSize": 307764,
+   "fileSize": 130304,
+   "fileHash": "sha256-aa9795db9c58e436c5b658ef5dbdf93817008618c37ca4ea162996ecb2142e17",
+   "hosts": [
+    "megaplay.buzz",
+    "anisnatch.to",
+    "kitsu.io",
+    "omg10.com",
+    "vidtube.site",
+    "vidwish.live"
+   ],
+   "hostCount": 6,
+   "extendsPlugin": false,
+   "extendsBasePlugin": true,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)"
+   },
+   "embedRefs": [],
+   "hostProvidedRefs": [],
+   "mediaHints": [],
+   "verdict": "HOST-COMPAT",
+   "why": "loads, but its code calls app-only types (CloudStreamApp, CommonActivity) - those paths throw unless the host provides a matching type",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/AniSnatch.cs3"
+  },
+  {
+   "provider": "AniVortex",
+   "internalName": "AniVortex",
+   "language": "hi",
+   "tvTypes": [
+    "Anime",
+    "AnimeMovie",
+    "OVA",
+    "TvSeries",
+    "Movie"
+   ],
+   "version": 10,
+   "repoStatus": 1,
+   "requiresResources": false,
+   "pluginClassName": "com.AniVortex.AniVortexPlugin",
+   "dexMethod": "DEFLATED",
+   "dexSize": 381688,
+   "fileSize": 149542,
+   "fileHash": "sha256-e89294c3781885009afcb680f12e8c0d030b585562f4cef019915e9b26f29f9e",
+   "hosts": [
+    "api.anivortex.in",
+    "omg10.com",
+    "www.youtube.com"
+   ],
+   "hostCount": 3,
+   "extendsPlugin": true,
+   "extendsBasePlugin": false,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity",
+    "com.lagradost.cloudstream3.plugins.Plugin"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)",
+    "com.lagradost.cloudstream3.plugins.Plugin": "base class of *bundled* extensions; a .cs3 must extend BasePlugin instead"
+   },
+   "embedRefs": [],
+   "hostProvidedRefs": [
+    "com.lagradost.cloudstream3.utils.DataStore"
+   ],
+   "mediaHints": [],
+   "verdict": "NEEDS-ENTRY-SHIM",
+   "why": "the entry class itself extends com.lagradost.cloudstream3.plugins.Plugin (app module), so loadClass fails with \"Didn't find class\" before anything runs",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/AniVortex.cs3"
+  },
+  {
+   "provider": "Aniworld",
+   "internalName": "Aniworld",
+   "language": "de",
+   "tvTypes": [
+    "AnimeMovie",
+    "Anime",
+    "OVA"
+   ],
+   "version": 14,
+   "repoStatus": 1,
+   "requiresResources": true,
+   "pluginClassName": "com.Aniworld.AniworldPlugin",
+   "dexMethod": "DEFLATED",
+   "dexSize": 199508,
+   "fileSize": 91731,
+   "fileHash": "sha256-296db4936d945bb373e590b2e3bfc881afb7aefde353ebed7f9a49481f65f6e9",
+   "hosts": [
+    "serienstream.to",
+    "aniworld.to",
+    "byse.sx",
+    "filemoon.to",
+    "omg10.com",
+    "urochsunloath.com"
+   ],
+   "hostCount": 6,
+   "extendsPlugin": true,
+   "extendsBasePlugin": false,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity",
+    "com.lagradost.cloudstream3.plugins.Plugin"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)",
+    "com.lagradost.cloudstream3.plugins.Plugin": "base class of *bundled* extensions; a .cs3 must extend BasePlugin instead"
+   },
+   "embedRefs": [
+    "com.lagradost.cloudstream3.extractors.DoodLaExtractor",
+    "com.lagradost.cloudstream3.extractors.Vidmoly"
+   ],
+   "hostProvidedRefs": [],
+   "mediaHints": [],
+   "verdict": "NEEDS-ENTRY-SHIM",
+   "why": "the entry class itself extends com.lagradost.cloudstream3.plugins.Plugin (app module), so loadClass fails with \"Didn't find class\" before anything runs",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/Aniworld.cs3"
+  },
+  {
+   "provider": "Anizone",
+   "internalName": "Anizone",
+   "language": "en",
+   "tvTypes": [
+    "Anime"
+   ],
+   "version": 8,
+   "repoStatus": 1,
+   "requiresResources": true,
+   "pluginClassName": "com.ycngmn.AnizonePlugin",
+   "dexMethod": "DEFLATED",
+   "dexSize": 138512,
+   "fileSize": 63063,
+   "fileHash": "sha256-f2dd8168d874a5f26167e0cab86b1295b35c359a88c65a0e88fba144f830983b",
+   "hosts": [
+    "anizone.to",
+    "omg10.com"
+   ],
+   "hostCount": 2,
+   "extendsPlugin": true,
+   "extendsBasePlugin": false,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity",
+    "com.lagradost.cloudstream3.plugins.Plugin"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)",
+    "com.lagradost.cloudstream3.plugins.Plugin": "base class of *bundled* extensions; a .cs3 must extend BasePlugin instead"
+   },
+   "embedRefs": [],
+   "hostProvidedRefs": [],
+   "mediaHints": [
+    "m3u8"
+   ],
+   "verdict": "NEEDS-ENTRY-SHIM",
+   "why": "the entry class itself extends com.lagradost.cloudstream3.plugins.Plugin (app module), so loadClass fails with \"Didn't find class\" before anything runs",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/Anizone.cs3"
+  },
+  {
+   "provider": "BanglaPlex",
+   "internalName": "BanglaPlex",
+   "language": "bn",
+   "tvTypes": [
+    "Movie",
+    "TvSeries"
+   ],
+   "version": 8,
+   "repoStatus": 1,
+   "requiresResources": false,
+   "pluginClassName": "com.BanglaPlex.BanglaPlexProvider",
+   "dexMethod": "DEFLATED",
+   "dexSize": 140048,
+   "fileSize": 60344,
+   "fileHash": "sha256-f087d0fa0a61b847854e4155fc70575d7cce7b7ee95a596f57ed80088379fe7d",
+   "hosts": [
+    "banglaplex.click",
+    "bpx.rpmvid.site",
+    "hglink.to",
+    "iplayerhls.com",
+    "omg10.com",
+    "plextream.work"
+   ],
+   "hostCount": 8,
+   "extendsPlugin": false,
+   "extendsBasePlugin": true,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)"
+   },
+   "embedRefs": [
+    "com.lagradost.cloudstream3.extractors.StreamTape",
+    "com.lagradost.cloudstream3.extractors.StreamWishExtractor",
+    "com.lagradost.cloudstream3.extractors.VidStack",
+    "com.lagradost.cloudstream3.extractors.Vtbe"
+   ],
+   "hostProvidedRefs": [],
+   "mediaHints": [],
+   "verdict": "HOST-COMPAT",
+   "why": "loads, but its code calls app-only types (CloudStreamApp, CommonActivity) - those paths throw unless the host provides a matching type",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/BanglaPlex.cs3"
+  },
+  {
+   "provider": "Chikianimation",
+   "internalName": "Chikianimation",
+   "language": "zh",
+   "tvTypes": [
+    "AnimeMovie",
+    "Anime"
+   ],
+   "version": 2,
+   "repoStatus": 1,
+   "requiresResources": false,
+   "pluginClassName": "com.Chikianimation.ChikianimationPlugin",
+   "dexMethod": "DEFLATED",
+   "dexSize": 212080,
+   "fileSize": 91296,
+   "fileHash": "sha256-d20d52b6a4ef93739ca6430048773a08080329e854d5be1a2c792cb3351bdc51",
+   "hosts": [
+    "chikianimation.com",
+    "galaxydonghua.xyz",
+    "ghbrisk.com",
+    "omg10.com",
+    "www.dailymotion.com"
+   ],
+   "hostCount": 5,
+   "extendsPlugin": false,
+   "extendsBasePlugin": true,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)"
+   },
+   "embedRefs": [
+    "com.lagradost.cloudstream3.extractors.Dailymotion",
+    "com.lagradost.cloudstream3.extractors.Filesim",
+    "com.lagradost.cloudstream3.extractors.StreamTape"
+   ],
+   "hostProvidedRefs": [],
+   "mediaHints": [
+    "m3u8"
+   ],
+   "verdict": "HOST-COMPAT",
+   "why": "loads, but its code calls app-only types (CloudStreamApp, CommonActivity) - those paths throw unless the host provides a matching type",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/Chikianimation.cs3"
+  },
+  {
+   "provider": "Cinefreak",
+   "internalName": "Cinefreak",
+   "language": "bn",
+   "tvTypes": [
+    "Movie",
+    "TvSeries",
+    "Anime"
+   ],
+   "version": 14,
+   "repoStatus": 1,
+   "requiresResources": false,
+   "pluginClassName": "com.cinefreak.CinefreakPlugin",
+   "dexMethod": "DEFLATED",
+   "dexSize": 266040,
+   "fileSize": 108814,
+   "fileHash": "sha256-65bacc61c1da86e3eb1345f670e65f887eb51feee7a5f06e873efa2f99c7378e",
+   "hosts": [
+    "cinefreak.nl",
+    "hubcloud.foo",
+    "hubcloud.one",
+    "hubdrive.space",
+    "new.neodrive.site",
+    "new5.cinecloud.site"
+   ],
+   "hostCount": 8,
+   "extendsPlugin": false,
+   "extendsBasePlugin": true,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)"
+   },
+   "embedRefs": [
+    "com.lagradost.cloudstream3.extractors.PixelDrain",
+    "com.lagradost.cloudstream3.extractors.StreamTape"
+   ],
+   "hostProvidedRefs": [],
+   "mediaHints": [],
+   "verdict": "HOST-COMPAT",
+   "why": "loads, but its code calls app-only types (CloudStreamApp, CommonActivity) - those paths throw unless the host provides a matching type",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/Cinefreak.cs3"
+  },
+  {
+   "provider": "Cinemacity",
+   "internalName": "Cinemacity",
+   "language": "en",
+   "tvTypes": [
+    "Movie",
+    "TvSeries"
+   ],
+   "version": 26,
+   "repoStatus": 1,
+   "requiresResources": true,
+   "pluginClassName": "com.Cinemacity.CinemacityPlugin",
+   "dexMethod": "DEFLATED",
+   "dexSize": 310232,
+   "fileSize": 134804,
+   "fileHash": "sha256-7a5399da11d43768a8e5b632b9e2c712a5cc35207296a15d2a0e85bd283a3f9d",
+   "hosts": [
+    "cinemacity.cc",
+    "v3-cinemeta.strem.io",
+    "omg10.com"
+   ],
+   "hostCount": 3,
+   "extendsPlugin": true,
+   "extendsBasePlugin": false,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity",
+    "com.lagradost.cloudstream3.plugins.Plugin"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)",
+    "com.lagradost.cloudstream3.plugins.Plugin": "base class of *bundled* extensions; a .cs3 must extend BasePlugin instead"
+   },
+   "embedRefs": [],
+   "hostProvidedRefs": [
+    "com.lagradost.cloudstream3.utils.DataStore"
+   ],
+   "mediaHints": [
+    "mp4"
+   ],
+   "verdict": "NEEDS-ENTRY-SHIM",
+   "why": "the entry class itself extends com.lagradost.cloudstream3.plugins.Plugin (app module), so loadClass fails with \"Didn't find class\" before anything runs",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/Cinemacity.cs3"
+  },
+  {
+   "provider": "Coflix",
+   "internalName": "Coflix",
+   "language": "fr",
+   "tvTypes": [
+    "Movie",
+    "TvSeries"
+   ],
+   "version": 19,
+   "repoStatus": 1,
+   "requiresResources": false,
+   "pluginClassName": "com.Coflix.CoflixProvider",
+   "dexMethod": "DEFLATED",
+   "dexSize": 153868,
+   "fileSize": 66868,
+   "fileHash": "sha256-01029e13ba1c8b76b0469039f792eba7c54990e1d389e72f0a0e33fb63a376a9",
+   "hosts": [
+    "coflix.esq",
+    "coflix.upn.one",
+    "darkibox.com",
+    "filemoon.sx",
+    "mivalyo.com",
+    "omg10.com"
+   ],
+   "hostCount": 12,
+   "extendsPlugin": false,
+   "extendsBasePlugin": true,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)"
+   },
+   "embedRefs": [
+    "com.lagradost.cloudstream3.extractors.Filesim",
+    "com.lagradost.cloudstream3.extractors.LuluStream",
+    "com.lagradost.cloudstream3.extractors.StreamSB",
+    "com.lagradost.cloudstream3.extractors.StreamWishExtractor",
+    "com.lagradost.cloudstream3.extractors.VidStack",
+    "com.lagradost.cloudstream3.extractors.VidhideExtractor",
+    "com.lagradost.cloudstream3.extractors.Vidmoly",
+    "com.lagradost.cloudstream3.extractors.Voe"
+   ],
+   "hostProvidedRefs": [],
+   "mediaHints": [],
+   "verdict": "HOST-COMPAT",
+   "why": "loads, but its code calls app-only types (CloudStreamApp, CommonActivity) - those paths throw unless the host provides a matching type",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/Coflix.cs3"
+  },
+  {
+   "provider": "Comix",
+   "internalName": "Comix",
+   "language": "en",
+   "tvTypes": [
+    "Others",
+    "Anime"
+   ],
+   "version": 2,
+   "repoStatus": 1,
+   "requiresResources": false,
+   "pluginClassName": "com.comix.ComixPlugin",
+   "dexMethod": "DEFLATED",
+   "dexSize": 178936,
+   "fileSize": 75290,
+   "fileHash": "sha256-0fb13f8fbba6c2e4b2eb3e12d1a096535e80c06ad299109cc8592ffa7b4061ea",
+   "hosts": [
+    "comix.to",
+    "omg10.com"
+   ],
+   "hostCount": 2,
+   "extendsPlugin": false,
+   "extendsBasePlugin": true,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)"
+   },
+   "embedRefs": [],
+   "hostProvidedRefs": [],
+   "mediaHints": [],
+   "verdict": "HOST-COMPAT",
+   "why": "loads, but its code calls app-only types (CloudStreamApp, CommonActivity) - those paths throw unless the host provides a matching type",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/Comix.cs3"
+  },
+  {
+   "provider": "Desicinemas",
+   "internalName": "Desicinemas",
+   "language": "hi",
+   "tvTypes": [
+    "Movie",
+    "TvSeries"
+   ],
+   "version": 16,
+   "repoStatus": 1,
+   "requiresResources": false,
+   "pluginClassName": "com.Desicinemas.DesicinemasPlugin",
+   "dexMethod": "DEFLATED",
+   "dexSize": 183996,
+   "fileSize": 78942,
+   "fileHash": "sha256-2a06c43432556c2bd2afaea32c162da8c165926e6926a765eec1b56810b108d5",
+   "hosts": [
+    "desicinemas.to",
+    "flow.tvlogy.to",
+    "tellygossips.net",
+    "desicinemas.phisherdesicinema.workers.dev",
+    "flow.tellygossips.net",
+    "omg10.com"
+   ],
+   "hostCount": 9,
+   "extendsPlugin": false,
+   "extendsBasePlugin": true,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)"
+   },
+   "embedRefs": [],
+   "hostProvidedRefs": [],
+   "mediaHints": [
+    "m3u8"
+   ],
+   "verdict": "HOST-COMPAT",
+   "why": "loads, but its code calls app-only types (CloudStreamApp, CommonActivity) - those paths throw unless the host provides a matching type",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/Desicinemas.cs3"
+  },
+  {
+   "provider": "Donghuastream",
+   "internalName": "Donghuastream",
+   "language": "zh",
+   "tvTypes": [
+    "Anime"
+   ],
+   "version": 22,
+   "repoStatus": 1,
+   "requiresResources": false,
+   "pluginClassName": "com.Donghuastream.DonghuastreamProvider",
+   "dexMethod": "DEFLATED",
+   "dexSize": 197228,
+   "fileSize": 79642,
+   "fileHash": "sha256-1c499c5501de45596af37a9b2a8675b29b3c70d89057e674c4f2321b3ea8e369",
+   "hosts": [
+    "donghuastream.org",
+    "filemoon.sx",
+    "omg10.com",
+    "play.streamplay.co.in",
+    "rumble.com",
+    "seatv-24.xyz"
+   ],
+   "hostCount": 11,
+   "extendsPlugin": false,
+   "extendsBasePlugin": true,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)"
+   },
+   "embedRefs": [
+    "com.lagradost.cloudstream3.extractors.Dailymotion",
+    "com.lagradost.cloudstream3.extractors.Geodailymotion",
+    "com.lagradost.cloudstream3.extractors.OkRuHTTP",
+    "com.lagradost.cloudstream3.extractors.OkRuSSL",
+    "com.lagradost.cloudstream3.extractors.StreamWishExtractor",
+    "com.lagradost.cloudstream3.extractors.helper.AesHelper"
+   ],
+   "hostProvidedRefs": [],
+   "mediaHints": [
+    "m3u8",
+    "mp4"
+   ],
+   "verdict": "HOST-COMPAT",
+   "why": "loads, but its code calls app-only types (CloudStreamApp, CommonActivity) - those paths throw unless the host provides a matching type",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/Donghuastream.cs3"
+  },
+  {
+   "provider": "DoraBash",
+   "internalName": "DoraBash",
+   "language": "hi",
+   "tvTypes": [
+    "AnimeMovie",
+    "Anime",
+    "Cartoon"
+   ],
+   "version": 13,
+   "repoStatus": 1,
+   "requiresResources": false,
+   "pluginClassName": "com.DoraBash.DoraBashProvider",
+   "dexMethod": "DEFLATED",
+   "dexSize": 279260,
+   "fileSize": 116543,
+   "fileHash": "sha256-bc96643f38535822fcc6a64504ab2dbad6a3d6e158e7e9ace3d9439c392d8416",
+   "hosts": [
+    "dorabash.in",
+    "playhydrax.com",
+    "abyssplayer.com",
+    "bysevepoin.com",
+    "enc-dec.app",
+    "filemoon.in"
+   ],
+   "hostCount": 10,
+   "extendsPlugin": true,
+   "extendsBasePlugin": false,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity",
+    "com.lagradost.cloudstream3.plugins.Plugin"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)",
+    "com.lagradost.cloudstream3.plugins.Plugin": "base class of *bundled* extensions; a .cs3 must extend BasePlugin instead"
+   },
+   "embedRefs": [
+    "com.lagradost.cloudstream3.extractors.ByseVepoin",
+    "com.lagradost.cloudstream3.extractors.FileMoon",
+    "com.lagradost.cloudstream3.extractors.Filesim",
+    "com.lagradost.cloudstream3.extractors.StreamSB",
+    "com.lagradost.cloudstream3.extractors.StreamWishExtractor"
+   ],
+   "hostProvidedRefs": [
+    "com.lagradost.cloudstream3.utils.DataStore"
+   ],
+   "mediaHints": [],
+   "verdict": "NEEDS-ENTRY-SHIM",
+   "why": "the entry class itself extends com.lagradost.cloudstream3.plugins.Plugin (app module), so loadClass fails with \"Didn't find class\" before anything runs",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/DoraBash.cs3"
+  },
+  {
+   "provider": "DudeFilms",
+   "internalName": "DudeFilms",
+   "language": "hi",
+   "tvTypes": [
+    "Movie",
+    "TvSeries"
+   ],
+   "version": 12,
+   "repoStatus": 1,
+   "requiresResources": false,
+   "pluginClassName": "com.dudefilms.DudefilmsPlugin",
+   "dexMethod": "DEFLATED",
+   "dexSize": 267280,
+   "fileSize": 108874,
+   "fileHash": "sha256-0da5a3e44c19fc865677b6ef472b1100f0cfe16050eba4f5fce5d5e2b6be9871",
+   "hosts": [
+    "api.gofile.io",
+    "dudefilms.sarl",
+    "gofile.io",
+    "hubcloud.foo",
+    "hubdrive.space",
+    "new.gdflix"
+   ],
+   "hostCount": 18,
+   "extendsPlugin": false,
+   "extendsBasePlugin": true,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)"
+   },
+   "embedRefs": [
+    "com.lagradost.cloudstream3.extractors.PixelDrain",
+    "com.lagradost.cloudstream3.extractors.VidStack"
+   ],
+   "hostProvidedRefs": [],
+   "mediaHints": [],
+   "verdict": "HOST-COMPAT",
+   "why": "loads, but its code calls app-only types (CloudStreamApp, CommonActivity) - those paths throw unless the host provides a matching type",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/DudeFilms.cs3"
+  },
+  {
+   "provider": "Fibwatch",
+   "internalName": "Fibwatch",
+   "language": "hi",
+   "tvTypes": [
+    "Movie",
+    "TvSeries"
+   ],
+   "version": 11,
+   "repoStatus": 1,
+   "requiresResources": false,
+   "pluginClassName": "com.Fibwatch.FibwatchPlugin",
+   "dexMethod": "DEFLATED",
+   "dexSize": 194468,
+   "fileSize": 81013,
+   "fileHash": "sha256-8d329f2e8a8211b5e4037c6896a8df0c193081e1cf58fe8a879ff097393ca4c9",
+   "hosts": [
+    "fibdrama.top",
+    "fibtoon.top",
+    "fibwatch.top",
+    "omg10.com"
+   ],
+   "hostCount": 4,
+   "extendsPlugin": false,
+   "extendsBasePlugin": true,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)"
+   },
+   "embedRefs": [],
+   "hostProvidedRefs": [],
+   "mediaHints": [
+    "m3u8",
+    "mp4"
+   ],
+   "verdict": "HOST-COMPAT",
+   "why": "loads, but its code calls app-only types (CloudStreamApp, CommonActivity) - those paths throw unless the host provides a matching type",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/Fibwatch.cs3"
+  },
+  {
+   "provider": "Fivemovierulz",
+   "internalName": "Fivemovierulz",
+   "language": "hi",
+   "tvTypes": [
+    "TvSeries",
+    "Movie"
+   ],
+   "version": 8,
+   "repoStatus": 1,
+   "requiresResources": false,
+   "pluginClassName": "com.darkdemon.FivemovierulzPlugin",
+   "dexMethod": "DEFLATED",
+   "dexSize": 118844,
+   "fileSize": 51770,
+   "fileHash": "sha256-e4ed2c944147da0380fbee2cea9881e8db4c9760e56537c84c21c05ceb8099fd",
+   "hosts": [
+    "5movierulz.gripe",
+    "hglink.to",
+    "mivalyo.com",
+    "omg10.com",
+    "vidhidepro.com"
+   ],
+   "hostCount": 5,
+   "extendsPlugin": false,
+   "extendsBasePlugin": true,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)"
+   },
+   "embedRefs": [
+    "com.lagradost.cloudstream3.extractors.StreamWishExtractor",
+    "com.lagradost.cloudstream3.extractors.VidhideExtractor"
+   ],
+   "hostProvidedRefs": [],
+   "mediaHints": [],
+   "verdict": "HOST-COMPAT",
+   "why": "loads, but its code calls app-only types (CloudStreamApp, CommonActivity) - those paths throw unless the host provides a matching type",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/Fivemovierulz.cs3"
+  },
+  {
+   "provider": "FourKHDHub",
+   "internalName": "FourKHDHub",
+   "language": "en",
+   "tvTypes": [
+    "Movie",
+    "TvSeries"
+   ],
+   "version": 39,
+   "repoStatus": 1,
+   "requiresResources": false,
+   "pluginClassName": "com.fourKHDHub.FourKHDHubProvider",
+   "dexMethod": "DEFLATED",
+   "dexSize": 259684,
+   "fileSize": 106538,
+   "fileHash": "sha256-63f1823a30e0f23cb267a630d351d9b9f597cbd762acafc9ca7892d1d93191bb",
+   "hosts": [
+    "api.simkl.com",
+    "4khdhub.dad",
+    "hubcloud.foo",
+    "hubdrive.space",
+    "omg10.com",
+    "pixeldrain.dev"
+   ],
+   "hostCount": 6,
+   "extendsPlugin": false,
+   "extendsBasePlugin": true,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)"
+   },
+   "embedRefs": [
+    "com.lagradost.cloudstream3.extractors.PixelDrain",
+    "com.lagradost.cloudstream3.extractors.VidHidePro",
+    "com.lagradost.cloudstream3.extractors.VidStack"
+   ],
+   "hostProvidedRefs": [],
+   "mediaHints": [],
+   "verdict": "HOST-COMPAT",
+   "why": "loads, but its code calls app-only types (CloudStreamApp, CommonActivity) - those paths throw unless the host provides a matching type",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/FourKHDHub.cs3"
+  },
+  {
+   "provider": "GoldenAudiobooks",
+   "internalName": "GoldenAudiobooks",
+   "language": "en",
+   "tvTypes": [
+    "Others"
+   ],
+   "version": 1,
+   "repoStatus": 1,
+   "requiresResources": false,
+   "pluginClassName": "com.goldenaudiobooks.GoldenAudiobooksPlugin",
+   "dexMethod": "DEFLATED",
+   "dexSize": 122656,
+   "fileSize": 53770,
+   "fileHash": "sha256-78655d3f601840b916a7b165db87278cf3a74f0c58dcbe14cedf548a3a1dd738",
+   "hosts": [
+    "goldenaudiobooks.com",
+    "omg10.com"
+   ],
+   "hostCount": 2,
+   "extendsPlugin": false,
+   "extendsBasePlugin": true,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)"
+   },
+   "embedRefs": [],
+   "hostProvidedRefs": [],
+   "mediaHints": [],
+   "verdict": "HOST-COMPAT",
+   "why": "loads, but its code calls app-only types (CloudStreamApp, CommonActivity) - those paths throw unless the host provides a matching type",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/GoldenAudiobooks.cs3"
+  },
+  {
+   "provider": "Goojara",
+   "internalName": "Goojara",
+   "language": "en",
+   "tvTypes": [
+    "Movie",
+    "TvSeries"
+   ],
+   "version": 5,
+   "repoStatus": 1,
+   "requiresResources": false,
+   "pluginClassName": "com.Goojara.GoojaraProvider",
+   "dexMethod": "DEFLATED",
+   "dexSize": 190008,
+   "fileSize": 82200,
+   "fileHash": "sha256-b04d1fa521daa69ed78dab50b39b11449b5d8204a213261f23376fa45b0d1a7c",
+   "hosts": [
+    "omg10.com",
+    "stre4mpay.one",
+    "streamplay.to",
+    "thumbs.dreamstime.com",
+    "v3-cinemeta.strem.io",
+    "web.wootly.ch"
+   ],
+   "hostCount": 9,
+   "extendsPlugin": false,
+   "extendsBasePlugin": true,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)"
+   },
+   "embedRefs": [
+    "com.lagradost.cloudstream3.extractors.VidhideExtractor"
+   ],
+   "hostProvidedRefs": [],
+   "mediaHints": [],
+   "verdict": "HOST-COMPAT",
+   "why": "loads, but its code calls app-only types (CloudStreamApp, CommonActivity) - those paths throw unless the host provides a matching type",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/Goojara.cs3"
+  },
+  {
+   "provider": "HDhub4u",
+   "internalName": "HDhub4u",
+   "language": "hi",
+   "tvTypes": [
+    "Movie",
+    "TvSeries",
+    "Anime"
+   ],
+   "version": 55,
+   "repoStatus": 1,
+   "requiresResources": false,
+   "pluginClassName": "com.hdhub4u.HDhub4uPlugin",
+   "dexMethod": "DEFLATED",
+   "dexSize": 298788,
+   "fileSize": 119238,
+   "fileHash": "sha256-a8e13d203258cef18070700428dbf43058392b6be1c5de477ac2031d71c4256e",
+   "hosts": [
+    "hdhub4u.glass",
+    "hdstream4u.com",
+    "hubcloud.foo",
+    "hubdrive.space",
+    "omg10.com",
+    "pixeldrain.dev"
+   ],
+   "hostCount": 8,
+   "extendsPlugin": true,
+   "extendsBasePlugin": false,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity",
+    "com.lagradost.cloudstream3.plugins.Plugin"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)",
+    "com.lagradost.cloudstream3.plugins.Plugin": "base class of *bundled* extensions; a .cs3 must extend BasePlugin instead"
+   },
+   "embedRefs": [
+    "com.lagradost.cloudstream3.extractors.PixelDrain",
+    "com.lagradost.cloudstream3.extractors.StreamTape",
+    "com.lagradost.cloudstream3.extractors.VidHidePro"
+   ],
+   "hostProvidedRefs": [],
+   "mediaHints": [],
+   "verdict": "NEEDS-ENTRY-SHIM",
+   "why": "the entry class itself extends com.lagradost.cloudstream3.plugins.Plugin (app module), so loadClass fails with \"Didn't find class\" before anything runs",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/HDhub4u.cs3"
+  },
+  {
+   "provider": "Hdmovie2",
+   "internalName": "Hdmovie2",
+   "language": "hi",
+   "tvTypes": [
+    "TvSeries",
+    "Movie"
+   ],
+   "version": 5,
+   "repoStatus": 1,
+   "requiresResources": false,
+   "pluginClassName": "com.Hdmovie2.Hdmovie2Plugin",
+   "dexMethod": "DEFLATED",
+   "dexSize": 187764,
+   "fileSize": 81866,
+   "fileHash": "sha256-f45ae1826a3ce6f5bdd315072e5ed1ef7e789655b721983d745dd83237418e76",
+   "hosts": [
+    "molop.art",
+    "playhydrax.com",
+    "enc-dec.app",
+    "exxample.com",
+    "hdm2.ink",
+    "hdmovie2a.net"
+   ],
+   "hostCount": 8,
+   "extendsPlugin": false,
+   "extendsBasePlugin": true,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)"
+   },
+   "embedRefs": [],
+   "hostProvidedRefs": [],
+   "mediaHints": [],
+   "verdict": "HOST-COMPAT",
+   "why": "loads, but its code calls app-only types (CloudStreamApp, CommonActivity) - those paths throw unless the host provides a matching type",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/Hdmovie2.cs3"
+  },
+  {
+   "provider": "HiAnime",
+   "internalName": "HiAnime",
+   "language": "en",
+   "tvTypes": [
+    "Anime",
+    "OVA"
+   ],
+   "version": 1,
+   "repoStatus": 1,
+   "requiresResources": false,
+   "pluginClassName": "com.HiAnime.HiAnimeProviderPlugin",
+   "dexMethod": "DEFLATED",
+   "dexSize": 216912,
+   "fileSize": 91888,
+   "fileHash": "sha256-1609c760b708dc134a4af28731061986d718c12e0e52bf563b112e9a728cfa38",
+   "hosts": [
+    "hianime.at",
+    "megaplay.buzz",
+    "omg10.com",
+    "vidtube.site",
+    "zokoanime.video"
+   ],
+   "hostCount": 5,
+   "extendsPlugin": true,
+   "extendsBasePlugin": false,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity",
+    "com.lagradost.cloudstream3.plugins.Plugin"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)",
+    "com.lagradost.cloudstream3.plugins.Plugin": "base class of *bundled* extensions; a .cs3 must extend BasePlugin instead"
+   },
+   "embedRefs": [],
+   "hostProvidedRefs": [],
+   "mediaHints": [],
+   "verdict": "NEEDS-ENTRY-SHIM",
+   "why": "the entry class itself extends com.lagradost.cloudstream3.plugins.Plugin (app module), so loadClass fails with \"Didn't find class\" before anything runs",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/HiAnime.cs3"
+  },
+  {
+   "provider": "Hindmoviez",
+   "internalName": "Hindmoviez",
+   "language": "hi",
+   "tvTypes": [
+    "Movie",
+    "TvSeries"
+   ],
+   "version": 17,
+   "repoStatus": 1,
+   "requiresResources": false,
+   "pluginClassName": "com.hindmoviez.HindmoviezPlugin",
+   "dexMethod": "DEFLATED",
+   "dexSize": 236324,
+   "fileSize": 96595,
+   "fileHash": "sha256-5e587d4af35ec2b393ddc4925e4695b84215248aaecce288df18fdaef78b64c3",
+   "hosts": [
+    "gdshine.org",
+    "hindmoviez.icu",
+    "omg10.com"
+   ],
+   "hostCount": 3,
+   "extendsPlugin": false,
+   "extendsBasePlugin": true,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)"
+   },
+   "embedRefs": [],
+   "hostProvidedRefs": [],
+   "mediaHints": [],
+   "verdict": "HOST-COMPAT",
+   "why": "loads, but its code calls app-only types (CloudStreamApp, CommonActivity) - those paths throw unless the host provides a matching type",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/Hindmoviez.cs3"
+  },
+  {
+   "provider": "IdlixProvider",
+   "internalName": "IdlixProvider",
+   "language": "id",
+   "tvTypes": [
+    "TvSeries",
+    "Movie",
+    "Anime",
+    "AsianDrama"
+   ],
+   "version": 16,
+   "repoStatus": 1,
+   "requiresResources": false,
+   "pluginClassName": "com.idlix.IdlixProviderPlugin",
+   "dexMethod": "DEFLATED",
+   "dexSize": 237388,
+   "fileSize": 94915,
+   "fileHash": "sha256-f0fdab0ac98f91bb3645cddadf13422a64ad541c5923503f3b043d1e27fff5db",
+   "hosts": [
+    "jeniusplay.com",
+    "omg10.com"
+   ],
+   "hostCount": 2,
+   "extendsPlugin": false,
+   "extendsBasePlugin": true,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)"
+   },
+   "embedRefs": [],
+   "hostProvidedRefs": [],
+   "mediaHints": [
+    "m3u8"
+   ],
+   "verdict": "HOST-COMPAT",
+   "why": "loads, but its code calls app-only types (CloudStreamApp, CommonActivity) - those paths throw unless the host provides a matching type",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/IdlixProvider.cs3"
+  },
+  {
+   "provider": "IPTVPlayer",
+   "internalName": "IPTVPlayer",
+   "language": "hi",
+   "tvTypes": [
+    "Live"
+   ],
+   "version": 9,
+   "repoStatus": 1,
+   "requiresResources": false,
+   "pluginClassName": "com.phisher98.IPTVPlayerPlugin",
+   "dexMethod": "DEFLATED",
+   "dexSize": 136148,
+   "fileSize": 58532,
+   "fileHash": "sha256-8f7b910c80a4dee386059054e5897409550a61284d28d69f27ff2dc1c0f9dadc",
+   "hosts": [
+    "omg10.com"
+   ],
+   "hostCount": 1,
+   "extendsPlugin": false,
+   "extendsBasePlugin": true,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)"
+   },
+   "embedRefs": [],
+   "hostProvidedRefs": [],
+   "mediaHints": [],
+   "verdict": "HOST-COMPAT",
+   "why": "loads, but its code calls app-only types (CloudStreamApp, CommonActivity) - those paths throw unless the host provides a matching type",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/IPTVPlayer.cs3"
+  },
+  {
+   "provider": "IStreamFlare",
+   "internalName": "IStreamFlare",
+   "language": "hi",
+   "tvTypes": [
+    "AsianDrama",
+    "TvSeries",
+    "Anime",
+    "Movie",
+    "Cartoon",
+    "AnimeMovie"
+   ],
+   "version": 6,
+   "repoStatus": 1,
+   "requiresResources": false,
+   "pluginClassName": "com.IStreamFlare.IStreamFlareProvider",
+   "dexMethod": "DEFLATED",
+   "dexSize": 239340,
+   "fileSize": 96366,
+   "fileHash": "sha256-3374e3f5d4b813010ee215c7b064d25f15cdb93d2e4ee497f50928d25dde8f72",
+   "hosts": [
+    "v3-cinemeta.strem.io",
+    "exposeworld.art",
+    "guten.hippitunes.pro",
+    "iasbase.net",
+    "istreamcdn.com",
+    "omg10.com"
+   ],
+   "hostCount": 8,
+   "extendsPlugin": false,
+   "extendsBasePlugin": true,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)"
+   },
+   "embedRefs": [],
+   "hostProvidedRefs": [],
+   "mediaHints": [
+    "m3u8",
+    "mpd"
+   ],
+   "verdict": "HOST-COMPAT",
+   "why": "loads, but its code calls app-only types (CloudStreamApp, CommonActivity) - those paths throw unless the host provides a matching type",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/IStreamFlare.cs3"
+  },
+  {
+   "provider": "Jellyfin",
+   "internalName": "Jellyfin",
+   "language": "en",
+   "tvTypes": [
+    "AsianDrama",
+    "TvSeries",
+    "Anime",
+    "Movie",
+    "Cartoon",
+    "AnimeMovie"
+   ],
+   "version": 6,
+   "repoStatus": 1,
+   "requiresResources": true,
+   "pluginClassName": "com.phisher98.JellyfinPlugin",
+   "dexMethod": "DEFLATED",
+   "dexSize": 229056,
+   "fileSize": 100568,
+   "fileHash": "sha256-cf5bdf1a6879492c0c23efc2ba1bd5921929b662bc261adf28aba4ff87dc0346",
+   "hosts": [
+    "omg10.com"
+   ],
+   "hostCount": 1,
+   "extendsPlugin": true,
+   "extendsBasePlugin": false,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity",
+    "com.lagradost.cloudstream3.plugins.Plugin"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)",
+    "com.lagradost.cloudstream3.plugins.Plugin": "base class of *bundled* extensions; a .cs3 must extend BasePlugin instead"
+   },
+   "embedRefs": [],
+   "hostProvidedRefs": [],
+   "mediaHints": [
+    "mp4"
+   ],
+   "verdict": "NEEDS-ENTRY-SHIM",
+   "why": "the entry class itself extends com.lagradost.cloudstream3.plugins.Plugin (app module), so loadClass fails with \"Didn't find class\" before anything runs",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/Jellyfin.cs3"
+  },
+  {
+   "provider": "Kartoons",
+   "internalName": "Kartoons",
+   "language": "hi",
+   "tvTypes": [
+    "AnimeMovie",
+    "Anime",
+    "Cartoon"
+   ],
+   "version": 4,
+   "repoStatus": 1,
+   "requiresResources": true,
+   "pluginClassName": "com.Kartoons.KartoonsPlugin",
+   "dexMethod": "DEFLATED",
+   "dexSize": 272624,
+   "fileSize": 117811,
+   "fileHash": "sha256-4099269afb0c81c9fee1930432e8f8eb8bb7a517c392ddf4479f13a266c84f91",
+   "hosts": [
+    "kartoons.me",
+    "api.kartoons.me",
+    "omg10.com"
+   ],
+   "hostCount": 3,
+   "extendsPlugin": true,
+   "extendsBasePlugin": false,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity",
+    "com.lagradost.cloudstream3.plugins.Plugin"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)",
+    "com.lagradost.cloudstream3.plugins.Plugin": "base class of *bundled* extensions; a .cs3 must extend BasePlugin instead"
+   },
+   "embedRefs": [],
+   "hostProvidedRefs": [],
+   "mediaHints": [
+    "m3u8",
+    "ts"
+   ],
+   "verdict": "NEEDS-ENTRY-SHIM",
+   "why": "the entry class itself extends com.lagradost.cloudstream3.plugins.Plugin (app module), so loadClass fails with \"Didn't find class\" before anything runs",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/Kartoons.cs3"
+  },
+  {
+   "provider": "Kickassanime",
+   "internalName": "Kickassanime",
+   "language": "en",
+   "tvTypes": [
+    "AnimeMovie",
+    "Anime",
+    "OVA"
+   ],
+   "version": 27,
+   "repoStatus": 1,
+   "requiresResources": false,
+   "pluginClassName": "com.kickassanime.KickassanimePlugin",
+   "dexMethod": "DEFLATED",
+   "dexSize": 237520,
+   "fileSize": 97267,
+   "fileHash": "sha256-21d8f4eb2e28c631c399b43813b4802f066c735f696950c825434e6566fbd184",
+   "hosts": [
+    "kaa.lt",
+    "omg10.com",
+    "plyr.link"
+   ],
+   "hostCount": 3,
+   "extendsPlugin": false,
+   "extendsBasePlugin": true,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)"
+   },
+   "embedRefs": [],
+   "hostProvidedRefs": [],
+   "mediaHints": [
+    "m3u8"
+   ],
+   "verdict": "HOST-COMPAT",
+   "why": "loads, but its code calls app-only types (CloudStreamApp, CommonActivity) - those paths throw unless the host provides a matching type",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/Kickassanime.cs3"
+  },
+  {
+   "provider": "KisskhProvider",
+   "internalName": "KisskhProvider",
+   "language": "en",
+   "tvTypes": [
+    "AsianDrama",
+    "TvSeries",
+    "Anime",
+    "Movie"
+   ],
+   "version": 22,
+   "repoStatus": 1,
+   "requiresResources": false,
+   "pluginClassName": "com.phisher98.KisskhProviderPlugin",
+   "dexMethod": "DEFLATED",
+   "dexSize": 181624,
+   "fileSize": 78136,
+   "fileHash": "sha256-02d2b739ba68f6ab8b61e56d191d3f01c824d8aff1a71157878682fd17ee1289",
+   "hosts": [
+    "kisskh.is",
+    "omg10.com"
+   ],
+   "hostCount": 2,
+   "extendsPlugin": false,
+   "extendsBasePlugin": true,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)"
+   },
+   "embedRefs": [],
+   "hostProvidedRefs": [],
+   "mediaHints": [
+    "m3u8"
+   ],
+   "verdict": "HOST-COMPAT",
+   "why": "loads, but its code calls app-only types (CloudStreamApp, CommonActivity) - those paths throw unless the host provides a matching type",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/KisskhProvider.cs3"
+  },
+  {
+   "provider": "Latanime",
+   "internalName": "Latanime",
+   "language": "mx",
+   "tvTypes": [
+    "Movie",
+    "Anime",
+    "AnimeMovie"
+   ],
+   "version": 5,
+   "repoStatus": 1,
+   "requiresResources": false,
+   "pluginClassName": "com.latanime.LatanimeProvider",
+   "dexMethod": "DEFLATED",
+   "dexSize": 123184,
+   "fileSize": 53767,
+   "fileHash": "sha256-00df7acefd83abf4275bc0be53ece8c59a7029d581b2a9e5d85763b0c369ff27",
+   "hosts": [
+    "animeav1.uns.bio",
+    "latanime.org",
+    "omg10.com",
+    "player.zilla-networks.com"
+   ],
+   "hostCount": 4,
+   "extendsPlugin": true,
+   "extendsBasePlugin": false,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity",
+    "com.lagradost.cloudstream3.plugins.Plugin"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)",
+    "com.lagradost.cloudstream3.plugins.Plugin": "base class of *bundled* extensions; a .cs3 must extend BasePlugin instead"
+   },
+   "embedRefs": [
+    "com.lagradost.cloudstream3.extractors.VidStack"
+   ],
+   "hostProvidedRefs": [],
+   "mediaHints": [],
+   "verdict": "NEEDS-ENTRY-SHIM",
+   "why": "the entry class itself extends com.lagradost.cloudstream3.plugins.Plugin (app module), so loadClass fails with \"Didn't find class\" before anything runs",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/Latanime.cs3"
+  },
+  {
+   "provider": "LayarKacaProvider",
+   "internalName": "LayarKacaProvider",
+   "language": "id",
+   "tvTypes": [
+    "AsianDrama",
+    "TvSeries",
+    "Movie"
+   ],
+   "version": 10,
+   "repoStatus": 1,
+   "requiresResources": false,
+   "pluginClassName": "com.layarKacaProvider.LayarKacaProviderPlugin",
+   "dexMethod": "DEFLATED",
+   "dexSize": 218752,
+   "fileSize": 91119,
+   "fileHash": "sha256-ab7071b282396eee837fd0021d0b4ea4777c066f2fb76a157050c296d25f91da",
+   "hosts": [
+    "playcdn.de",
+    "playhydrax.com",
+    "tv12.lk21official.cc",
+    "abyssplayer.com",
+    "cloud.hownetwork.xyz",
+    "co4nxtrl.com"
+   ],
+   "hostCount": 16,
+   "extendsPlugin": true,
+   "extendsBasePlugin": false,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity",
+    "com.lagradost.cloudstream3.plugins.Plugin"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)",
+    "com.lagradost.cloudstream3.plugins.Plugin": "base class of *bundled* extensions; a .cs3 must extend BasePlugin instead"
+   },
+   "embedRefs": [
+    "com.lagradost.cloudstream3.extractors.DoodLaExtractor",
+    "com.lagradost.cloudstream3.extractors.EmturbovidExtractor",
+    "com.lagradost.cloudstream3.extractors.FileMoon",
+    "com.lagradost.cloudstream3.extractors.FilemoonV2",
+    "com.lagradost.cloudstream3.extractors.Filesim",
+    "com.lagradost.cloudstream3.extractors.Mp4Upload",
+    "com.lagradost.cloudstream3.extractors.StreamTape",
+    "com.lagradost.cloudstream3.extractors.StreamWishExtractor",
+    "com.lagradost.cloudstream3.extractors.VidHidePro6",
+    "com.lagradost.cloudstream3.extractors.Voe"
+   ],
+   "hostProvidedRefs": [
+    "com.lagradost.cloudstream3.utils.DataStore"
+   ],
+   "mediaHints": [
+    "m3u8",
+    "mp4"
+   ],
+   "verdict": "NEEDS-ENTRY-SHIM",
+   "why": "the entry class itself extends com.lagradost.cloudstream3.plugins.Plugin (app module), so loadClass fails with \"Didn't find class\" before anything runs",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/LayarKacaProvider.cs3"
+  },
+  {
+   "provider": "MassTamilanProvider",
+   "internalName": "MassTamilanProvider",
+   "language": "ta",
+   "tvTypes": [
+    "Music",
+    "Movie"
+   ],
+   "version": 9,
+   "repoStatus": 1,
+   "requiresResources": false,
+   "pluginClassName": "com.likdev256.MovieHUBProviderPlugin",
+   "dexMethod": "DEFLATED",
+   "dexSize": 128704,
+   "fileSize": 56083,
+   "fileHash": "sha256-2f55f5b5c6b9844c4d1d091394d90fccfe7d8018b1c8282763810c664d7763b8",
+   "hosts": [
+    "goodproxy.goodproxy.workers.dev",
+    "masstamilan.dev",
+    "miro.medium.com",
+    "omg10.com"
+   ],
+   "hostCount": 4,
+   "extendsPlugin": false,
+   "extendsBasePlugin": true,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)"
+   },
+   "embedRefs": [],
+   "hostProvidedRefs": [],
+   "mediaHints": [],
+   "verdict": "HOST-COMPAT",
+   "why": "loads, but its code calls app-only types (CloudStreamApp, CommonActivity) - those paths throw unless the host provides a matching type",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/MassTamilanProvider.cs3"
+  },
+  {
+   "provider": "Megakino",
+   "internalName": "Megakino",
+   "language": "de",
+   "tvTypes": [
+    "Movie,Anime,Cartoon"
+   ],
+   "version": 6,
+   "repoStatus": 1,
+   "requiresResources": false,
+   "pluginClassName": "com.Megakino.MegakinoProvider",
+   "dexMethod": "DEFLATED",
+   "dexSize": 136908,
+   "fileSize": 58648,
+   "fileHash": "sha256-0c0911352a1c0255d173600d0c529414d3dcc1d2322f61b7291046a791c335c3",
+   "hosts": [
+    "megakino5.org",
+    "omg10.com",
+    "watch.gxplayer.xyz"
+   ],
+   "hostCount": 3,
+   "extendsPlugin": false,
+   "extendsBasePlugin": true,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)"
+   },
+   "embedRefs": [
+    "com.lagradost.cloudstream3.extractors.Voe"
+   ],
+   "hostProvidedRefs": [],
+   "mediaHints": [],
+   "verdict": "HOST-COMPAT",
+   "why": "loads, but its code calls app-only types (CloudStreamApp, CommonActivity) - those paths throw unless the host provides a matching type",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/Megakino.cs3"
+  },
+  {
+   "provider": "Microtv",
+   "internalName": "Microtv",
+   "language": "hi",
+   "tvTypes": [
+    "Movie",
+    "TvSeries"
+   ],
+   "version": 3,
+   "repoStatus": 1,
+   "requiresResources": false,
+   "pluginClassName": "com.Microtv.MicrotvProvider",
+   "dexMethod": "DEFLATED",
+   "dexSize": 181204,
+   "fileSize": 76555,
+   "fileHash": "sha256-5da4fe091844c7a82e4049bc43a31f915764d17227541c966b9b300c1d3750c7",
+   "hosts": [
+    "api.gofile.io",
+    "dldokan.online",
+    "gofile.io",
+    "new.microtv.st",
+    "new.xdl.my.id",
+    "new8.xcloud.asia"
+   ],
+   "hostCount": 9,
+   "extendsPlugin": false,
+   "extendsBasePlugin": true,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)"
+   },
+   "embedRefs": [],
+   "hostProvidedRefs": [],
+   "mediaHints": [],
+   "verdict": "HOST-COMPAT",
+   "why": "loads, but its code calls app-only types (CloudStreamApp, CommonActivity) - those paths throw unless the host provides a matching type",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/Microtv.cs3"
+  },
+  {
+   "provider": "MovieBoxProvider",
+   "internalName": "MovieBoxProvider",
+   "language": "hi",
+   "tvTypes": [
+    "Movie",
+    "TvSeries"
+   ],
+   "version": 31,
+   "repoStatus": 1,
+   "requiresResources": true,
+   "pluginClassName": "com.MovieBox.MovieBoxProviderPlugin",
+   "dexMethod": "DEFLATED",
+   "dexSize": 274092,
+   "fileSize": 124331,
+   "fileHash": "sha256-7661180124d821b3bb24487769e08760d6e72cc3abff09551832b1bcba2157c0",
+   "hosts": [
+    "api3.aoneroom.com",
+    "api4.aoneroom.com",
+    "api4sg.aoneroom.com",
+    "api5.aoneroom.com",
+    "api6.aoneroom.com",
+    "apig.inmoviebox.com"
+   ],
+   "hostCount": 8,
+   "extendsPlugin": true,
+   "extendsBasePlugin": false,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity",
+    "com.lagradost.cloudstream3.plugins.Plugin"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)",
+    "com.lagradost.cloudstream3.plugins.Plugin": "base class of *bundled* extensions; a .cs3 must extend BasePlugin instead"
+   },
+   "embedRefs": [],
+   "hostProvidedRefs": [],
+   "mediaHints": [
+    "m3u8",
+    "mp4",
+    "mpd"
+   ],
+   "verdict": "NEEDS-ENTRY-SHIM",
+   "why": "the entry class itself extends com.lagradost.cloudstream3.plugins.Plugin (app module), so loadClass fails with \"Didn't find class\" before anything runs",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/MovieBoxProvider.cs3"
+  },
+  {
+   "provider": "Movies4u",
+   "internalName": "Movies4u",
+   "language": "hi",
+   "tvTypes": [
+    "Movie",
+    "TvSeries"
+   ],
+   "version": 15,
+   "repoStatus": 1,
+   "requiresResources": false,
+   "pluginClassName": "com.movies4u.Movies4uProvider",
+   "dexMethod": "DEFLATED",
+   "dexSize": 284348,
+   "fileSize": 118415,
+   "fileHash": "sha256-16376a2a4c555b4bb6e7aac98c272d48686de5684ed7feb240bc58c1e55f72ea",
+   "hosts": [
+    "api.gofile.io",
+    "gofile.io",
+    "hubcloud.foo",
+    "m4ulinks.com",
+    "m4ulinks.site",
+    "new.gdflix"
+   ],
+   "hostCount": 19,
+   "extendsPlugin": false,
+   "extendsBasePlugin": true,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)"
+   },
+   "embedRefs": [],
+   "hostProvidedRefs": [],
+   "mediaHints": [],
+   "verdict": "HOST-COMPAT",
+   "why": "loads, but its code calls app-only types (CloudStreamApp, CommonActivity) - those paths throw unless the host provides a matching type",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/Movies4u.cs3"
+  },
+  {
+   "provider": "MPlayerProvider",
+   "internalName": "MPlayerProvider",
+   "language": "hi",
+   "tvTypes": [
+    "AsianDrama",
+    "TvSeries",
+    "Movie"
+   ],
+   "version": 9,
+   "repoStatus": 1,
+   "requiresResources": false,
+   "pluginClassName": "com.MPlayer.MPlayerPlugin",
+   "dexMethod": "DEFLATED",
+   "dexSize": 378880,
+   "fileSize": 132049,
+   "fileHash": "sha256-ff35e8c4b9ccccbaae11f93aec4666ea6c2617834d45a587a8ab24fad6b46781",
+   "hosts": [
+    "api.mxplayer.in",
+    "d3sgzbosmwirao.cloudfront.net",
+    "omg10.com",
+    "qqcdnpictest.mxplay.com",
+    "www.mxplayer.in"
+   ],
+   "hostCount": 5,
+   "extendsPlugin": false,
+   "extendsBasePlugin": true,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)"
+   },
+   "embedRefs": [],
+   "hostProvidedRefs": [],
+   "mediaHints": [
+    "m3u8",
+    "mpd"
+   ],
+   "verdict": "HOST-COMPAT",
+   "why": "loads, but its code calls app-only types (CloudStreamApp, CommonActivity) - those paths throw unless the host provides a matching type",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/MPlayerProvider.cs3"
+  },
+  {
+   "provider": "MultiMoviesProvider",
+   "internalName": "MultiMoviesProvider",
+   "language": "hi",
+   "tvTypes": [
+    "Movie",
+    "TvSeries",
+    "Anime"
+   ],
+   "version": 54,
+   "repoStatus": 1,
+   "requiresResources": false,
+   "pluginClassName": "com.phisher98.MultiMoviesProviderPlugin",
+   "dexMethod": "DEFLATED",
+   "dexSize": 335280,
+   "fileSize": 141369,
+   "fileHash": "sha256-3a7d8fddcd4b1fd8713e6f731218a216a81b50b291c9451369b483c010aa6161",
+   "hosts": [
+    "db.speedracelight.com",
+    "gofile.io",
+    "multimovies.casa",
+    "nxsha.space",
+    "allinonedownloader.fun",
+    "animezia.cloud"
+   ],
+   "hostCount": 22,
+   "extendsPlugin": true,
+   "extendsBasePlugin": false,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity",
+    "com.lagradost.cloudstream3.plugins.Plugin"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)",
+    "com.lagradost.cloudstream3.plugins.Plugin": "base class of *bundled* extensions; a .cs3 must extend BasePlugin instead"
+   },
+   "embedRefs": [
+    "com.lagradost.cloudstream3.extractors.StreamWishExtractor",
+    "com.lagradost.cloudstream3.extractors.VidHidePro",
+    "com.lagradost.cloudstream3.extractors.VidStack",
+    "com.lagradost.cloudstream3.extractors.VidhideExtractor"
+   ],
+   "hostProvidedRefs": [],
+   "mediaHints": [
+    "m3u8"
+   ],
+   "verdict": "NEEDS-ENTRY-SHIM",
+   "why": "the entry class itself extends com.lagradost.cloudstream3.plugins.Plugin (app module), so loadClass fails with \"Didn't find class\" before anything runs",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/MultiMoviesProvider.cs3"
+  },
+  {
+   "provider": "Netcinez",
+   "internalName": "Netcinez",
+   "language": "pt-br",
+   "tvTypes": [
+    "Movie",
+    "TvSeries"
+   ],
+   "version": 5,
+   "repoStatus": 1,
+   "requiresResources": false,
+   "pluginClassName": "com.Netcinez.NetcinezProvider",
+   "dexMethod": "DEFLATED",
+   "dexSize": 125708,
+   "fileSize": 55031,
+   "fileHash": "sha256-97050334f64256322cbce641016c8efd327321f728406212a536e491cfeb1821",
+   "hosts": [
+    "netcinez.si",
+    "omg10.com"
+   ],
+   "hostCount": 2,
+   "extendsPlugin": false,
+   "extendsBasePlugin": true,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)"
+   },
+   "embedRefs": [],
+   "hostProvidedRefs": [],
+   "mediaHints": [],
+   "verdict": "HOST-COMPAT",
+   "why": "loads, but its code calls app-only types (CloudStreamApp, CommonActivity) - those paths throw unless the host provides a matching type",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/Netcinez.cs3"
+  },
+  {
+   "provider": "ObejrzyjTo",
+   "internalName": "ObejrzyjTo",
+   "language": "pl",
+   "tvTypes": [
+    "Movie",
+    "TvSeries"
+   ],
+   "version": 3,
+   "repoStatus": 1,
+   "requiresResources": false,
+   "pluginClassName": "com.phisher98.ObejrzyjToPlugin",
+   "dexMethod": "DEFLATED",
+   "dexSize": 377216,
+   "fileSize": 151554,
+   "fileHash": "sha256-a32283416da35e2ce8120eac3a1d8707615460eae718055b0b3eb3f94e7cf18c",
+   "hosts": [
+    "ultrastream.online",
+    "vidneo.cc",
+    "vidara.to",
+    "bysekoze.com",
+    "bysevepoin.com",
+    "omg10.com"
+   ],
+   "hostCount": 7,
+   "extendsPlugin": false,
+   "extendsBasePlugin": true,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)"
+   },
+   "embedRefs": [],
+   "hostProvidedRefs": [],
+   "mediaHints": [
+    "m3u8"
+   ],
+   "verdict": "HOST-COMPAT",
+   "why": "loads, but its code calls app-only types (CloudStreamApp, CommonActivity) - those paths throw unless the host provides a matching type",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/ObejrzyjTo.cs3"
+  },
+  {
+   "provider": "OHLI24",
+   "internalName": "OHLI24",
+   "language": "ko",
+   "tvTypes": [
+    "AsianDrama",
+    "TvSeries",
+    "Movie"
+   ],
+   "version": 7,
+   "repoStatus": 1,
+   "requiresResources": false,
+   "pluginClassName": "com.ohli24.OHLI24Plugin",
+   "dexMethod": "DEFLATED",
+   "dexSize": 133556,
+   "fileSize": 58368,
+   "fileHash": "sha256-964fea6171c26d7ce60b4928acd7e6d5370bceeb592128dea76006c937929f33",
+   "hosts": [
+    "ani.ohli24.com",
+    "cdndania.com",
+    "michealcdn.com",
+    "omg10.com"
+   ],
+   "hostCount": 4,
+   "extendsPlugin": false,
+   "extendsBasePlugin": true,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)"
+   },
+   "embedRefs": [],
+   "hostProvidedRefs": [],
+   "mediaHints": [],
+   "verdict": "HOST-COMPAT",
+   "why": "loads, but its code calls app-only types (CloudStreamApp, CommonActivity) - those paths throw unless the host provides a matching type",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/OHLI24.cs3"
+  },
+  {
+   "provider": "OnePace",
+   "internalName": "OnePace",
+   "language": "en",
+   "tvTypes": [
+    "Anime"
+   ],
+   "version": 23,
+   "repoStatus": 1,
+   "requiresResources": false,
+   "pluginClassName": "com.phisher98.OnePacePlugin",
+   "dexMethod": "DEFLATED",
+   "dexSize": 186252,
+   "fileSize": 79153,
+   "fileHash": "sha256-b70e90f391b3d72bf4f081cf34cf186fb23ec1f92cdf2d8d9931c1dba3fdca2c",
+   "hosts": [
+    "playhydrax.com",
+    "abyssplayer.com",
+    "animedekho.app",
+    "animedekho.co",
+    "animeworld.site",
+    "as-cdn21.top"
+   ],
+   "hostCount": 16,
+   "extendsPlugin": false,
+   "extendsBasePlugin": true,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)"
+   },
+   "embedRefs": [
+    "com.lagradost.cloudstream3.extractors.StreamWishExtractor",
+    "com.lagradost.cloudstream3.extractors.VidHidePro",
+    "com.lagradost.cloudstream3.extractors.VidStack",
+    "com.lagradost.cloudstream3.extractors.Vidmoly"
+   ],
+   "hostProvidedRefs": [],
+   "mediaHints": [],
+   "verdict": "HOST-COMPAT",
+   "why": "loads, but its code calls app-only types (CloudStreamApp, CommonActivity) - those paths throw unless the host provides a matching type",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/OnePace.cs3"
+  },
+  {
+   "provider": "OneTouchTV",
+   "internalName": "OneTouchTV",
+   "language": "en",
+   "tvTypes": [
+    "AsianDrama",
+    "TvSeries"
+   ],
+   "version": 5,
+   "repoStatus": 1,
+   "requiresResources": false,
+   "pluginClassName": "com.OneTouchTV.OneTouchTVPlugin",
+   "dexMethod": "DEFLATED",
+   "dexSize": 252596,
+   "fileSize": 100521,
+   "fileHash": "sha256-2f6c1a8523d6600aa476e7e03246bfab0460d2348f19cd032630f808d4aeaa3b",
+   "hosts": [
+    "omg10.com"
+   ],
+   "hostCount": 1,
+   "extendsPlugin": false,
+   "extendsBasePlugin": true,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)"
+   },
+   "embedRefs": [],
+   "hostProvidedRefs": [],
+   "mediaHints": [
+    "m3u8",
+    "mp4"
+   ],
+   "verdict": "HOST-COMPAT",
+   "why": "loads, but its code calls app-only types (CloudStreamApp, CommonActivity) - those paths throw unless the host provides a matching type",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/OneTouchTV.cs3"
+  },
+  {
+   "provider": "Pencurimovie",
+   "internalName": "Pencurimovie",
+   "language": "id",
+   "tvTypes": [
+    "Movie",
+    "TvSeries"
+   ],
+   "version": 8,
+   "repoStatus": 1,
+   "requiresResources": false,
+   "pluginClassName": "com.Pencurimovie.PencurimovieProvider",
+   "dexMethod": "DEFLATED",
+   "dexSize": 122620,
+   "fileSize": 53476,
+   "fileHash": "sha256-5ec9779acb4307d8ae2cb9bb97ded76caf8b2900dd0a3b4136311712e206ccef",
+   "hosts": [
+    "omg10.com",
+    "ww21.pencurimovie.sbs"
+   ],
+   "hostCount": 2,
+   "extendsPlugin": false,
+   "extendsBasePlugin": true,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)"
+   },
+   "embedRefs": [],
+   "hostProvidedRefs": [],
+   "mediaHints": [],
+   "verdict": "HOST-COMPAT",
+   "why": "loads, but its code calls app-only types (CloudStreamApp, CommonActivity) - those paths throw unless the host provides a matching type",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/Pencurimovie.cs3"
+  },
+  {
+   "provider": "Pinoymoviepedia",
+   "internalName": "Pinoymoviepedia",
+   "language": "fil",
+   "tvTypes": [
+    "Movie",
+    "TvSeries"
+   ],
+   "version": 5,
+   "repoStatus": 1,
+   "requiresResources": false,
+   "pluginClassName": "com.Pinoymoviepedia.PinoymoviepediaProvider",
+   "dexMethod": "DEFLATED",
+   "dexSize": 140828,
+   "fileSize": 60535,
+   "fileHash": "sha256-397de2df0f619e97b1d11103fa8457fc954f4acfdf073cfffde932116f3a3303",
+   "hosts": [
+    "bluray7.com",
+    "dood.wf",
+    "ds2play.com",
+    "luluvdo.store",
+    "mixdrop.ag",
+    "omg10.com"
+   ],
+   "hostCount": 9,
+   "extendsPlugin": false,
+   "extendsBasePlugin": true,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)"
+   },
+   "embedRefs": [
+    "com.lagradost.cloudstream3.extractors.MixDrop",
+    "com.lagradost.cloudstream3.extractors.StreamWishExtractor",
+    "com.lagradost.cloudstream3.extractors.Upstream",
+    "com.lagradost.cloudstream3.extractors.VidHidePro3",
+    "com.lagradost.cloudstream3.extractors.VidhideExtractor",
+    "com.lagradost.cloudstream3.extractors.Voe"
+   ],
+   "hostProvidedRefs": [],
+   "mediaHints": [],
+   "verdict": "HOST-COMPAT",
+   "why": "loads, but its code calls app-only types (CloudStreamApp, CommonActivity) - those paths throw unless the host provides a matching type",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/Pinoymoviepedia.cs3"
+  },
+  {
+   "provider": "Piratexplay",
+   "internalName": "Piratexplay",
+   "language": "hi",
+   "tvTypes": [
+    "AnimeMovie",
+    "Anime",
+    "Cartoon"
+   ],
+   "version": 5,
+   "repoStatus": 1,
+   "requiresResources": false,
+   "pluginClassName": "com.piratexplay.PiratexplayProvider",
+   "dexMethod": "DEFLATED",
+   "dexSize": 241620,
+   "fileSize": 103780,
+   "fileHash": "sha256-457bb95745c7fcd033f5eac8800692198115632d9b7e927a32020e58dc65793c",
+   "hosts": [
+    "playhydrax.com",
+    "abyssplayer.com",
+    "as-cdn21.top",
+    "buzzheavier.com",
+    "bysevepoin.com",
+    "bysezejataos.com"
+   ],
+   "hostCount": 21,
+   "extendsPlugin": false,
+   "extendsBasePlugin": true,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)"
+   },
+   "embedRefs": [
+    "com.lagradost.cloudstream3.extractors.Filesim",
+    "com.lagradost.cloudstream3.extractors.VidHidePro",
+    "com.lagradost.cloudstream3.extractors.VidStack"
+   ],
+   "hostProvidedRefs": [],
+   "mediaHints": [],
+   "verdict": "HOST-COMPAT",
+   "why": "loads, but its code calls app-only types (CloudStreamApp, CommonActivity) - those paths throw unless the host provides a matching type",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/Piratexplay.cs3"
+  },
+  {
+   "provider": "Pmsm",
+   "internalName": "Pmsm",
+   "language": "id",
+   "tvTypes": [
+    "Movie",
+    "TvSeries"
+   ],
+   "version": 7,
+   "repoStatus": 1,
+   "requiresResources": false,
+   "pluginClassName": "com.pmsm.PmsmPlugin",
+   "dexMethod": "DEFLATED",
+   "dexSize": 149580,
+   "fileSize": 64188,
+   "fileHash": "sha256-17560eb374da85f4fb07016da46993dca5d46cb16c3ce9501e7f1a2e62e56b73",
+   "hosts": [
+    "dhtpre.com",
+    "larhu.website",
+    "netu.msmbot.club",
+    "omg10.com",
+    "pencurimoviesubmalay26.site",
+    "playerx.ezplayer.stream"
+   ],
+   "hostCount": 13,
+   "extendsPlugin": true,
+   "extendsBasePlugin": false,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity",
+    "com.lagradost.cloudstream3.plugins.Plugin"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)",
+    "com.lagradost.cloudstream3.plugins.Plugin": "base class of *bundled* extensions; a .cs3 must extend BasePlugin instead"
+   },
+   "embedRefs": [
+    "com.lagradost.cloudstream3.extractors.VidStack",
+    "com.lagradost.cloudstream3.extractors.VidhideExtractor"
+   ],
+   "hostProvidedRefs": [],
+   "mediaHints": [
+    "m3u8"
+   ],
+   "verdict": "NEEDS-ENTRY-SHIM",
+   "why": "the entry class itself extends com.lagradost.cloudstream3.plugins.Plugin (app module), so loadClass fails with \"Didn't find class\" before anything runs",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/Pmsm.cs3"
+  },
+  {
+   "provider": "PublicSportsIPTV",
+   "internalName": "PublicSportsIPTV",
+   "language": "en",
+   "tvTypes": [
+    "Live"
+   ],
+   "version": 5,
+   "repoStatus": 1,
+   "requiresResources": false,
+   "pluginClassName": "com.PublicSportsIPTV.PublicSportsIPTVProvider",
+   "dexMethod": "DEFLATED",
+   "dexSize": 152036,
+   "fileSize": 62787,
+   "fileHash": "sha256-839f2757594b3e5e4e544134c105eef347b2b49497bc9b34a4917b92a064e293",
+   "hosts": [
+    "omg10.com",
+    "www.fancode.com"
+   ],
+   "hostCount": 2,
+   "extendsPlugin": false,
+   "extendsBasePlugin": true,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)"
+   },
+   "embedRefs": [],
+   "hostProvidedRefs": [],
+   "mediaHints": [],
+   "verdict": "HOST-COMPAT",
+   "why": "loads, but its code calls app-only types (CloudStreamApp, CommonActivity) - those paths throw unless the host provides a matching type",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/PublicSportsIPTV.cs3"
+  },
+  {
+   "provider": "QuickIPTV",
+   "internalName": "QuickIPTV",
+   "language": "en",
+   "tvTypes": [
+    "Live"
+   ],
+   "version": 8,
+   "repoStatus": 1,
+   "requiresResources": false,
+   "pluginClassName": "com.phisher98.QuickIPTVPlugin",
+   "dexMethod": "DEFLATED",
+   "dexSize": 153728,
+   "fileSize": 62309,
+   "fileHash": "sha256-2289a6c1659d0ac2bc88afd15eb464e137ab942c3c7665d764e08ac9883181ba",
+   "hosts": [
+    "embedme.top",
+    "omg10.com"
+   ],
+   "hostCount": 2,
+   "extendsPlugin": false,
+   "extendsBasePlugin": true,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)"
+   },
+   "embedRefs": [],
+   "hostProvidedRefs": [],
+   "mediaHints": [
+    "m3u8"
+   ],
+   "verdict": "HOST-COMPAT",
+   "why": "loads, but its code calls app-only types (CloudStreamApp, CommonActivity) - those paths throw unless the host provides a matching type",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/QuickIPTV.cs3"
+  },
+  {
+   "provider": "Reanime",
+   "internalName": "Reanime",
+   "language": "en",
+   "tvTypes": [
+    "AnimeMovie",
+    "Anime",
+    "OVA"
+   ],
+   "version": 2,
+   "repoStatus": 1,
+   "requiresResources": false,
+   "pluginClassName": "com.phisher98.ReanimePlugin",
+   "dexMethod": "DEFLATED",
+   "dexSize": 282672,
+   "fileSize": 116017,
+   "fileHash": "sha256-6e765dcfa260b0fcb828f2fc2a5af2d96d9ff4582348fd41f66f4d38866d50c7",
+   "hosts": [
+    "enc-dec.app",
+    "flixcloud.cc",
+    "reanime.to",
+    "omg10.com"
+   ],
+   "hostCount": 4,
+   "extendsPlugin": false,
+   "extendsBasePlugin": true,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)"
+   },
+   "embedRefs": [],
+   "hostProvidedRefs": [],
+   "mediaHints": [
+    "m3u8",
+    "mp4"
+   ],
+   "verdict": "HOST-COMPAT",
+   "why": "loads, but its code calls app-only types (CloudStreamApp, CommonActivity) - those paths throw unless the host provides a matching type",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/Reanime.cs3"
+  },
+  {
+   "provider": "RingZ",
+   "internalName": "RingZ",
+   "language": "hi",
+   "tvTypes": [
+    "AnimeMovie",
+    "Anime",
+    "Cartoon"
+   ],
+   "version": 12,
+   "repoStatus": 1,
+   "requiresResources": false,
+   "pluginClassName": "com.RingZ.RingZProvider",
+   "dexMethod": "DEFLATED",
+   "dexSize": 157800,
+   "fileSize": 67975,
+   "fileHash": "sha256-10bbbdbec6cd5ff25ad136b197ebcda97e9daa3753d45d5827ee0f8d089e7b15",
+   "hosts": [
+    "omg10.com"
+   ],
+   "hostCount": 1,
+   "extendsPlugin": false,
+   "extendsBasePlugin": true,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)"
+   },
+   "embedRefs": [],
+   "hostProvidedRefs": [],
+   "mediaHints": [],
+   "verdict": "HOST-COMPAT",
+   "why": "loads, but its code calls app-only types (CloudStreamApp, CommonActivity) - those paths throw unless the host provides a matching type",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/RingZ.cs3"
+  },
+  {
+   "provider": "ShowBox",
+   "internalName": "ShowBox",
+   "language": "en",
+   "tvTypes": [
+    "AsianDrama",
+    "Anime",
+    "TvSeries",
+    "Movie"
+   ],
+   "version": 8,
+   "repoStatus": 1,
+   "requiresResources": true,
+   "pluginClassName": "com.phisher98.SuperStreamPlugin",
+   "dexMethod": "DEFLATED",
+   "dexSize": 382004,
+   "fileSize": 153433,
+   "fileHash": "sha256-e2b7a88db996bed9f380cabc9d28867dde7ae4b7ad6c8d47732cfcbe2f5b7164",
+   "hosts": [
+    "omg10.com",
+    "opensubtitles-v3.strem.io",
+    "v3-cinemeta.strem.io",
+    "watchsomuch.tv",
+    "www.febbox.com"
+   ],
+   "hostCount": 5,
+   "extendsPlugin": true,
+   "extendsBasePlugin": false,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity",
+    "com.lagradost.cloudstream3.plugins.Plugin"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)",
+    "com.lagradost.cloudstream3.plugins.Plugin": "base class of *bundled* extensions; a .cs3 must extend BasePlugin instead"
+   },
+   "embedRefs": [],
+   "hostProvidedRefs": [],
+   "mediaHints": [],
+   "verdict": "NEEDS-ENTRY-SHIM",
+   "why": "the entry class itself extends com.lagradost.cloudstream3.plugins.Plugin (app module), so loadClass fails with \"Didn't find class\" before anything runs",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/ShowBox.cs3"
+  },
+  {
+   "provider": "StreamPlay",
+   "internalName": "StreamPlay",
+   "language": "en",
+   "tvTypes": [
+    "AsianDrama",
+    "TvSeries",
+    "Anime",
+    "Movie",
+    "Cartoon",
+    "AnimeMovie"
+   ],
+   "version": 670,
+   "repoStatus": 1,
+   "requiresResources": true,
+   "pluginClassName": "com.phisher98.StreamPlayPlugin",
+   "dexMethod": "DEFLATED",
+   "dexSize": 4137448,
+   "fileSize": 1601667,
+   "fileHash": "sha256-17c3ef4017dc364aace411586dd0b1d2db68ddee4a996bd04f8d68f9cdddc6d4",
+   "hosts": [
+    "enc-dec.app",
+    "api3.aoneroom.com",
+    "kisskh.nl",
+    "anime-kitsu.strem.fun",
+    "animepahe.pw",
+    "api.malsync.moe"
+   ],
+   "hostCount": 216,
+   "extendsPlugin": true,
+   "extendsBasePlugin": false,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity",
+    "com.lagradost.cloudstream3.MainActivity",
+    "com.lagradost.cloudstream3.plugins.Plugin",
+    "com.lagradost.cloudstream3.syncproviders.AccountManager",
+    "com.lagradost.cloudstream3.syncproviders.AccountManager$Companion"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)",
+    "com.lagradost.cloudstream3.MainActivity": "the app player activity (note: MainActivityKt is a library file facade, that one is fine)",
+    "com.lagradost.cloudstream3.plugins.Plugin": "base class of *bundled* extensions; a .cs3 must extend BasePlugin instead",
+    "com.lagradost.cloudstream3.syncproviders.AccountManager": "app sync/trakt layer",
+    "com.lagradost.cloudstream3.syncproviders.AccountManager$Companion": "app sync/trakt layer"
+   },
+   "embedRefs": [
+    "com.lagradost.cloudstream3.extractors.DoodLaExtractor",
+    "com.lagradost.cloudstream3.extractors.DoodYtExtractor",
+    "com.lagradost.cloudstream3.extractors.FileMoon",
+    "com.lagradost.cloudstream3.extractors.FilemoonV2",
+    "com.lagradost.cloudstream3.extractors.Filesim",
+    "com.lagradost.cloudstream3.extractors.Jeniusplay",
+    "com.lagradost.cloudstream3.extractors.MixDrop",
+    "com.lagradost.cloudstream3.extractors.Mp4Upload",
+    "com.lagradost.cloudstream3.extractors.OkRuHTTP",
+    "com.lagradost.cloudstream3.extractors.OkRuSSL",
+    "com.lagradost.cloudstream3.extractors.PixelDrain",
+    "com.lagradost.cloudstream3.extractors.StreamSB",
+    "com.lagradost.cloudstream3.extractors.StreamSB8",
+    "com.lagradost.cloudstream3.extractors.StreamTape",
+    "com.lagradost.cloudstream3.extractors.StreamWishExtractor",
+    "com.lagradost.cloudstream3.extractors.Streamlare",
+    "com.lagradost.cloudstream3.extractors.VidHidePro",
+    "com.lagradost.cloudstream3.extractors.VidHidePro6",
+    "com.lagradost.cloudstream3.extractors.VidStack",
+    "com.lagradost.cloudstream3.extractors.VidhideExtractor",
+    "com.lagradost.cloudstream3.extractors.Vidmolyme",
+    "com.lagradost.cloudstream3.extractors.Voe",
+    "com.lagradost.cloudstream3.extractors.helper.AesHelper"
+   ],
+   "hostProvidedRefs": [],
+   "mediaHints": [
+    "m3u8",
+    "mp4",
+    "mpd",
+    "webm"
+   ],
+   "verdict": "NEEDS-ENTRY-SHIM",
+   "why": "the entry class itself extends com.lagradost.cloudstream3.plugins.Plugin (app module), so loadClass fails with \"Didn't find class\" before anything runs",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/StreamPlay.cs3"
+  },
+  {
+   "provider": "StremioAddon",
+   "internalName": "StremioAddon",
+   "language": "en",
+   "tvTypes": [
+    "TvSeries",
+    "Movie",
+    "Torrent"
+   ],
+   "version": 15,
+   "repoStatus": 1,
+   "requiresResources": true,
+   "pluginClassName": "com.phisher98.StremioAddonProvider",
+   "dexMethod": "DEFLATED",
+   "dexSize": 265420,
+   "fileSize": 112501,
+   "fileHash": "sha256-f5501e7bc185cdb87005eb033d608ef560ed12e02c6f3b035fc5f667d1b1685d",
+   "hosts": [
+    "files.catbox.moe",
+    "watchsomuch.tv",
+    "opensubtitles-v3.strem.io",
+    "example.com",
+    "omg10.com",
+    "www.youtube.com"
+   ],
+   "hostCount": 6,
+   "extendsPlugin": true,
+   "extendsBasePlugin": false,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity",
+    "com.lagradost.cloudstream3.plugins.Plugin"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)",
+    "com.lagradost.cloudstream3.plugins.Plugin": "base class of *bundled* extensions; a .cs3 must extend BasePlugin instead"
+   },
+   "embedRefs": [],
+   "hostProvidedRefs": [],
+   "mediaHints": [],
+   "verdict": "NEEDS-ENTRY-SHIM",
+   "why": "the entry class itself extends com.lagradost.cloudstream3.plugins.Plugin (app module), so loadClass fails with \"Didn't find class\" before anything runs",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/StremioAddon.cs3"
+  },
+  {
+   "provider": "StremioX",
+   "internalName": "StremioX",
+   "language": "en",
+   "tvTypes": [
+    "TvSeries",
+    "Movie"
+   ],
+   "version": 26,
+   "repoStatus": 1,
+   "requiresResources": true,
+   "pluginClassName": "com.phisher98.StremioXPlugin",
+   "dexMethod": "DEFLATED",
+   "dexSize": 533244,
+   "fileSize": 210701,
+   "fileHash": "sha256-df1ad3d3e5d2736e50ad384c78991e21cda5f4d466ac2786999004484f74937f",
+   "hosts": [
+    "torrentio.strem.fun",
+    "watchsomuch.tv",
+    "aiometadata.elfhosted.com",
+    "opensubtitles-v3.strem.io",
+    "knaben.org",
+    "omg10.com"
+   ],
+   "hostCount": 9,
+   "extendsPlugin": true,
+   "extendsBasePlugin": false,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity",
+    "com.lagradost.cloudstream3.MainActivity",
+    "com.lagradost.cloudstream3.plugins.Plugin"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)",
+    "com.lagradost.cloudstream3.MainActivity": "the app player activity (note: MainActivityKt is a library file facade, that one is fine)",
+    "com.lagradost.cloudstream3.plugins.Plugin": "base class of *bundled* extensions; a .cs3 must extend BasePlugin instead"
+   },
+   "embedRefs": [],
+   "hostProvidedRefs": [
+    "com.lagradost.cloudstream3.utils.DataStore"
+   ],
+   "mediaHints": [],
+   "verdict": "NEEDS-ENTRY-SHIM",
+   "why": "the entry class itself extends com.lagradost.cloudstream3.plugins.Plugin (app module), so loadClass fails with \"Didn't find class\" before anything runs",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/StremioX.cs3"
+  },
+  {
+   "provider": "SuperStream",
+   "internalName": "SuperStream",
+   "language": "en",
+   "tvTypes": [
+    "AsianDrama",
+    "TvSeries",
+    "Anime",
+    "Movie",
+    "Cartoon",
+    "AnimeMovie"
+   ],
+   "version": 36,
+   "repoStatus": 1,
+   "requiresResources": true,
+   "pluginClassName": "com.phisher98.SuperStreamPlugin",
+   "dexMethod": "DEFLATED",
+   "dexSize": 420740,
+   "fileSize": 166985,
+   "fileHash": "sha256-481f699935a5c8fc86c244945aac3626671b4ee7c4ec4274793ea035b1fe0c6d",
+   "hosts": [
+    "www.febbox.com",
+    "aiometadata.elfhosted.com",
+    "febapi.nuvioapp.space",
+    "opensubtitles-v3.strem.io",
+    "www.showbox.media",
+    "omg10.com"
+   ],
+   "hostCount": 9,
+   "extendsPlugin": true,
+   "extendsBasePlugin": false,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity",
+    "com.lagradost.cloudstream3.plugins.Plugin"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)",
+    "com.lagradost.cloudstream3.plugins.Plugin": "base class of *bundled* extensions; a .cs3 must extend BasePlugin instead"
+   },
+   "embedRefs": [],
+   "hostProvidedRefs": [],
+   "mediaHints": [],
+   "verdict": "NEEDS-ENTRY-SHIM",
+   "why": "the entry class itself extends com.lagradost.cloudstream3.plugins.Plugin (app module), so loadClass fails with \"Didn't find class\" before anything runs",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/SuperStream.cs3"
+  },
+  {
+   "provider": "Tamilblasters",
+   "internalName": "Tamilblasters",
+   "language": "ta",
+   "tvTypes": [
+    "Movie",
+    "TvSeries"
+   ],
+   "version": 10,
+   "repoStatus": 1,
+   "requiresResources": false,
+   "pluginClassName": "com.tamilblasters.TamilblastersPlugin",
+   "dexMethod": "DEFLATED",
+   "dexSize": 137360,
+   "fileSize": 59279,
+   "fileHash": "sha256-99ef5b0c1470e834bf54ba46277d8d3ce3ce77994f09718cb36c5d23110e4103",
+   "hosts": [
+    "cavanhabg.com",
+    "hgcloud.to",
+    "omg10.com",
+    "tryzendm.com",
+    "vidhidepro.com",
+    "www.1tamilblasters.company"
+   ],
+   "hostCount": 6,
+   "extendsPlugin": true,
+   "extendsBasePlugin": false,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity",
+    "com.lagradost.cloudstream3.plugins.Plugin"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)",
+    "com.lagradost.cloudstream3.plugins.Plugin": "base class of *bundled* extensions; a .cs3 must extend BasePlugin instead"
+   },
+   "embedRefs": [
+    "com.lagradost.cloudstream3.extractors.VidHidePro"
+   ],
+   "hostProvidedRefs": [],
+   "mediaHints": [],
+   "verdict": "NEEDS-ENTRY-SHIM",
+   "why": "the entry class itself extends com.lagradost.cloudstream3.plugins.Plugin (app module), so loadClass fails with \"Didn't find class\" before anything runs",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/Tamilblasters.cs3"
+  },
+  {
+   "provider": "ToonHub",
+   "internalName": "ToonHub",
+   "language": "hi",
+   "tvTypes": [
+    "AnimeMovie",
+    "Anime",
+    "Cartoon"
+   ],
+   "version": 12,
+   "repoStatus": 1,
+   "requiresResources": false,
+   "pluginClassName": "com.toonhub4u.Toonhub4uPlugin",
+   "dexMethod": "DEFLATED",
+   "dexSize": 152584,
+   "fileSize": 65116,
+   "fileHash": "sha256-75bee3d04ad2aaebd4cb7c2437d146a763f340ae17fdb773c4cdd2ab69515ac5",
+   "hosts": [
+    "allinonedownloader.fun",
+    "animezia.cloud",
+    "asnwish.com",
+    "cdnwish.com",
+    "dhtpre.com",
+    "gdmirrorbot.nl"
+   ],
+   "hostCount": 11,
+   "extendsPlugin": false,
+   "extendsBasePlugin": true,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)"
+   },
+   "embedRefs": [
+    "com.lagradost.cloudstream3.extractors.Filesim",
+    "com.lagradost.cloudstream3.extractors.MixDrop",
+    "com.lagradost.cloudstream3.extractors.StreamWishExtractor",
+    "com.lagradost.cloudstream3.extractors.VidHidePro",
+    "com.lagradost.cloudstream3.extractors.VidStack",
+    "com.lagradost.cloudstream3.extractors.VidhideExtractor"
+   ],
+   "hostProvidedRefs": [],
+   "mediaHints": [],
+   "verdict": "HOST-COMPAT",
+   "why": "loads, but its code calls app-only types (CloudStreamApp, CommonActivity) - those paths throw unless the host provides a matching type",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/ToonHub.cs3"
+  },
+  {
+   "provider": "Toonstream",
+   "internalName": "Toonstream",
+   "language": "hi",
+   "tvTypes": [
+    "AnimeMovie",
+    "Anime",
+    "Cartoon"
+   ],
+   "version": 10,
+   "repoStatus": 1,
+   "requiresResources": false,
+   "pluginClassName": "com.Toonstream.ToonstreamProvider",
+   "dexMethod": "DEFLATED",
+   "dexSize": 194468,
+   "fileSize": 81817,
+   "fileHash": "sha256-49206f4477330da75e159cda91fca00ec461013e36c92d9c99ec9aaf0575270d",
+   "hosts": [
+    "playhydrax.com",
+    "abyssplayer.com",
+    "as-cdn26.top",
+    "blakiteapi.xyz",
+    "cdnwish.com",
+    "cloudy.upns.one"
+   ],
+   "hostCount": 21,
+   "extendsPlugin": false,
+   "extendsBasePlugin": true,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)"
+   },
+   "embedRefs": [
+    "com.lagradost.cloudstream3.extractors.DoodLaExtractor",
+    "com.lagradost.cloudstream3.extractors.Filesim",
+    "com.lagradost.cloudstream3.extractors.StreamSB",
+    "com.lagradost.cloudstream3.extractors.StreamWishExtractor",
+    "com.lagradost.cloudstream3.extractors.VidHidePro",
+    "com.lagradost.cloudstream3.extractors.VidStack",
+    "com.lagradost.cloudstream3.extractors.VidhideExtractor",
+    "com.lagradost.cloudstream3.extractors.Vidmolyme"
+   ],
+   "hostProvidedRefs": [],
+   "mediaHints": [
+    "m3u8"
+   ],
+   "verdict": "HOST-COMPAT",
+   "why": "loads, but its code calls app-only types (CloudStreamApp, CommonActivity) - those paths throw unless the host provides a matching type",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/Toonstream.cs3"
+  },
+  {
+   "provider": "ToonTales",
+   "internalName": "ToonTales",
+   "language": "hi",
+   "tvTypes": [
+    "Cartoon"
+   ],
+   "version": 5,
+   "repoStatus": 1,
+   "requiresResources": false,
+   "pluginClassName": "com.ToonTales.ToonTalesProvider",
+   "dexMethod": "DEFLATED",
+   "dexSize": 113648,
+   "fileSize": 49798,
+   "fileHash": "sha256-e6ad8f7af1e450f1ddd66e40779d7b22303c3620e7a13b26de232004d1c3c035",
+   "hosts": [
+    "omg10.com",
+    "www.toontales.net"
+   ],
+   "hostCount": 2,
+   "extendsPlugin": false,
+   "extendsBasePlugin": true,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)"
+   },
+   "embedRefs": [],
+   "hostProvidedRefs": [],
+   "mediaHints": [],
+   "verdict": "HOST-COMPAT",
+   "why": "loads, but its code calls app-only types (CloudStreamApp, CommonActivity) - those paths throw unless the host provides a matching type",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/ToonTales.cs3"
+  },
+  {
+   "provider": "Topcartoons",
+   "internalName": "Topcartoons",
+   "language": "hi",
+   "tvTypes": [
+    "Cartoon"
+   ],
+   "version": 5,
+   "repoStatus": 1,
+   "requiresResources": false,
+   "pluginClassName": "com.Topcartoons.TopcartoonsProvider",
+   "dexMethod": "DEFLATED",
+   "dexSize": 114244,
+   "fileSize": 49892,
+   "fileHash": "sha256-66ff9467cd91580ee4adbaa102aadb1f56c0123b2c16f16f5da67f81bce32360",
+   "hosts": [
+    "omg10.com",
+    "www.topcartoons.tv"
+   ],
+   "hostCount": 2,
+   "extendsPlugin": false,
+   "extendsBasePlugin": true,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)"
+   },
+   "embedRefs": [],
+   "hostProvidedRefs": [],
+   "mediaHints": [],
+   "verdict": "HOST-COMPAT",
+   "why": "loads, but its code calls app-only types (CloudStreamApp, CommonActivity) - those paths throw unless the host provides a matching type",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/Topcartoons.cs3"
+  },
+  {
+   "provider": "Topstreamfilm",
+   "internalName": "Topstreamfilm",
+   "language": "de",
+   "tvTypes": [
+    "Movie",
+    "TvSeries"
+   ],
+   "version": 9,
+   "repoStatus": 1,
+   "requiresResources": false,
+   "pluginClassName": "com.Topstreamfilm.TopstreamfilmPlugin",
+   "dexMethod": "DEFLATED",
+   "dexSize": 131484,
+   "fileSize": 56788,
+   "fileHash": "sha256-1640017866afc55622e8670bd4702e061cef7cff4dc3d659bb2c13486fa4deb3",
+   "hosts": [
+    "dropload.io",
+    "omg10.com",
+    "supervideo.tv",
+    "www.topstreamfilm.live"
+   ],
+   "hostCount": 4,
+   "extendsPlugin": false,
+   "extendsBasePlugin": true,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)"
+   },
+   "embedRefs": [
+    "com.lagradost.cloudstream3.extractors.MixDrop"
+   ],
+   "hostProvidedRefs": [],
+   "mediaHints": [],
+   "verdict": "HOST-COMPAT",
+   "why": "loads, but its code calls app-only types (CloudStreamApp, CommonActivity) - those paths throw unless the host provides a matching type",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/Topstreamfilm.cs3"
+  },
+  {
+   "provider": "TorraStream",
+   "internalName": "TorraStream",
+   "language": "en",
+   "tvTypes": [
+    "Movie",
+    "Torrent",
+    "AsianDrama",
+    "TvSeries",
+    "Anime"
+   ],
+   "version": 96,
+   "repoStatus": 1,
+   "requiresResources": true,
+   "pluginClassName": "com.phisher98.TorraStreamProvider",
+   "dexMethod": "DEFLATED",
+   "dexSize": 677316,
+   "fileSize": 252283,
+   "fileHash": "sha256-3cfd2e387a00151717a393e9271e626323b5204072fc74b34f251b70c568c524",
+   "hosts": [
+    "anime-kitsu.strem.fun",
+    "opensubtitles-v3.strem.io",
+    "aiometadata.elfhosted.com",
+    "feed.animetosho.xyz",
+    "torrentio.strem.fun",
+    "kitsu.io"
+   ],
+   "hostCount": 13,
+   "extendsPlugin": true,
+   "extendsBasePlugin": false,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity",
+    "com.lagradost.cloudstream3.plugins.Plugin",
+    "com.lagradost.cloudstream3.syncproviders.AccountManager",
+    "com.lagradost.cloudstream3.syncproviders.AccountManager$Companion"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)",
+    "com.lagradost.cloudstream3.plugins.Plugin": "base class of *bundled* extensions; a .cs3 must extend BasePlugin instead",
+    "com.lagradost.cloudstream3.syncproviders.AccountManager": "app sync/trakt layer",
+    "com.lagradost.cloudstream3.syncproviders.AccountManager$Companion": "app sync/trakt layer"
+   },
+   "embedRefs": [],
+   "hostProvidedRefs": [],
+   "mediaHints": [],
+   "verdict": "NEEDS-ENTRY-SHIM",
+   "why": "the entry class itself extends com.lagradost.cloudstream3.plugins.Plugin (app module), so loadClass fails with \"Didn't find class\" before anything runs",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/TorraStream.cs3"
+  },
+  {
+   "provider": "UHDmoviesProvider",
+   "internalName": "UHDmoviesProvider",
+   "language": "en",
+   "tvTypes": [
+    "Movie",
+    "TvSeries"
+   ],
+   "version": 40,
+   "repoStatus": 1,
+   "requiresResources": false,
+   "pluginClassName": "com.phisher98.UHDmoviesProviderPlugin",
+   "dexMethod": "DEFLATED",
+   "dexSize": 210360,
+   "fileSize": 90154,
+   "fileHash": "sha256-5be4aa3e1418d3ca09758a2e33dc96563ad4be96a74760cb700035faf9c4e2ed",
+   "hosts": [
+    "video-seed.xyz",
+    "api.simkl.com",
+    "driveleech.net",
+    "driveleech.org",
+    "driveleech.pro",
+    "driveseed.org"
+   ],
+   "hostCount": 9,
+   "extendsPlugin": false,
+   "extendsBasePlugin": true,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)"
+   },
+   "embedRefs": [],
+   "hostProvidedRefs": [],
+   "mediaHints": [],
+   "verdict": "HOST-COMPAT",
+   "why": "loads, but its code calls app-only types (CloudStreamApp, CommonActivity) - those paths throw unless the host provides a matching type",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/UHDmoviesProvider.cs3"
+  },
+  {
+   "provider": "Ultima",
+   "internalName": "Ultima",
+   "language": "en",
+   "tvTypes": [
+    "All"
+   ],
+   "version": 63,
+   "repoStatus": 2,
+   "requiresResources": true,
+   "pluginClassName": "com.phisher98.UltimaPlugin",
+   "dexMethod": "DEFLATED",
+   "dexSize": 508912,
+   "fileSize": 222506,
+   "fileHash": "sha256-bffb4ca63b4b1ee3c96d172938b4e675f527ca08af5bcbfd14c08c8bdaacd60a",
+   "hosts": [
+    "cdn.jsdelivr.net",
+    "cloudstream-ultima-sync-default-rtdb.firebaseio.com",
+    "omg10.com"
+   ],
+   "hostCount": 3,
+   "extendsPlugin": true,
+   "extendsBasePlugin": false,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity",
+    "com.lagradost.cloudstream3.MainActivity",
+    "com.lagradost.cloudstream3.plugins.Plugin",
+    "com.lagradost.cloudstream3.ui.home.HomeViewModel",
+    "com.lagradost.cloudstream3.ui.home.HomeViewModel$Companion",
+    "com.lagradost.cloudstream3.ui.settings.extensions.RepositoryData"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)",
+    "com.lagradost.cloudstream3.MainActivity": "the app player activity (note: MainActivityKt is a library file facade, that one is fine)",
+    "com.lagradost.cloudstream3.plugins.Plugin": "base class of *bundled* extensions; a .cs3 must extend BasePlugin instead",
+    "com.lagradost.cloudstream3.ui.home.HomeViewModel": "app UI package",
+    "com.lagradost.cloudstream3.ui.home.HomeViewModel$Companion": "app UI package",
+    "com.lagradost.cloudstream3.ui.settings.extensions.RepositoryData": "app UI package"
+   },
+   "embedRefs": [],
+   "hostProvidedRefs": [
+    "com.lagradost.cloudstream3.utils.DataStore",
+    "com.lagradost.cloudstream3.utils.DataStoreHelper$ResumeWatchingResult"
+   ],
+   "mediaHints": [],
+   "verdict": "NEEDS-ENTRY-SHIM",
+   "why": "the entry class itself extends com.lagradost.cloudstream3.plugins.Plugin (app module), so loadClass fails with \"Didn't find class\" before anything runs",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/Ultima.cs3"
+  },
+  {
+   "provider": "XDMovies",
+   "internalName": "XDMovies",
+   "language": "en",
+   "tvTypes": [
+    "AsianDrama",
+    "TvSeries",
+    "Anime",
+    "Movie",
+    "Cartoon",
+    "AnimeMovie"
+   ],
+   "version": 15,
+   "repoStatus": 1,
+   "requiresResources": true,
+   "pluginClassName": "com.phisher98.XDMoviesProvider",
+   "dexMethod": "DEFLATED",
+   "dexSize": 372744,
+   "fileSize": 151772,
+   "fileHash": "sha256-c1fd26cbb7c2885d80bb2500a0e5623e0727d0c391a1ff72c3b823287cb3ff47",
+   "hosts": [
+    "cinemeta-live.strem.io",
+    "top.xdmovies.wtf",
+    "challenges.cloudflare.com",
+    "hubcloud.foo",
+    "link.xdmovies.wtf",
+    "omg10.com"
+   ],
+   "hostCount": 6,
+   "extendsPlugin": true,
+   "extendsBasePlugin": false,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity",
+    "com.lagradost.cloudstream3.plugins.Plugin"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)",
+    "com.lagradost.cloudstream3.plugins.Plugin": "base class of *bundled* extensions; a .cs3 must extend BasePlugin instead"
+   },
+   "embedRefs": [],
+   "hostProvidedRefs": [
+    "com.lagradost.cloudstream3.utils.DataStore"
+   ],
+   "mediaHints": [],
+   "verdict": "NEEDS-ENTRY-SHIM",
+   "why": "the entry class itself extends com.lagradost.cloudstream3.plugins.Plugin (app module), so loadClass fails with \"Didn't find class\" before anything runs",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/XDMovies.cs3"
+  },
+  {
+   "provider": "YTS",
+   "internalName": "YTS",
+   "language": "en",
+   "tvTypes": [
+    "Movie",
+    "Torrent"
+   ],
+   "version": 11,
+   "repoStatus": 1,
+   "requiresResources": false,
+   "pluginClassName": "com.YTS.YTSProvider",
+   "dexMethod": "DEFLATED",
+   "dexSize": 129324,
+   "fileSize": 55447,
+   "fileHash": "sha256-092870265e17ffe895c39fca65d4970488f877d3b6450dac97a3b779289d0975",
+   "hosts": [
+    "omg10.com",
+    "www12.yts-official.to",
+    "yts.bz"
+   ],
+   "hostCount": 3,
+   "extendsPlugin": false,
+   "extendsBasePlugin": true,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)"
+   },
+   "embedRefs": [],
+   "hostProvidedRefs": [],
+   "mediaHints": [],
+   "verdict": "HOST-COMPAT",
+   "why": "loads, but its code calls app-only types (CloudStreamApp, CommonActivity) - those paths throw unless the host provides a matching type",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/YTS.cs3"
+  },
+  {
+   "provider": "Zinkmovies",
+   "internalName": "Zinkmovies",
+   "language": "hi",
+   "tvTypes": [
+    "Movie",
+    "TvSeries",
+    "Anime"
+   ],
+   "version": 10,
+   "repoStatus": 1,
+   "requiresResources": true,
+   "pluginClassName": "com.zinkmovies.ZinkmoviesPlugin",
+   "dexMethod": "DEFLATED",
+   "dexSize": 321536,
+   "fileSize": 133526,
+   "fileHash": "sha256-66184b0510b83ea25b389920453d3614d7d24efb7b876f898159a7e73fe2c1d1",
+   "hosts": [
+    "hubcloud.foo",
+    "hubcloud.one",
+    "hubdrive.space",
+    "omg10.com",
+    "pixeldrain.dev",
+    "zinkmovies.vip"
+   ],
+   "hostCount": 6,
+   "extendsPlugin": true,
+   "extendsBasePlugin": false,
+   "appOnlyRefs": [
+    "com.lagradost.cloudstream3.CloudStreamApp",
+    "com.lagradost.cloudstream3.CommonActivity",
+    "com.lagradost.cloudstream3.plugins.Plugin"
+   ],
+   "appOnlyWhy": {
+    "com.lagradost.cloudstream3.CloudStreamApp": "the app Application object (context, activity, image loader)",
+    "com.lagradost.cloudstream3.CommonActivity": "app activity plumbing (toasts, dialogs, webview callbacks)",
+    "com.lagradost.cloudstream3.plugins.Plugin": "base class of *bundled* extensions; a .cs3 must extend BasePlugin instead"
+   },
+   "embedRefs": [
+    "com.lagradost.cloudstream3.extractors.PixelDrain",
+    "com.lagradost.cloudstream3.extractors.StreamTape"
+   ],
+   "hostProvidedRefs": [
+    "com.lagradost.cloudstream3.utils.DataStore"
+   ],
+   "mediaHints": [],
+   "verdict": "NEEDS-ENTRY-SHIM",
+   "why": "the entry class itself extends com.lagradost.cloudstream3.plugins.Plugin (app module), so loadClass fails with \"Didn't find class\" before anything runs",
+   "repositoryUrl": "https://github.com/phisher98/cloudstream-extensions-phisher",
+   "upstream": {},
+   "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/Zinkmovies.cs3"
+  }
+ ]
+}
