@@ -37,13 +37,17 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables { useSupportLibrary = true }
 
-        // Supabase config - MUST come from local.properties or env, never hardcoded.
+        // The mobile APK has no Vite runtime environment. Keep the public Supabase project
+        // configuration as a checked-in fallback so a normal Gradle build cannot silently ship
+        // with an empty content service. These are publishable/anon credentials, not a service key.
         val supabaseUrl: String = (project.findProperty("SUPABASE_URL") as String?)
             ?: System.getenv("SUPABASE_URL")
-            ?: ""
+            ?: System.getenv("VITE_SUPABASE_URL")
+            ?: "https://krqbehuaukdaxaakrwnc.supabase.co"
         val supabaseKey: String = (project.findProperty("SUPABASE_ANON_KEY") as String?)
             ?: System.getenv("SUPABASE_ANON_KEY")
-            ?: ""
+            ?: System.getenv("VITE_SUPABASE_ANON_KEY")
+            ?: "sb_publishable_yYlDgrq_8JveqdIS5FxGoQ_52AdykTe"
 
         buildConfigField("String", "SUPABASE_URL", "\"$supabaseUrl\"")
         buildConfigField("String", "SUPABASE_ANON_KEY", "\"$supabaseKey\"")
