@@ -73,7 +73,8 @@ fun OfflinePlayerScreen(
 private fun buildOfflineMediaItem(url: String, keySetId: String, licenseUrl: String, scheme: String): MediaItem {
     val builder = MediaItem.Builder().setUri(url)
     if (keySetId.isNotBlank() && licenseUrl.isNotBlank() && scheme.isNotBlank()) {
-        val drm = MediaItem.DrmConfiguration.Builder(UUID.fromString(scheme), android.net.Uri.parse(licenseUrl))
+        val drm = MediaItem.DrmConfiguration.Builder(UUID.fromString(scheme))
+            .setLicenseUri(android.net.Uri.parse(licenseUrl))
             .setKeySetId(Base64.decode(keySetId, Base64.DEFAULT))
             .setMultiSession(true)
             .build()

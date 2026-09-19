@@ -453,7 +453,8 @@ private fun createPlayer(context: android.content.Context, link: ExtractorLink):
 private fun buildMediaItem(link: ExtractorLink): MediaItem {
     val builder = MediaItem.Builder().setUri(link.url)
     DrmConfig.from(link)?.let { drm ->
-        val drmBuilder = MediaItem.DrmConfiguration.Builder(drm.scheme, android.net.Uri.parse(drm.licenseUrl))
+        val drmBuilder = MediaItem.DrmConfiguration.Builder(drm.scheme)
+            .setLicenseUri(android.net.Uri.parse(drm.licenseUrl))
             .setLicenseRequestHeaders(drm.licenseHeaders)
             .setMultiSession(true)
         drm.offlineKeySetId?.let(drmBuilder::setKeySetId)
