@@ -46,7 +46,12 @@ object ContentDeduplicator {
     private fun normalize(value: String): String = value
         .lowercase()
         .replace("&", " and ")
-        .replace(Regex("\\[[^]]*]|\\([^)]*\\)|\\{[^}]*}"), " ")
+        // Keep each delimiter pair separate. The old combined pattern was rejected by
+        // java.util.regex on some Android builds, which made every Home request fail while
+        // deduplicating provider results.
+        .replace(Regex("\\[[^\\]]*\\]"), " ")
+        .replace(Regex("\\([^)]*\\)"), " ")
+        .replace(Regex("\\{[^}]*\\}"), " ")
         .replace(Regex("[^a-z0-9\\u00c0-\\u024f]+"), " ")
         .trim()
         .replace(Regex("\\s+"), " ")
