@@ -17,7 +17,7 @@ Deno.serve(async (request) => {
   const admin = createClient(url, key);
   const { data, error } = await admin
     .from('app_categories')
-    .select('id,slug,name,sort_order,max_items,app_provider_mappings(id,provider_key,provider_name,priority,language,region)')
+    .select('id,slug,name,sort_order,max_items,app_provider_mappings(id,provider_key,provider_name,priority,language,region,enabled)')
     .eq('enabled', true)
     .order('sort_order', { ascending: true });
 

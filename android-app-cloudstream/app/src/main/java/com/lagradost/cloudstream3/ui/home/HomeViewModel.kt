@@ -23,6 +23,7 @@ import com.lagradost.cloudstream3.mvvm.debugWarning
 import com.lagradost.cloudstream3.mvvm.launchSafe
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.plugins.PluginManager
+import com.lagradost.cloudstream3.plugins.FMHubCatalogSync
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.APIRepository.Companion.noneApi
 import com.lagradost.cloudstream3.ui.APIRepository.Companion.randomApi
@@ -56,6 +57,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.withContext
 import java.util.EnumSet
 import java.util.concurrent.CopyOnWriteArrayList
+import org.json.JSONArray
 
 class HomeViewModel : ViewModel() {
     companion object {
@@ -415,6 +417,119 @@ class HomeViewModel : ViewModel() {
         isCurrentlyLoadingName = null
     }
 
+    private data class AdminProviderRoute(val key: String, val priority: Int)
+    private data class AdminCategoryRoute(
+        val slug: String,
+        val name: String,
+        val maxItems: Int,
+        val providers: List<AdminProviderRoute>
+    )
+
+    private fun adminCategoryRoutes(): List<AdminCategoryRoute> {
+        val categories = FMHubCatalogSync.cachedCatalog()?.optJSONArray("categories") ?: return emptyList()
+        return buildList {
+            for (index in 0 until categories.length()) {
+                val category = categories.optJSONObject(index) ?: continue
+                val mappings = category.optJSONArray("app_provider_mappings") ?: JSONArray()
+                val providers = buildList {
+                    for (mappingIndex in 0 until mappings.length()) {
+                        val mapping = mappings.optJSONObject(mappingIndex) ?: continue
+                        if (mapping.has("enabled") && !mapping.optBoolean("enabled", true)) continue
+                        val key = mapping.optString("provider_key").trim()
+                        if (key.isNotBlank()) add(AdminProviderRoute(key, mapping.optInt("priority", 0)))
+                    }
+                }.sortedBy { it.priority }
+                if (providers.isNotEmpty()) add(
+                    AdminCategoryRoute(
+                        slug = category.optString("slug").trim().lowercase(),
+                        name = category.optString("name").trim().ifBlank { category.optString("slug") },
+                        maxItems = category.optInt("max_items", 20).coerceIn(1, 100),
+                        providers = providers
+                    )
+                )
+            }
+        }
+    }
+
+    private fun SearchResponse.matchesAdminCategory(slug: String): Boolean {
+        val mediaType = type ?: return true
+        return when (slug) {
+            "movies", "movie" -> mediaType == TvType.Movie
+            "anime" -> mediaType == TvType.Anime || mediaType == TvType.OVA || mediaType == TvType.AnimeMovie
+            "web-series", "web_series", "series" -> mediaType == TvType.TvSeries
+            "drama" -> mediaType == TvType.AsianDrama || mediaType == TvType.TvSeries
+            "trending" -> true
+            else -> true
+        }
+    }
+
+    private fun deduplicateHomeItems(items: List<SearchResponse>): List<SearchResponse> {
+        val seen = HashSet<String>()
+        return items.filter { item ->
+            val key = if (item.id != null && item.id!! > 0) {
+                "id:${item.id}"
+            } else {
+                "title:${item.name.trim().lowercase().replace(Regex("\\s+"), " ")}"
+            }
+            seen.add(key)
+        }
+    }
+
+    private fun loadAdminRoutedHome(routes: List<AdminCategoryRoute>): Job = ioSafe {
+        val routedPages = mutableListOf<HomePageList>()
+        var primaryApi: MainAPI? = null
+
+        for (route in routes) {
+            var selectedItems: List<SearchResponse> = emptyList()
+            for (provider in route.providers) {
+                val api = getApiFromNameNull(provider.key) ?: continue
+                if (!api.hasMainPage) continue
+                val response = APIRepository(api).getMainPage(1, null)
+                if (response !is Resource.Success) continue
+                val candidates = response.value.orEmpty()
+                    .flatMap { it?.items.orEmpty() }
+                    .flatMap { it.list }
+                    .filter { it.matchesAdminCategory(route.slug) }
+                selectedItems = deduplicateHomeItems(candidates).take(route.maxItems)
+                if (selectedItems.isNotEmpty()) {
+                    primaryApi = primaryApi ?: api
+                    break
+                }
+            }
+            if (selectedItems.isNotEmpty()) {
+                routedPages += HomePageList(route.name, selectedItems)
+            }
+        }
+
+        if (routedPages.isEmpty()) {
+            _page.postValue(Resource.Failure(false, "No content matched the configured category providers"))
+            _preview.postValue(Resource.Failure(false, "No content matched the configured category providers"))
+            _randomItems.postValue(emptyList())
+            isCurrentlyLoadingName = null
+            return@ioSafe
+        }
+
+        repo = primaryApi?.let { APIRepository(it) }
+        _apiName.postValue("FMHuB24")
+        val categories = routedPages.map { page ->
+            ExpandableHomepageList(page, 1, false)
+        }
+        expandable.clear()
+        categories.forEach { expandable[it.list.name] = it }
+        val previewItems = deduplicateHomeItems(routedPages.flatMap { it.list }).shuffled()
+        previewResponses.clear()
+        previewResponsesAdded.clear()
+        previewResponses.addAll(previewItems.take(3).mapNotNull { item ->
+            val loaded = getApiFromNameNull(item.apiName)?.let { APIRepository(it).load(item.url) }
+            if (loaded is Resource.Success) loaded.value else null
+        })
+        currentShuffledList = previewItems
+        _randomItems.postValue(previewItems)
+        _preview.postValue(if (previewResponses.isEmpty()) Resource.Failure(false, "No homepage responses") else Resource.Success(false to previewResponses))
+        _page.postValue(Resource.Success(expandable))
+        isCurrentlyLoadingName = null
+    }
+
     fun click(callback: SearchClickCallback) {
         if (callback.action != SEARCH_ACTION_FOCUSED) {
             SearchHelper.handleSearchClickCallback(callback)
@@ -513,6 +628,13 @@ class HomeViewModel : ViewModel() {
             // if we don't need to reload and we have a valid homepage or currently loading the same thing then return
             val currentLoading = isCurrentlyLoadingName
             if (!forceReload && (currentPage is Resource.Success && currentPage.value.isNotEmpty() || (currentLoading != null && currentLoading == preferredApiName))) {
+                return@ioSafe
+            }
+
+            val adminRoutes = if (!fromUI) adminCategoryRoutes() else emptyList()
+            if (adminRoutes.isNotEmpty()) {
+                isCurrentlyLoadingName = "__fmhub_admin_routes__"
+                loadAdminRoutedHome(adminRoutes)
                 return@ioSafe
             }
 
