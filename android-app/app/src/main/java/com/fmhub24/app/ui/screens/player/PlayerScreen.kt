@@ -366,9 +366,8 @@ private fun PlayerDropdown(
 }
 
 private fun showAudioTrackDialog(context: android.content.Context, player: ExoPlayer) {
-        TrackSelectionDialogBuilder(context, "Audio and subtitles", player, C.TRACK_TYPE_AUDIO)
+    TrackSelectionDialogBuilder(context, "Audio and subtitles", player, C.TRACK_TYPE_AUDIO)
         .setShowDisableOption(false)
-        .setShowClearOverrideOption(false)
         .build()
         .show()
 }
