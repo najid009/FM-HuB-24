@@ -20,7 +20,13 @@ Deno.serve(async (request) => {
     .select('id,slug,name,sort_order,max_items,app_provider_mappings(id,provider_key,provider_name,priority,language,region)')
     .eq('enabled', true)
     .order('sort_order', { ascending: true });
-  if (error) return new Response(JSON.stringify({ success: false, error: error.message }), { status: 500, headers });
 
-  return new Response(JSON.stringify({ success: true, categories: data ?? [], generatedAt: new Date().toISOString() }), { headers });
+  const { data: repositories, error: repositoryError } = await admin
+    .from('extension_repos')
+    .select('name,url')
+    .eq('enabled', true)
+    .order('name', { ascending: true });
+  if (repositoryError) return new Response(JSON.stringify({ success: false, error: repositoryError.message }), { status: 500, headers });
+
+  return new Response(JSON.stringify({ success: true, categories: data ?? [], repositories: repositories ?? [], warning: error?.message, generatedAt: new Date().toISOString() }), { headers });
 });

@@ -1,4 +1,22 @@
 -- FMHuB24 catalogue rules: one controlled provider map per category.
+-- Keep the original table name used by the existing admin/app schema. This
+-- makes this migration safe for both fresh and previously initialized projects.
+create table if not exists public.extension_repos (
+  id uuid primary key default gen_random_uuid(),
+  url text not null unique,
+  name text not null,
+  description text,
+  enabled boolean not null default true,
+  last_synced_at timestamptz,
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
+);
+alter table public.extension_repos enable row level security;
+drop policy if exists "Public read enabled repos" on public.extension_repos;
+create policy "Public read enabled repos" on public.extension_repos for select to anon, authenticated using (enabled = true);
+drop policy if exists "Admin manages repos" on public.extension_repos;
+create policy "Admin manages repos" on public.extension_repos for all to authenticated using (auth.role() = 'authenticated') with check (auth.role() = 'authenticated');
+
 create table if not exists public.app_categories (
   id uuid primary key default gen_random_uuid(),
   slug text not null unique,

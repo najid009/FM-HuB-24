@@ -26,7 +26,11 @@ object FMHubRepositorySync {
     private const val TAG = "FMHubRepositorySync"
 
     suspend fun sync() {
-        val configUrl = BuildConfig.FMHUB_REPOSITORY_CONFIG_URL.trim()
+        // New builds publish repositories in catalog-config. Keep the old dedicated URL as an
+        // override for existing installations and private deployments.
+        val configUrl = BuildConfig.FMHUB_REPOSITORY_CONFIG_URL.trim().ifBlank {
+            BuildConfig.FMHUB_CATALOG_CONFIG_URL.trim()
+        }
         if (configUrl.isBlank()) return
         if (!configUrl.startsWith("https://", ignoreCase = true)) {
             Log.w(TAG, "Ignoring non-HTTPS repository config URL")

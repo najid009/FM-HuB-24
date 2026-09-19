@@ -118,36 +118,7 @@ class ExtensionsFragment : BaseFragment<FragmentExtensionsBinding>(
                     R.id.navigation_settings_extensions_to_navigation_settings_plugins,
                     PluginsFragment.newInstance(it)
                 )
-            }, { repo ->
-                // Prompt user before deleting repo
-                main {
-                    val uiContext = context ?: binding.root.context
-                    val builder = AlertDialog.Builder(uiContext)
-                    val dialogClickListener =
-                        DialogInterface.OnClickListener { _, which ->
-                            when (which) {
-                                DialogInterface.BUTTON_POSITIVE -> {
-                                    ioSafe {
-                                        RepositoryManager.removeRepository(
-                                            uiContext.applicationContext,
-                                            repo
-                                        )
-                                        extensionViewModel.loadStats()
-                                        extensionViewModel.loadRepositories()
-                                    }
-                                }
-
-                                DialogInterface.BUTTON_NEGATIVE -> {}
-                            }
-                        }
-
-                    builder.setTitle(R.string.delete_repository)
-                        .setMessage(uiContext.getString(R.string.delete_repository_plugins))
-                        .setPositiveButton(R.string.delete, dialogClickListener)
-                        .setNegativeButton(R.string.cancel, dialogClickListener)
-                        .show().setDefaultFocus()
-                }
-            })
+            }, {})
         }
 
         observe(extensionViewModel.repositories) { repos ->
@@ -331,15 +302,16 @@ class ExtensionsFragment : BaseFragment<FragmentExtensionsBinding>(
 
         val isTv = isLayout(TV)
         binding.apply {
-            addRepoButton.isGone = isTv
-            addRepoButtonImageviewHolder.isVisible = isTv
+            // Repositories are approved in the FMHuB24 admin panel only.
+            addRepoButton.isGone = true
+            addRepoButtonImageviewHolder.isGone = true
 
             // Band-aid for Fire TV
             pluginStorageAppbar.isFocusableInTouchMode = isTv
             addRepoButtonImageview.isFocusableInTouchMode = isTv
 
-            addRepoButton.setOnClickListener(addRepositoryClick)
-            addRepoButtonImageview.setOnClickListener(addRepositoryClick)
+            addRepoButton.setOnClickListener(null)
+            addRepoButtonImageview.setOnClickListener(null)
         }
         reloadRepositories()
     }
