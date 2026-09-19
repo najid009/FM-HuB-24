@@ -43,12 +43,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
+import androidx.media3.common.TrackSelectionOverride
 import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
 import androidx.media3.ui.PlayerView
-import androidx.media3.ui.TrackSelectionDialogBuilder
 import com.fmhub24.app.media.DrmConfig
 import com.fmhub24.app.plugins.cloudstream.ExtractorLink
 import com.fmhub24.app.ui.components.LargeContentCard
@@ -546,9 +546,37 @@ private fun PlayerDropdown(
 }
 
 private fun showAudioTrackDialog(context: android.content.Context, player: ExoPlayer) {
-    TrackSelectionDialogBuilder(context, "Audio and subtitles", player, C.TRACK_TYPE_AUDIO)
-        .setShowDisableOption(false)
-        .build()
+    val audioGroups = player.currentTracks.groups.filter { it.type == C.TRACK_TYPE_AUDIO }
+    val tracks = audioGroups.flatMap { group ->
+        (0 until group.mediaTrackGroup.length).map { index ->
+            val format = group.mediaTrackGroup.getFormat(index)
+            val language = format.language?.takeIf { it.isNotBlank() }
+            val label = format.label?.takeIf { it.isNotBlank() }
+            val details = listOfNotNull(label, language).distinct().joinToString(" • ")
+            Triple(group, index, details.ifBlank { "Audio ${index + 1}" })
+        }
+    }
+
+    if (tracks.isEmpty()) {
+        android.app.AlertDialog.Builder(context)
+            .setTitle("Audio and subtitles")
+            .setMessage("No alternate audio track is available for this video.")
+            .setPositiveButton("OK", null)
+            .show()
+        return
+    }
+
+    android.app.AlertDialog.Builder(context)
+        .setTitle("Audio and subtitles")
+        .setItems(tracks.map { it.third }.toTypedArray()) { _, which ->
+            val (group, index) = tracks[which]
+            val override = TrackSelectionOverride(group.mediaTrackGroup, listOf(index))
+            player.trackSelectionParameters = player.trackSelectionParameters
+                .buildUpon()
+                .setOverrideForType(override)
+                .build()
+        }
+        .setNegativeButton("Cancel", null)
         .show()
 }
 
