@@ -3,8 +3,8 @@ package com.lagradost.cloudstream3.plugins
 import android.util.Log
 import com.lagradost.cloudstream3.BuildConfig
 import com.lagradost.cloudstream3.app
-import com.lagradost.cloudstream3.utils.getKey
-import com.lagradost.cloudstream3.utils.setKey
+import com.lagradost.cloudstream3.utils.DataStore.getKey
+import com.lagradost.cloudstream3.utils.DataStore.setKey
 import org.json.JSONObject
 
 /**
