@@ -3,6 +3,7 @@ package com.fmhub24.app.ui.screens.player
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fmhub24.app.data.repository.ContentRepository
+import com.fmhub24.app.data.repository.DownloadRepository
 import com.fmhub24.app.data.repository.SettingsRepository
 import com.fmhub24.app.data.repository.WatchProgressRepository
 import com.fmhub24.app.plugins.cloudstream.AnimeLoadResponse
@@ -26,10 +27,13 @@ import javax.inject.Inject
 class PlayerViewModel @Inject constructor(
     private val contentRepository: ContentRepository,
     private val watchProgressRepository: WatchProgressRepository,
+    private val downloadRepository: DownloadRepository,
     settingsRepository: SettingsRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<PlayerUiState>(PlayerUiState.Loading)
     val uiState: StateFlow<PlayerUiState> = _uiState
+    private val _downloadState = MutableStateFlow<String?>(null)
+    val downloadState: StateFlow<String?> = _downloadState
 
     val resumeEnabled: StateFlow<Boolean> = settingsRepository.resumePlayback
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), true)
@@ -130,6 +134,20 @@ class PlayerViewModel @Inject constructor(
     fun selectLink(link: ExtractorLink) {
         val state = _uiState.value
         if (state is PlayerUiState.Success) _uiState.value = state.copy(selectedLink = link)
+    }
+
+    fun downloadSelected(link: ExtractorLink) {
+        safeLaunch {
+            _downloadState.value = "Downloading…"
+            downloadRepository.download(
+                sourceUrl = link.url,
+                name = currentName,
+                posterUrl = currentPoster,
+                apiName = currentApiName,
+                episodeName = currentEpisodeName,
+            ).onSuccess { _downloadState.value = "Downloaded for offline viewing" }
+                .onFailure { _downloadState.value = it.message ?: "Download failed" }
+        }
     }
 
     fun nextEpisodeTarget(): EpisodeTarget? {

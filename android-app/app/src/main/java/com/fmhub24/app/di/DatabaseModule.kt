@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.fmhub24.app.data.local.AppDatabase
 import com.fmhub24.app.data.local.dao.CachedExtensionDao
+import com.fmhub24.app.data.local.dao.DownloadedContentDao
 import com.fmhub24.app.data.local.dao.FavoriteDao
 import com.fmhub24.app.data.local.dao.WatchProgressDao
 import dagger.Module
@@ -25,7 +26,7 @@ object DatabaseModule {
             AppDatabase::class.java,
             "fmhub24.db"
         )
-            .addMigrations(AppDatabase.MIGRATION_1_2)
+            .addMigrations(AppDatabase.MIGRATION_1_2, AppDatabase.MIGRATION_2_3)
             .fallbackToDestructiveMigration(dropAllTables = true)
             .build()
     }
@@ -38,4 +39,7 @@ object DatabaseModule {
 
     @Provides
     fun provideCachedExtensionDao(db: AppDatabase): CachedExtensionDao = db.cachedExtensionDao()
+
+    @Provides
+    fun provideDownloadedContentDao(db: AppDatabase): DownloadedContentDao = db.downloadedContentDao()
 }

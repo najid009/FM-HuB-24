@@ -8,6 +8,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.fmhub24.app.ui.screens.details.DetailsScreen
 import com.fmhub24.app.ui.screens.favorites.FavoritesScreen
+import com.fmhub24.app.ui.screens.category.CategoryScreen
+import com.fmhub24.app.ui.screens.downloads.DownloadsScreen
+import com.fmhub24.app.ui.screens.downloads.OfflinePlayerScreen
 import com.fmhub24.app.ui.screens.home.HomeScreen
 import com.fmhub24.app.ui.screens.player.PlayerScreen
 import com.fmhub24.app.ui.screens.search.SearchScreen
@@ -41,6 +44,29 @@ fun NavGraph(navController: NavHostController) {
                 },
                 onNavigateToSettings = {
                     navController.navigate(Screen.Settings.route)
+                },
+                onNavigateToCategory = { providerName, categoryName ->
+                    navController.navigate(Screen.Category.createRoute(providerName, categoryName))
+                },
+                onNavigateToDownloads = {
+                    navController.navigate(Screen.Downloads.route)
+                }
+            )
+        }
+
+        composable(
+            route = Screen.Category.route,
+            arguments = listOf(
+                navArgument("providerName") { type = NavType.StringType },
+                navArgument("categoryName") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            CategoryScreen(
+                providerName = backStackEntry.arguments?.getString("providerName") ?: "",
+                categoryName = backStackEntry.arguments?.getString("categoryName") ?: "",
+                onNavigateBack = { navController.popBackStack() },
+                onNavigateToDetails = { detailUrl, detailApiName ->
+                    navController.navigate(Screen.Details.createRoute(detailUrl, detailApiName))
                 }
             )
         }
@@ -51,6 +77,29 @@ fun NavGraph(navController: NavHostController) {
                 onNavigateToDetails = { url, apiName ->
                     navController.navigate(Screen.Details.createRoute(url, apiName))
                 }
+            )
+        }
+
+        composable(Screen.Downloads.route) {
+            DownloadsScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onPlayOffline = { path, title ->
+                    navController.navigate(Screen.OfflinePlayer.createRoute(path, title))
+                }
+            )
+        }
+
+        composable(
+            route = Screen.OfflinePlayer.route,
+            arguments = listOf(
+                navArgument("path") { type = NavType.StringType },
+                navArgument("title") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            OfflinePlayerScreen(
+                path = backStackEntry.arguments?.getString("path") ?: "",
+                title = backStackEntry.arguments?.getString("title") ?: "Offline video",
+                onNavigateBack = { navController.popBackStack() }
             )
         }
 

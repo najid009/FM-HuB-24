@@ -5,21 +5,24 @@ import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.fmhub24.app.data.local.dao.CachedExtensionDao
+import com.fmhub24.app.data.local.dao.DownloadedContentDao
 import com.fmhub24.app.data.local.dao.FavoriteDao
 import com.fmhub24.app.data.local.dao.WatchProgressDao
 import com.fmhub24.app.data.local.entity.CachedExtension
+import com.fmhub24.app.data.local.entity.DownloadedContent
 import com.fmhub24.app.data.local.entity.Favorite
 import com.fmhub24.app.data.local.entity.WatchProgress
 
 @Database(
-    entities = [Favorite::class, WatchProgress::class, CachedExtension::class],
-    version = 2,
+    entities = [Favorite::class, WatchProgress::class, CachedExtension::class, DownloadedContent::class],
+    version = 3,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun favoriteDao(): FavoriteDao
     abstract fun watchProgressDao(): WatchProgressDao
     abstract fun cachedExtensionDao(): CachedExtensionDao
+    abstract fun downloadedContentDao(): DownloadedContentDao
 
     companion object {
         /**
@@ -53,6 +56,26 @@ abstract class AppDatabase : RoomDatabase() {
                         sizeBytes INTEGER,
                         sourceRepoUrl TEXT,
                         lastError TEXT
+                    )
+                    """.trimIndent()
+                )
+            }
+        }
+
+        val MIGRATION_2_3 = object : Migration(2, 3) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    """
+                    CREATE TABLE IF NOT EXISTS downloaded_content (
+                        id TEXT NOT NULL PRIMARY KEY,
+                        name TEXT NOT NULL,
+                        posterUrl TEXT,
+                        apiName TEXT NOT NULL,
+                        episodeName TEXT,
+                        localPath TEXT NOT NULL,
+                        sourceUrl TEXT NOT NULL,
+                        status TEXT NOT NULL,
+                        createdAt INTEGER NOT NULL
                     )
                     """.trimIndent()
                 )

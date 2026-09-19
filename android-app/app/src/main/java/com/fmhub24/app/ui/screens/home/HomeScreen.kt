@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
@@ -31,7 +32,9 @@ fun HomeScreen(
     onNavigateToDetails: (String, String) -> Unit,
     onNavigateToSearch: () -> Unit,
     onNavigateToFavorites: () -> Unit,
-    onNavigateToSettings: () -> Unit
+    onNavigateToSettings: () -> Unit,
+    onNavigateToCategory: (String, String) -> Unit,
+    onNavigateToDownloads: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var isRefreshing by remember { mutableStateOf(false) }
@@ -78,6 +81,9 @@ fun HomeScreen(
                     }
                     IconButton(onClick = onNavigateToFavorites) {
                         Icon(Icons.Default.Favorite, contentDescription = "Favorites", tint = Color.White)
+                    }
+                    IconButton(onClick = onNavigateToDownloads) {
+                        Icon(Icons.Default.Download, contentDescription = "Downloads", tint = Color.White)
                     }
                     IconButton(onClick = onNavigateToSettings) {
                         Icon(Icons.Default.Settings, contentDescription = "Settings", tint = Color.White)
@@ -236,18 +242,20 @@ fun HomeScreen(
                                     fontSize = 18.sp,
                                     modifier = Modifier.weight(1f)
                                 )
-                                Box(
-                                    modifier = Modifier
-                                        .background(Color(0xFF1A1A1A), RoundedCornerShape(6.dp))
-                                        .padding(horizontal = 8.dp, vertical = 4.dp)
+                                TextButton(
+                                    onClick = { onNavigateToCategory(providerName, homeList.name) },
+                                    contentPadding = PaddingValues(horizontal = 8.dp, vertical = 0.dp)
                                 ) {
-                                    Text(
-                                        text = providerName,
-                                        color = Color.Gray,
-                                        fontSize = 10.sp
-                                    )
+                                    Text("See More", color = OrangeAccent, fontSize = 12.sp)
                                 }
                             }
+
+                            Text(
+                                text = providerName,
+                                color = Color.Gray,
+                                fontSize = 10.sp,
+                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 2.dp)
+                            )
 
                             Spacer(modifier = Modifier.height(12.dp))
 

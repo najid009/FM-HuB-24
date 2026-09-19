@@ -6,6 +6,15 @@ sealed class Screen(val route: String) {
     object Search : Screen("search")
     object Favorites : Screen("favorites")
     object Settings : Screen("settings")
+    object Category : Screen("category/{providerName}/{categoryName}") {
+        fun createRoute(providerName: String, categoryName: String): String =
+            "category/${encodeNavSegment(providerName)}/${encodeNavSegment(categoryName)}"
+    }
+    object Downloads : Screen("downloads")
+    object OfflinePlayer : Screen("offline-player/{path}/{title}") {
+        fun createRoute(path: String, title: String): String =
+            "offline-player/${encodeNavSegment(path)}/${encodeNavSegment(title)}"
+    }
     object Details : Screen("details/{url}/{apiName}") {
         fun createRoute(url: String, apiName: String): String {
             // Encode url to be safe for navigation.

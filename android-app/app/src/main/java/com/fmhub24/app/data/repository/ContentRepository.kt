@@ -73,13 +73,29 @@ class ContentRepository @Inject constructor(
             }
         }
 
+    /** Loads one provider category for the Home screen's See More destination. */
+    suspend fun getProviderCategory(
+        providerName: String,
+        categoryName: String,
+        page: Int = 1,
+    ): Result<HomePageList> = withContext(Dispatchers.IO) {
+        val provider = visibleProviders().firstOrNull { it.name == providerName }
+            ?: return@withContext Result.failure(Exception("Provider not found: $providerName"))
+        val items = provider.mainPageSections(page)
+            .filter { it.second.name.equals(categoryName, ignoreCase = true) }
+            .flatMap { it.second.list }
+            .distinctBy { "${it.apiName}:${it.url}" }
+        Result.success(HomePageList(categoryName, items))
+    }
+
     /** Requests every `mainPage` entry of [provider] and returns (provider, section) pairs. */
     private suspend fun MainAPI.mainPageSections(page: Int): List<Pair<String, HomePageList>> {
         if (!hasMainPage) return emptyList()
 
+        // Some providers intentionally use an empty data token for their default section.
+        // Dropping those entries makes the provider appear on search but disappear from Home.
         val requests = runCatching { mainPage }
             .getOrDefault(emptyList())
-            .filter { it.data.isNotBlank() }
             .map { MainPageRequest(name = it.name, data = it.data, horizontalImages = it.horizontalImages) }
             .ifEmpty { listOf(MainPageRequest(name = name, data = "", horizontalImages = false)) }
 

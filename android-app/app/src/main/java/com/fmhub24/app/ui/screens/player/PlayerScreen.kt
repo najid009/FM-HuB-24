@@ -59,6 +59,7 @@ fun PlayerScreen(
     onNavigateToDetails: (String, String) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val downloadState by viewModel.downloadState.collectAsState()
     val context = LocalContext.current
     val activity = context as? Activity
     val view = LocalView.current
@@ -216,6 +217,17 @@ fun PlayerScreen(
                                         }
                                     }
                                 )
+                            }
+                            item {
+                                Button(
+                                    onClick = { state.selectedLink?.let(viewModel::downloadSelected) },
+                                    enabled = state.selectedLink != null && downloadState != "Downloading…",
+                                    modifier = Modifier.fillMaxWidth(),
+                                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF242424)),
+                                    shape = RoundedCornerShape(10.dp)
+                                ) {
+                                    Text(downloadState ?: "Download for offline viewing", color = Color.White)
+                                }
                             }
                             item {
                                 Row(verticalAlignment = Alignment.CenterVertically) {
