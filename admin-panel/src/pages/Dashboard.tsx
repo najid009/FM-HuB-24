@@ -7,9 +7,10 @@ import ExtensionTable from '../components/ExtensionTable';
 import EditModal from '../components/EditModal';
 import RepoManager from '../components/RepoManager';
 import AppControlPanel from '../components/AppControlPanel';
+import AppRepositoryManager from '../components/AppRepositoryManager';
 import { Extension } from '../types/extension';
 
-type Tab = 'extensions' | 'repos' | 'controls';
+type Tab = 'extensions' | 'repos' | 'app-repos' | 'controls';
 
 export default function Dashboard() {
   const queryClient = useQueryClient();
@@ -37,6 +38,7 @@ export default function Dashboard() {
   const tabs: Array<{ id: Tab; label: string; count: number }> = [
     { id: 'extensions', label: 'Extensions', count: extensions?.length ?? 0 },
     { id: 'repos', label: 'Repositories', count: repoCount },
+    { id: 'app-repos', label: 'App sources', count: 0 },
     { id: 'controls', label: 'Notices & Updates', count: 0 },
   ];
 
@@ -129,6 +131,7 @@ export default function Dashboard() {
         )}
 
         {tab === 'repos' && <RepoManager />}
+        {tab === 'app-repos' && <AppRepositoryManager />}
         {tab === 'controls' && <AppControlPanel />}
       </main>
 
