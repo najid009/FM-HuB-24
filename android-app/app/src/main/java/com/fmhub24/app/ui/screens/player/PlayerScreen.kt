@@ -1,6 +1,7 @@
 package com.fmhub24.app.ui.screens.player
 
 import android.app.Activity
+import android.content.pm.ActivityInfo
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.activity.compose.BackHandler
@@ -13,8 +14,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Fullscreen
 import androidx.compose.material.icons.filled.FullscreenExit
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -28,12 +31,15 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
+import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
 import androidx.media3.ui.PlayerView
+import androidx.media3.ui.TrackSelectionDialogBuilder
 import com.fmhub24.app.plugins.cloudstream.ExtractorLink
 import com.fmhub24.app.ui.components.LargeContentCard
 import com.fmhub24.app.ui.theme.OrangeAccent
@@ -57,10 +63,9 @@ fun PlayerScreen(
     val activity = context as? Activity
     val view = LocalView.current
     var exoPlayer by remember { mutableStateOf<ExoPlayer?>(null) }
-    var isFullscreen by remember { mutableStateOf(false) }
+    var isFullscreen by rememberSaveable { mutableStateOf(false) }
     var currentEpisodeTitle by remember { mutableStateOf(episodeName) }
-    var selectedDub by remember { mutableStateOf<String?>(null) }
-    var autoNext by remember { mutableStateOf(true) }
+    var autoNext by rememberSaveable { mutableStateOf(true) }
 
     LaunchedEffect(url, apiName, episodeData) {
         currentEpisodeTitle = episodeName
@@ -79,6 +84,15 @@ fun PlayerScreen(
             prepare()
             if (resumePosition > 1000) seekTo(resumePosition)
             playWhenReady = true
+        }
+    }
+
+    fun setFullscreen(enabled: Boolean) {
+        isFullscreen = enabled
+        activity?.requestedOrientation = if (enabled) {
+            ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+        } else {
+            ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
         }
     }
 
@@ -126,17 +140,35 @@ fun PlayerScreen(
             controller.hide(WindowInsetsCompat.Type.systemBars())
             controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
         } else {
-            controller.show(WindowInsetsCompat.Type.systemBars())
             WindowCompat.setDecorFitsSystemWindows(window, true)
+            controller.show(WindowInsetsCompat.Type.systemBars())
         }
     }
 
-    BackHandler(enabled = isFullscreen) { isFullscreen = false }
-    DisposableEffect(Unit) { onDispose { releasePlayer(); isFullscreen = false } }
+    BackHandler(enabled = isFullscreen) { setFullscreen(false) }
+    DisposableEffect(Unit) {
+        onDispose {
+            releasePlayer()
+            activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+            isFullscreen = false
+        }
+    }
 
-    Scaffold(
-        topBar = {
-            if (!isFullscreen) {
+    if (isFullscreen) {
+        Box(Modifier.fillMaxSize().background(Color.Black)) {
+            PlayerSurface(
+                uiState = uiState,
+                player = exoPlayer,
+                modifier = Modifier.fillMaxSize(),
+                onRetry = { viewModel.loadLinks(url, apiName, name, posterUrl, episodeData, episodeName) },
+                onFullscreen = { setFullscreen(false) },
+                onAudioSettings = { player -> showAudioTrackDialog(context, player) },
+                isFullscreen = true
+            )
+        }
+    } else {
+        Scaffold(
+            topBar = {
                 TopAppBar(
                     title = {
                         Column {
@@ -149,45 +181,23 @@ fun PlayerScreen(
                             Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = Color.White)
                         }
                     },
-                    actions = {
-                        IconButton(onClick = { isFullscreen = true }) {
-                            Icon(Icons.Default.Fullscreen, contentDescription = "Fullscreen", tint = Color.White)
-                        }
-                    },
                     colors = TopAppBarDefaults.topAppBarColors(containerColor = Color(0xFF0A0A0A))
                 )
-            }
-        },
-        containerColor = Color.Black
-    ) { padding ->
-        if (isFullscreen) {
-            Box(Modifier.fillMaxSize().background(Color.Black)) {
-                PlayerSurface(uiState, exoPlayer, Modifier.fillMaxSize(), onRetry = {
-                    viewModel.loadLinks(url, apiName, name, posterUrl, episodeData, episodeName)
-                })
-                IconButton(
-                    onClick = { isFullscreen = false },
-                    modifier = Modifier.align(Alignment.TopEnd).padding(12.dp)
-                ) {
-                    Icon(Icons.Default.FullscreenExit, contentDescription = "Exit fullscreen", tint = Color.White)
-                }
-            }
-        } else {
-            Column(
-                modifier = Modifier.fillMaxSize().padding(padding).background(Color.Black)
-            ) {
+            },
+            containerColor = Color.Black
+        ) { padding ->
+            Column(Modifier.fillMaxSize().padding(padding).background(Color.Black)) {
                 PlayerSurface(
                     uiState = uiState,
                     player = exoPlayer,
                     modifier = Modifier.fillMaxWidth().aspectRatio(16f / 9f),
-                    onRetry = { viewModel.loadLinks(url, apiName, name, posterUrl, episodeData, episodeName) }
+                    onRetry = { viewModel.loadLinks(url, apiName, name, posterUrl, episodeData, episodeName) },
+                    onFullscreen = { setFullscreen(true) },
+                    onAudioSettings = { player -> showAudioTrackDialog(context, player) },
+                    isFullscreen = false
                 )
                 when (val state = uiState) {
                     is PlayerViewModel.PlayerUiState.Success -> {
-                        val dubOptions = state.links.map { it.name.ifBlank { "Original" } }.distinct()
-                        val filteredLinks = state.links.filter {
-                            selectedDub == null || it.name.ifBlank { "Original" } == selectedDub
-                        }
                         LazyColumn(
                             modifier = Modifier.fillMaxSize(),
                             contentPadding = PaddingValues(16.dp),
@@ -197,9 +207,9 @@ fun PlayerScreen(
                                 PlayerDropdown(
                                     label = "Quality",
                                     value = state.selectedLink?.let { "${it.quality}p • ${it.source}" } ?: "Select quality",
-                                    options = filteredLinks.map { "${it.quality}p • ${it.source}" }.distinct(),
+                                    options = state.links.map { "${it.quality}p • ${it.source}" }.distinct(),
                                     onSelected = { value ->
-                                        val link = filteredLinks.firstOrNull { "${it.quality}p • ${it.source}" == value }
+                                        val link = state.links.firstOrNull { "${it.quality}p • ${it.source}" == value }
                                         if (link != null) {
                                             viewModel.selectLink(link)
                                             startLink(link, exoPlayer?.currentPosition ?: 0L)
@@ -207,27 +217,14 @@ fun PlayerScreen(
                                     }
                                 )
                             }
-                            if (dubOptions.size > 1) {
-                                item {
-                                    PlayerDropdown(
-                                        label = "Audio / Dub",
-                                        value = selectedDub ?: dubOptions.first(),
-                                        options = dubOptions,
-                                        onSelected = {
-                                            selectedDub = it
-                                            val link = state.links.firstOrNull { link -> link.name.ifBlank { "Original" } == it }
-                                            if (link != null) {
-                                                viewModel.selectLink(link)
-                                                startLink(link, exoPlayer?.currentPosition ?: 0L)
-                                            }
-                                        }
-                                    )
-                                }
-                            }
                             item {
                                 Row(verticalAlignment = Alignment.CenterVertically) {
                                     Text("Auto next episode", color = Color.White, modifier = Modifier.weight(1f))
-                                    Switch(checked = autoNext, onCheckedChange = { autoNext = it }, colors = SwitchDefaults.colors(checkedThumbColor = OrangeAccent))
+                                    Switch(
+                                        checked = autoNext,
+                                        onCheckedChange = { autoNext = it },
+                                        colors = SwitchDefaults.colors(checkedThumbColor = OrangeAccent)
+                                    )
                                 }
                             }
                             if (state.subtitles.isNotEmpty()) {
@@ -238,7 +235,13 @@ fun PlayerScreen(
                             }
                             if (state.recommendations.isNotEmpty()) {
                                 item {
-                                    Text("Recommended for you", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 17.sp, modifier = Modifier.padding(top = 12.dp))
+                                    Text(
+                                        "Recommended for you",
+                                        color = Color.White,
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 17.sp,
+                                        modifier = Modifier.padding(top = 12.dp)
+                                    )
                                 }
                                 items(state.recommendations) { item ->
                                     LargeContentCard(item = item, onClick = { onNavigateToDetails(item.url, item.apiName) })
@@ -258,22 +261,69 @@ private fun PlayerSurface(
     uiState: PlayerViewModel.PlayerUiState,
     player: ExoPlayer?,
     modifier: Modifier,
-    onRetry: () -> Unit
+    onRetry: () -> Unit,
+    onFullscreen: () -> Unit,
+    onAudioSettings: (ExoPlayer) -> Unit,
+    isFullscreen: Boolean
 ) {
     Box(modifier.background(Color.Black), contentAlignment = Alignment.Center) {
         when (uiState) {
             is PlayerViewModel.PlayerUiState.Loading -> CircularProgressIndicator(color = OrangeAccent)
-            is PlayerViewModel.PlayerUiState.Error -> Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(20.dp)) {
+            is PlayerViewModel.PlayerUiState.Error -> Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.padding(20.dp)
+            ) {
                 Text(uiState.message, color = Color(0xFFFF5252), fontSize = 13.sp)
-                Button(onClick = onRetry, colors = ButtonDefaults.buttonColors(containerColor = OrangeAccent), modifier = Modifier.padding(top = 12.dp)) { Text("Retry") }
+                Button(
+                    onClick = onRetry,
+                    colors = ButtonDefaults.buttonColors(containerColor = OrangeAccent),
+                    modifier = Modifier.padding(top = 12.dp)
+                ) { Text("Retry") }
             }
             is PlayerViewModel.PlayerUiState.Success -> {
-                if (player == null) CircularProgressIndicator(color = OrangeAccent)
-                else AndroidView(
-                    factory = { ctx -> PlayerView(ctx).apply { useController = true; this.player = player; layoutParams = FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT) } },
-                    update = { it.player = player },
-                    modifier = Modifier.fillMaxSize()
-                )
+                if (player == null) {
+                    CircularProgressIndicator(color = OrangeAccent)
+                } else {
+                    AndroidView(
+                        factory = { ctx ->
+                            PlayerView(ctx).apply {
+                                useController = true
+                                controllerShowTimeoutMs = 3500
+                                controllerHideOnTouch = true
+                                this.player = player
+                                layoutParams = FrameLayout.LayoutParams(
+                                    ViewGroup.LayoutParams.MATCH_PARENT,
+                                    ViewGroup.LayoutParams.MATCH_PARENT
+                                )
+                            }
+                        },
+                        update = { it.player = player },
+                        modifier = Modifier.fillMaxSize()
+                    )
+                    Row(
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .padding(end = 12.dp, bottom = 48.dp)
+                            .background(Color.Black.copy(alpha = 0.65f), RoundedCornerShape(24.dp))
+                            .padding(horizontal = 2.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        IconButton(onClick = { onAudioSettings(player) }) {
+                            Icon(
+                                Icons.Default.Settings,
+                                contentDescription = "Audio and subtitle settings",
+                                tint = Color.White
+                            )
+                        }
+                        IconButton(onClick = onFullscreen) {
+                            Icon(
+                                if (isFullscreen) Icons.Default.FullscreenExit else Icons.Default.Fullscreen,
+                                contentDescription = "Fullscreen",
+                                tint = Color.White
+                            )
+                        }
+                    }
+                }
             }
         }
     }
@@ -299,7 +349,11 @@ private fun PlayerDropdown(
                 Text(value, modifier = Modifier.weight(1f))
                 Text("▾", color = OrangeAccent)
             }
-            DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }, modifier = Modifier.background(Color(0xFF1A1A1A))) {
+            DropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false },
+                modifier = Modifier.background(Color(0xFF1A1A1A))
+            ) {
                 options.forEach { option ->
                     DropdownMenuItem(
                         text = { Text(option, color = Color.White) },
@@ -311,11 +365,25 @@ private fun PlayerDropdown(
     }
 }
 
+private fun showAudioTrackDialog(context: android.content.Context, player: ExoPlayer) {
+        TrackSelectionDialogBuilder(context, "Audio and subtitles", player, C.TRACK_TYPE_AUDIO)
+        .setShowDisableOption(false)
+        .setShowClearOverrideOption(false)
+        .build()
+        .show()
+}
+
 private fun createPlayer(context: android.content.Context, link: ExtractorLink): ExoPlayer {
     val headers = linkedMapOf<String, String>()
     if (link.referer.isNotEmpty()) headers["Referer"] = link.referer
     headers.putAll(link.headers)
     val dataSourceFactory = DefaultHttpDataSource.Factory().setDefaultRequestProperties(headers)
     val mediaSourceFactory = DefaultMediaSourceFactory(context).setDataSourceFactory(dataSourceFactory)
-    return ExoPlayer.Builder(context).setMediaSourceFactory(mediaSourceFactory).build()
+    val trackSelector = DefaultTrackSelector(context).apply {
+        setParameters(buildUponParameters().setPreferredAudioLanguage(null).setPreferredTextLanguage(null))
+    }
+    return ExoPlayer.Builder(context)
+        .setTrackSelector(trackSelector)
+        .setMediaSourceFactory(mediaSourceFactory)
+        .build()
 }
