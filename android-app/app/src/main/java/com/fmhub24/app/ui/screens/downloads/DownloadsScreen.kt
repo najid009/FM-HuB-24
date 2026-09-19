@@ -54,7 +54,7 @@ fun DownloadsScreen(
             ) {
                 items(downloads, key = { it.id }) { item ->
                     Card(
-                        onClick = { onPlayOffline(item.localPath, item.name) },
+                        onClick = { onPlayOffline(item.sourceUrl, item.name) },
                         colors = CardDefaults.cardColors(containerColor = Color(0xFF151515)),
                         shape = RoundedCornerShape(12.dp)
                     ) {

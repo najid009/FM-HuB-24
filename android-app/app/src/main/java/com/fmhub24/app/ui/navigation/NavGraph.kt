@@ -97,7 +97,7 @@ fun NavGraph(navController: NavHostController) {
             )
         ) { backStackEntry ->
             OfflinePlayerScreen(
-                path = backStackEntry.arguments?.getString("path") ?: "",
+                sourceUrl = backStackEntry.arguments?.getString("path") ?: "",
                 title = backStackEntry.arguments?.getString("title") ?: "Offline video",
                 onNavigateBack = { navController.popBackStack() }
             )

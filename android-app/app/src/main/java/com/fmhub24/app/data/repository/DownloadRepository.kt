@@ -1,15 +1,18 @@
 package com.fmhub24.app.data.repository
 
 import android.content.Context
+import android.net.Uri
+import androidx.media3.common.MimeTypes
+import androidx.media3.common.util.Util
+import androidx.media3.exoplayer.offline.DownloadRequest
+import androidx.media3.exoplayer.offline.DownloadService
 import com.fmhub24.app.data.local.dao.DownloadedContentDao
 import com.fmhub24.app.data.local.entity.DownloadedContent
+import com.fmhub24.app.download.FMHubDownloadService
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import java.io.File
+import kotlinx.coroutines.Dispatchers
 import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -18,11 +21,11 @@ import javax.inject.Singleton
 class DownloadRepository @Inject constructor(
     @ApplicationContext private val context: Context,
     private val dao: DownloadedContentDao,
-    private val httpClient: OkHttpClient,
 ) {
     fun observeDownloads(): Flow<List<DownloadedContent>> = dao.observeAll()
 
-    suspend fun download(
+    /** Queues progressive, HLS (.m3u8), and DASH (.mpd) URLs in Media3's persistent manager. */
+    suspend fun enqueue(
         sourceUrl: String,
         name: String,
         posterUrl: String?,
@@ -30,36 +33,44 @@ class DownloadRepository @Inject constructor(
         episodeName: String?,
     ): Result<DownloadedContent> = withContext(Dispatchers.IO) {
         runCatching {
-            val downloadsDir = File(context.filesDir, "downloads").apply { mkdirs() }
             val id = UUID.nameUUIDFromBytes(sourceUrl.toByteArray()).toString()
-            val safeName = (name + (episodeName?.let { "_$it" } ?: ""))
-                .replace(Regex("[^A-Za-z0-9._-]"), "_")
-                .take(100)
-            val target = File(downloadsDir, "${safeName}_$id.mp4")
-            val temp = File(downloadsDir, "${target.name}.part")
-            val request = Request.Builder().url(sourceUrl).build()
-            httpClient.newCall(request).execute().use { response ->
-                check(response.isSuccessful) { "Download failed: HTTP ${response.code}" }
-                val body = response.body ?: error("Empty download response")
-                body.byteStream().use { input -> temp.outputStream().use { output -> input.copyTo(output) } }
-            }
-            check(temp.length() > 0L) { "Downloaded file is empty" }
-            if (target.exists()) target.delete()
-            check(temp.renameTo(target)) { "Could not save downloaded video" }
+            val request = DownloadRequest.Builder(id, Uri.parse(sourceUrl))
+                .setMimeType(mimeTypeFor(sourceUrl))
+                .setData(Util.getUtf8Bytes("$name|${episodeName.orEmpty()}"))
+                .build()
+            DownloadService.sendAddDownload(
+                context,
+                FMHubDownloadService::class.java,
+                request,
+                /* foreground= */ true,
+            )
             DownloadedContent(
                 id = id,
                 name = name,
                 posterUrl = posterUrl,
                 apiName = apiName,
                 episodeName = episodeName,
-                localPath = target.absolutePath,
+                // Media3 owns the bytes in SimpleCache; sourceUrl is the playback key.
+                localPath = sourceUrl,
                 sourceUrl = sourceUrl,
+                status = "queued",
             ).also { dao.upsert(it) }
         }
     }
 
     suspend fun delete(item: DownloadedContent) = withContext(Dispatchers.IO) {
-        File(item.localPath).delete()
+        DownloadService.sendRemoveDownload(
+            context,
+            FMHubDownloadService::class.java,
+            item.id,
+            /* foreground= */ false,
+        )
         dao.delete(item)
+    }
+
+    private fun mimeTypeFor(url: String): String? = when {
+        url.substringBefore('?').endsWith(".m3u8", ignoreCase = true) -> MimeTypes.APPLICATION_M3U8
+        url.substringBefore('?').endsWith(".mpd", ignoreCase = true) -> MimeTypes.APPLICATION_MPD
+        else -> null
     }
 }

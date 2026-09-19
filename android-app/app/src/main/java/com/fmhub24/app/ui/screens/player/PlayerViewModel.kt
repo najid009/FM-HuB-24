@@ -139,7 +139,7 @@ class PlayerViewModel @Inject constructor(
     fun downloadSelected(link: ExtractorLink) {
         safeLaunch {
             _downloadState.value = "Downloading…"
-            downloadRepository.download(
+            downloadRepository.enqueue(
                 sourceUrl = link.url,
                 name = currentName,
                 posterUrl = currentPoster,
