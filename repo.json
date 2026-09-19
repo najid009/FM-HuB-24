@@ -1,0 +1,8 @@
+{
+  "name": "FMHub24 Extensions",
+  "description": "FMHub24 self-hosted extension repository",
+  "manifestVersion": 1,
+  "pluginLists": [
+    "https://raw.githubusercontent.com/najid009/FM-HuB-24/builds/plugins.json"
+  ]
+}

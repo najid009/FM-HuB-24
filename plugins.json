@@ -1,0 +1,165 @@
+[
+  {
+    "name": "AllMovieLandProvider",
+    "url": "https://raw.githubusercontent.com/najid009/FM-HuB-24/builds/AllMovieLandProvider.cs3",
+    "innerUrl": "AllMovieLandProvider.cs3",
+    "internalName": "AllMovieLandProvider",
+    "version": 20,
+    "status": 0,
+    "description": "AllMovieLand \u2014 Bollywood & regional movies",
+    "authors": [
+      "phisher98",
+      "FMHub24"
+    ],
+    "language": "hi",
+    "tvTypes": [
+      "Movie",
+      "TvSeries"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/LikDev-256/likdev256-tamil-providers/master/AllMovieLandProvider/icon.png",
+    "repositoryUrl": null,
+    "fileSize": 90617,
+    "fileHash": "b0b4dfe528cd059ba697f17e21bf59f35e3f8ca8dd89256fd269eb47260c57fa",
+    "fileHashType": "sha256",
+    "pluginClassName": "com.phisher98.AllMovieLandProviderPlugin",
+    "requiresResources": false,
+    "fmhubApiVersion": 1,
+    "cloudstreamVersion": "v4.8.0"
+  },
+  {
+    "name": "BanglaPlex",
+    "url": "https://raw.githubusercontent.com/najid009/FM-HuB-24/builds/BanglaPlex.cs3",
+    "innerUrl": "BanglaPlex.cs3",
+    "internalName": "BanglaPlex",
+    "version": 5,
+    "status": 0,
+    "description": "BanglaPlex \u2014 Bangla movies & series",
+    "authors": [
+      "phisher98",
+      "FMHub24"
+    ],
+    "language": "bn",
+    "tvTypes": [
+      "Movie",
+      "TvSeries"
+    ],
+    "iconUrl": "https://www.google.com/s2/favicons?domain=banglaplex.click",
+    "repositoryUrl": null,
+    "fileSize": 46642,
+    "fileHash": "0d8900170499c0a8c18e9a78af08e6a8e830fc86f316d1d2c183d79312405acd",
+    "fileHashType": "sha256",
+    "pluginClassName": "com.BanglaPlex.BanglaPlexProvider",
+    "requiresResources": false,
+    "fmhubApiVersion": 1,
+    "cloudstreamVersion": "v4.8.0"
+  },
+  {
+    "name": "Cinefreak",
+    "url": "https://raw.githubusercontent.com/najid009/FM-HuB-24/builds/Cinefreak.cs3",
+    "innerUrl": "Cinefreak.cs3",
+    "internalName": "Cinefreak",
+    "version": 9,
+    "status": 0,
+    "description": "Cinefreak \u2014 Bangla/Indian movies, series & anime",
+    "authors": [
+      "phisher98",
+      "FMHub24"
+    ],
+    "language": "bn",
+    "tvTypes": [
+      "Movie",
+      "TvSeries",
+      "Anime"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/phisher98/TVVVV/refs/heads/main/Icons/cinefreak.png",
+    "repositoryUrl": null,
+    "fileSize": 169214,
+    "fileHash": "c20eb812442b097b41ad32b4a1f7ac99fab68f26eac6dd1a3103eaedc0b8264f",
+    "fileHashType": "sha256",
+    "pluginClassName": "com.cinefreak.CinefreakPlugin",
+    "requiresResources": false,
+    "fmhubApiVersion": 1,
+    "cloudstreamVersion": "v4.8.0"
+  },
+  {
+    "name": "HDhub4u",
+    "url": "https://raw.githubusercontent.com/najid009/FM-HuB-24/builds/HDhub4u.cs3",
+    "innerUrl": "HDhub4u.cs3",
+    "internalName": "HDhub4u",
+    "version": 50,
+    "status": 0,
+    "description": "HDhub4u \u2014 Indian movies, multi-language",
+    "authors": [
+      "phisher98",
+      "FMHub24"
+    ],
+    "language": "hi",
+    "tvTypes": [
+      "Movie",
+      "TvSeries"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/phisher98/TVVVV/refs/heads/main/Icons/HDHUB.png",
+    "repositoryUrl": null,
+    "fileSize": 200372,
+    "fileHash": "47a0db36f11ce478676a864b8f4e311dcbaef0c9df2f4a2dd80c72855a9b006c",
+    "fileHashType": "sha256",
+    "pluginClassName": "com.hdhub4u.HDhub4uPlugin",
+    "requiresResources": false,
+    "fmhubApiVersion": 1,
+    "cloudstreamVersion": "v4.8.0"
+  },
+  {
+    "name": "MovieBoxProvider",
+    "url": "https://raw.githubusercontent.com/najid009/FM-HuB-24/builds/MovieBoxProvider.cs3",
+    "innerUrl": "MovieBoxProvider.cs3",
+    "internalName": "MovieBoxProvider",
+    "version": 24,
+    "status": 0,
+    "description": "MovieBox \u2014 movies & series",
+    "authors": [
+      "phisher98",
+      "FMHub24"
+    ],
+    "language": "bn",
+    "tvTypes": [
+      "Movie",
+      "TvSeries",
+      "Anime"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/NivinCNC/CNCVerse-Cloud-Stream-Extension/refs/heads/master/MovieBoxProvider/icon.png",
+    "repositoryUrl": null,
+    "fileSize": 124131,
+    "fileHash": "c9675c008df5f2338c2fd48c6a14b742852e7163548ceb74c406706132148f88",
+    "fileHashType": "sha256",
+    "pluginClassName": "com.MovieBox.MovieBoxProviderPlugin",
+    "requiresResources": false,
+    "fmhubApiVersion": 1,
+    "cloudstreamVersion": "v4.8.0"
+  },
+  {
+    "name": "fmhub-archive",
+    "url": "https://raw.githubusercontent.com/najid009/FM-HuB-24/builds/fmhub-archive.cs3",
+    "innerUrl": "fmhub-archive.cs3",
+    "internalName": "fmhub-archive",
+    "version": 1,
+    "status": 0,
+    "description": "Public domain movies and shows from the Internet Archive",
+    "authors": [
+      "FMHub24"
+    ],
+    "language": "en",
+    "tvTypes": [
+      "Movie",
+      "TvSeries"
+    ],
+    "iconUrl": "https://archive.org/favicon.ico",
+    "repositoryUrl": null,
+    "fileSize": 40205,
+    "fileHash": "e86e9ed7596d2e93054acf1193b2df876741999441a774418090d6cc0724ca21",
+    "fileHashType": "sha256",
+    "pluginClassName": "com.fmhub24.extensions.archive.FMHubArchivePlugin",
+    "requiresResources": false,
+    "fmhubApiVersion": 1,
+    "cloudstreamVersion": "v4.8.0"
+  }
+]
