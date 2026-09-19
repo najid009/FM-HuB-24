@@ -58,8 +58,8 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
           FMHUB_REPOSITORY_CONFIG_URL: ${{ secrets.FMHUB_REPOSITORY_CONFIG_URL }}
-          FMHUB_CATALOG_CONFIG_URL: ${{ secrets.FMHUB_CATALOG_CONFIG_URL }}
-          FMHUB_TMDB_TRENDING_URL: ${{ secrets.FMHUB_TMDB_TRENDING_URL }}
+          FMHUB_CATALOG_CONFIG_URL: https://${{ secrets.SUPABASE_PROJECT_REF }}.supabase.co/functions/v1/catalog-config
+          FMHUB_TMDB_TRENDING_URL: https://${{ secrets.SUPABASE_PROJECT_REF }}.supabase.co/functions/v1/tmdb-trending
         run: ./gradlew :app:assembleStableRelease --no-daemon --stacktrace
 
       - name: Prepare APK artifact

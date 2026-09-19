@@ -46,3 +46,21 @@ The upstream CloudStream source is GPL-3.0. This fork must retain the upstream `
 3. Configure the Supabase REST URL through the release build environment.
 4. Verify repository disable/enable behaviour and plugin rollback.
 5. Migrate any remaining FMHuB24-only backend features after the CloudStream baseline is stable.
+
+## Final GitHub/Supabase secrets
+
+The signed Android workflow expects these GitHub Actions secrets:
+
+```text
+SUPABASE_URL
+SUPABASE_ANON_KEY
+SUPABASE_PROJECT_REF
+SUPABASE_ACCESS_TOKEN
+TMDB_READ_ACCESS_TOKEN
+ANDROID_KEYSTORE_BASE64
+KEYSTORE_PASSWORD
+KEY_ALIAS
+KEY_PASSWORD
+```
+
+Run the **Supabase schema and functions deploy** workflow once after adding them. It applies migrations, stores `TMDB_READ_ACCESS_TOKEN` as an Edge Function secret, and deploys `/functions/v1/catalog-config` and `/functions/v1/tmdb-trending`. The Android release workflow derives those two function URLs from `SUPABASE_PROJECT_REF`, so separate URL secrets are not required.

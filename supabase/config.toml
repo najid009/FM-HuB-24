@@ -2,3 +2,6 @@ project_id = "fmhub24"
 
 [functions.tmdb-trending]
 verify_jwt = false
+
+[functions.catalog-config]
+verify_jwt = false
