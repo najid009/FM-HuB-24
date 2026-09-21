@@ -78,15 +78,15 @@ internal object ProviderJsonCodec {
         val format: String? = null,
     )
 
-    fun home(payload: String): ProviderResult<List<ProviderSection>> = parse(payload) { sections ->
+    fun home(payload: String): ProviderResult<List<ProviderSection>> = parse<List<SectionWire>, List<ProviderSection>>(payload) { sections ->
         sections.map { section -> ProviderSection(section.id, section.title, section.items.map(::item)) }
     }
 
-    fun search(payload: String): ProviderResult<ProviderPage<ProviderCatalogItem>> = parse(payload) { page ->
+    fun search(payload: String): ProviderResult<ProviderPage<ProviderCatalogItem>> = parse<PageWire<CatalogItemWire>, ProviderPage<ProviderCatalogItem>>(payload) { page ->
         ProviderPage(page.items.map(::item), page.page.coerceAtLeast(1), page.hasNext)
     }
 
-    fun details(payload: String): ProviderResult<ProviderDetails> = parse(payload) { details ->
+    fun details(payload: String): ProviderResult<ProviderDetails> = parse<DetailsWire, ProviderDetails>(payload) { details ->
         ProviderDetails(
             item = item(details.item),
             genres = details.genres,
@@ -97,11 +97,11 @@ internal object ProviderJsonCodec {
         )
     }
 
-    fun episodes(payload: String): ProviderResult<ProviderPage<ProviderEpisode>> = parse(payload) { page ->
+    fun episodes(payload: String): ProviderResult<ProviderPage<ProviderEpisode>> = parse<PageWire<EpisodeWire>, ProviderPage<ProviderEpisode>>(payload) { page ->
         ProviderPage(page.items.map(::episode), page.page.coerceAtLeast(1), page.hasNext)
     }
 
-    fun streams(payload: String): ProviderResult<List<ProviderStream>> = parse(payload) { streams ->
+    fun streams(payload: String): ProviderResult<List<ProviderStream>> = parse<List<StreamWire>, List<ProviderStream>>(payload) { streams ->
         streams.map { stream ->
             ProviderStream(
                 url = stream.url,
@@ -115,7 +115,7 @@ internal object ProviderJsonCodec {
         }
     }
 
-    fun subtitles(payload: String): ProviderResult<List<ProviderSubtitle>> = parse(payload) { subtitles ->
+    fun subtitles(payload: String): ProviderResult<List<ProviderSubtitle>> = parse<List<SubtitleWire>, List<ProviderSubtitle>>(payload) { subtitles ->
         subtitles.map { ProviderSubtitle(it.url, it.language, it.format) }
     }
 
