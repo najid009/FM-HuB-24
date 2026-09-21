@@ -5,6 +5,7 @@
 
 mod client;
 mod error;
+mod jni_bridge;
 mod models;
 
 pub use client::{ProviderClient, ProviderConfig, ProviderCore};

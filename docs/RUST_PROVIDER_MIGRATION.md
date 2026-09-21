@@ -19,15 +19,14 @@ The provider core is `rust-core/`. It contains no terminal UI, desktop launcher,
 
 The Kotlin DTOs and `ProviderCoreRepository` contract are in `android-app/app/src/main/java/com/fmhub24/app/data/provider/`. They are deliberately independent of CloudStream types so Home, Search, Details, and Player can be migrated one flow at a time. Until the native ABI bridge is compiled and an authorized endpoint is configured, the safe implementation returns an unavailable state; it never fabricates content.
 
-The Android-side JNI surface is now defined in `RustProviderBridge.kt` and is bound through Hilt as `ProviderCoreRepository`. Loading the native library is intentionally fail-closed: an APK built before the native library is packaged remains launchable and reports provider unavailability instead of crashing during application startup. The JNI methods must be implemented and JSON-validated as part of the next native build step before any screen is switched from the legacy CloudStream repository.
+The Android-side JNI surface is implemented in `rust-core/src/jni_bridge.rs` and declared in `RustProviderBridge.kt`. It exposes configuration, home, search, details, episodes, streams, and subtitles. Each call returns a JSON envelope with either `{ "ok": true, "data": ... }` or a typed provider error. Calls use a serialized Rust Tokio runtime and the existing timeout/retry/cache behavior. `ProviderJsonCodec.kt` validates the envelope, rejects malformed payloads, maps snake_case Rust fields to Kotlin DTOs, and never creates catalogue data when parsing fails. Loading the native library is intentionally fail-closed: an APK built before the native library is packaged remains launchable and reports provider unavailability instead of crashing during application startup.
 
 ## Remaining phases
 
-1. Add the Android native build and implement the JNI methods, then map validated Rust results to the Kotlin DTOs.
-2. Migrate `ContentRepository`, `HomeViewModel`, `SearchViewModel`, `DetailsViewModel`, and player stream resolution to `ProviderCoreRepository`.
-3. Retain Room-backed favorites/history/continue-watching while removing extension-only persistence.
-4. Build and test the new flow on an emulator or device.
-5. Search all consumers again, then remove `PluginManager`, `PluginLoader`, `.cs3` assets, `plugin-api`, extension workflows, and extension-only Supabase schema in separate verified commits.
-6. Run `git grep` for all legacy identifiers and perform a clean Android/Rust build before any main-branch push.
+1. Migrate `ContentRepository`, `HomeViewModel`, `SearchViewModel`, `DetailsViewModel`, and player stream resolution to `ProviderCoreRepository`.
+2. Retain Room-backed favorites/history/continue-watching while removing extension-only persistence.
+3. Build and test the new flow on an emulator or device.
+4. Search all consumers again, then remove `PluginManager`, `PluginLoader`, `.cs3` assets, `plugin-api`, extension workflows, and extension-only Supabase schema in separate verified commits.
+5. Run `git grep` for all legacy identifiers and perform a clean Android/Rust build before any main-branch push.
 
 A provider source change requires a new APK because the provider implementation is compiled into the application. Remote executable code updates are intentionally not supported.

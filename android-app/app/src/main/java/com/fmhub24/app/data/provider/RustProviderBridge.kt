@@ -1,13 +1,14 @@
 package com.fmhub24.app.data.provider
 
 import android.util.Log
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 /**
- * Minimal JNI surface for the future Android native build.
+ * JNI surface implemented by rust-core/src/jni_bridge.rs.
  *
- * The native library is optional during this migration step. If it is not packaged yet, calls
- * fail closed and the UI receives a provider-unavailable result instead of crashing at startup.
- * The native implementation must return validated JSON matching rust-core's serde models.
+ * The native library remains optional during migration. If it is not packaged, repository calls
+ * fail closed and the app remains launchable with an explicit provider-unavailable state.
  */
 internal object RustProviderBridge {
     private const val TAG = "RustProviderBridge"
@@ -18,12 +19,13 @@ internal object RustProviderBridge {
 
     fun isAvailable(): Boolean = loaded
 
-    external fun home(page: Int, forceRefresh: Boolean): String
-    external fun search(query: String, page: Int): String
-    external fun details(id: String): String
-    external fun episodes(id: String, season: Int, page: Int): String
-    external fun streams(episodeId: String): String
-    external fun subtitles(episodeId: String): String
+    @JvmStatic external fun configure(baseUrl: String, userAgent: String): String
+    @JvmStatic external fun home(page: Int, forceRefresh: Boolean): String
+    @JvmStatic external fun search(query: String, page: Int): String
+    @JvmStatic external fun details(id: String): String
+    @JvmStatic external fun episodes(id: String, season: Int, page: Int): String
+    @JvmStatic external fun streams(episodeId: String): String
+    @JvmStatic external fun subtitles(episodeId: String): String
 }
 
 class NativeProviderCoreRepository : ProviderCoreRepository {
@@ -31,10 +33,32 @@ class NativeProviderCoreRepository : ProviderCoreRepository {
         "Content provider is not configured or the native provider is unavailable",
     )
 
-    override suspend fun home(page: Int, forceRefresh: Boolean): ProviderResult<List<ProviderSection>> = unavailable()
-    override suspend fun search(query: String, page: Int): ProviderResult<ProviderPage<ProviderCatalogItem>> = unavailable()
-    override suspend fun details(id: String): ProviderResult<ProviderDetails> = unavailable()
-    override suspend fun episodes(id: String, season: Int, page: Int): ProviderResult<ProviderPage<ProviderEpisode>> = unavailable()
-    override suspend fun streams(episodeId: String): ProviderResult<List<ProviderStream>> = unavailable()
-    override suspend fun subtitles(episodeId: String): ProviderResult<List<ProviderSubtitle>> = unavailable()
+    private suspend fun payload(call: () -> String): String? = withContext(Dispatchers.IO) {
+        if (!RustProviderBridge.isAvailable()) return@withContext null
+        runCatching(call).getOrNull()
+    }
+
+    override suspend fun home(page: Int, forceRefresh: Boolean): ProviderResult<List<ProviderSection>> =
+        payload { RustProviderBridge.home(page.coerceAtLeast(1), forceRefresh) }
+            ?.let(ProviderJsonCodec::home) ?: unavailable()
+
+    override suspend fun search(query: String, page: Int): ProviderResult<ProviderPage<ProviderCatalogItem>> =
+        payload { RustProviderBridge.search(query.trim(), page.coerceAtLeast(1)) }
+            ?.let(ProviderJsonCodec::search) ?: unavailable()
+
+    override suspend fun details(id: String): ProviderResult<ProviderDetails> =
+        payload { RustProviderBridge.details(id) }
+            ?.let(ProviderJsonCodec::details) ?: unavailable()
+
+    override suspend fun episodes(id: String, season: Int, page: Int): ProviderResult<ProviderPage<ProviderEpisode>> =
+        payload { RustProviderBridge.episodes(id, season.coerceAtLeast(0), page.coerceAtLeast(1)) }
+            ?.let(ProviderJsonCodec::episodes) ?: unavailable()
+
+    override suspend fun streams(episodeId: String): ProviderResult<List<ProviderStream>> =
+        payload { RustProviderBridge.streams(episodeId) }
+            ?.let(ProviderJsonCodec::streams) ?: unavailable()
+
+    override suspend fun subtitles(episodeId: String): ProviderResult<List<ProviderSubtitle>> =
+        payload { RustProviderBridge.subtitles(episodeId) }
+            ?.let(ProviderJsonCodec::subtitles) ?: unavailable()
 }
