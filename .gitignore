@@ -12,3 +12,6 @@ admin-panel/dist/
 
 # Local deliverables
 releases/
+
+# Rust
+rust-core/target/
