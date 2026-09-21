@@ -19,9 +19,11 @@ The provider core is `rust-core/`. It contains no terminal UI, desktop launcher,
 
 The Kotlin DTOs and `ProviderCoreRepository` contract are in `android-app/app/src/main/java/com/fmhub24/app/data/provider/`. They are deliberately independent of CloudStream types so Home, Search, Details, and Player can be migrated one flow at a time. Until the native ABI bridge is compiled and an authorized endpoint is configured, the safe implementation returns an unavailable state; it never fabricates content.
 
+The Android-side JNI surface is now defined in `RustProviderBridge.kt` and is bound through Hilt as `ProviderCoreRepository`. Loading the native library is intentionally fail-closed: an APK built before the native library is packaged remains launchable and reports provider unavailability instead of crashing during application startup. The JNI methods must be implemented and JSON-validated as part of the next native build step before any screen is switched from the legacy CloudStream repository.
+
 ## Remaining phases
 
-1. Add the Android native build (UniFFI or a small JNI bridge) and map Rust results to the Kotlin DTOs.
+1. Add the Android native build and implement the JNI methods, then map validated Rust results to the Kotlin DTOs.
 2. Migrate `ContentRepository`, `HomeViewModel`, `SearchViewModel`, `DetailsViewModel`, and player stream resolution to `ProviderCoreRepository`.
 3. Retain Room-backed favorites/history/continue-watching while removing extension-only persistence.
 4. Build and test the new flow on an emulator or device.

@@ -1,5 +1,7 @@
 package com.fmhub24.app.di
 
+import com.fmhub24.app.data.provider.NativeProviderCoreRepository
+import com.fmhub24.app.data.provider.ProviderCoreRepository
 import com.fmhub24.app.data.remote.SupabaseClient
 import dagger.Module
 import dagger.Provides
@@ -23,4 +25,8 @@ object AppModule {
     fun provideOkHttpClient(supabaseClient: SupabaseClient): OkHttpClient {
         return supabaseClient.provideOkHttpClient()
     }
+
+    @Provides
+    @Singleton
+    fun provideProviderCoreRepository(): ProviderCoreRepository = NativeProviderCoreRepository()
 }
