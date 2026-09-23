@@ -66,7 +66,7 @@ jobs:
         run: |
           export PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$PATH
           yes | sdkmanager --licenses || true
-          # Must cover app/compileSdk (36) and plugin-api/compileSdk (36).
+          # Must cover the app compileSdk (36).
           sdkmanager "platforms;android-36" "build-tools;36.0.0" "platform-tools" || true
 
       - name: Grant execute permission for gradlew
