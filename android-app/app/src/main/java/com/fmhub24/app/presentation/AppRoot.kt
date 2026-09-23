@@ -192,7 +192,27 @@ fun AppRoot(container: com.fmhub24.app.data.AppContainer) {
 
 @Composable private fun AboutPage(onBack: () -> Unit) { LazyColumn(Modifier.fillMaxSize(), contentPadding = PaddingValues(bottom = 28.dp)) { item { PageHeader("About us", "What you should know", onBack) }; item { Card(Modifier.padding(16.dp), colors = CardDefaults.cardColors(containerColor = Panel)) { Column(Modifier.padding(18.dp)) { Text("FM HuB 24", color = Color.White, fontSize = 24.sp, fontWeight = FontWeight.ExtraBold); Text("A native catalogue and playback client.", color = Cyan, fontSize = 13.sp, modifier = Modifier.padding(top = 4.dp)); Text("FM HuB 24 uses external content providers to retrieve catalogue, playback, and subtitle information. Availability depends on provider authorization, regional availability, and network conditions.", color = Muted, fontSize = 14.sp, modifier = Modifier.padding(top = 16.dp)); Text("The app does not install executable extension packages. Provider responses are validated through a typed Rust boundary before they reach the UI.", color = Muted, fontSize = 14.sp, modifier = Modifier.padding(top = 12.dp)); Text("Your provider settings and local collections are handled by the app. Do not enter credentials unless you trust the provider endpoint.", color = Muted, fontSize = 14.sp, modifier = Modifier.padding(top = 12.dp)); Text("Version 3.0.0", color = Color.White, fontSize = 12.sp, modifier = Modifier.padding(top = 18.dp)) } } } }
 
-@Composable private fun DetailsPage(details: MediaDetails?, onBack: () -> Unit, onPlay: () -> Unit, onFavorite: () -> Unit) { if (details == null) { EmptyState("Loading details…", onBack); return }; LazyColumn(Modifier.fillMaxSize()) { item { DetailsHero(details.item, onBack, onPlay, onFavorite) }; item { Text(details.item.description ?: "No description available.", color = Muted, fontSize = 14.sp, modifier = Modifier.padding(18.dp)); Text(details.genres.joinToString("  ·  ").ifBlank { "Details" }, color = Cyan, fontSize = 12.sp, modifier = Modifier.padding(horizontal = 18.dp)); if (details.seasons.isNotEmpty()) Text("Seasons", color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(18.dp)); details.seasons.forEach { season -> Text("Season ${season.number}", color = Color.White, modifier = Modifier.padding(horizontal = 18.dp, vertical = 6.dp)); season.episodes.forEach { episode -> Text("Episode ${episode.number} · ${episode.title ?: "Untitled"}", color = Muted, modifier = Modifier.padding(horizontal = 28.dp, vertical = 5.dp)) } } } } }
+@Composable
+private fun DetailsPage(details: MediaDetails?, onBack: () -> Unit, onPlay: () -> Unit, onFavorite: () -> Unit) {
+    if (details == null) {
+        EmptyState("Loading details…", onBack)
+        return
+    }
+    LazyColumn(Modifier.fillMaxSize()) {
+        item { DetailsHero(details.item, onBack, onPlay, onFavorite) }
+        item {
+            Text(details.item.description ?: "No description available.", color = Muted, fontSize = 14.sp, modifier = Modifier.padding(18.dp))
+            Text(details.genres.joinToString("  ·  ").ifBlank { "Details" }, color = Cyan, fontSize = 12.sp, modifier = Modifier.padding(horizontal = 18.dp))
+            if (details.seasons.isNotEmpty()) Text("Seasons", color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(18.dp))
+            details.seasons.forEach { season ->
+                Text("Season ${season.number}", color = Color.White, modifier = Modifier.padding(horizontal = 18.dp, vertical = 6.dp))
+                season.episodes.forEach { episode ->
+                    Text("Episode ${episode.number} · ${episode.title ?: "Untitled"}", color = Muted, modifier = Modifier.padding(horizontal = 28.dp, vertical = 5.dp))
+                }
+            }
+        }
+    }
+}
 @Composable private fun PlayerPage(details: MediaDetails?, onBack: () -> Unit) { Column(Modifier.fillMaxSize()) { PageHeader("Now playing", details?.item?.title, onBack); Box(Modifier.fillMaxWidth().height(260.dp).background(Brush.linearGradient(listOf(Color(0xFF17304A), Color(0xFF5B2E43)))), contentAlignment = Alignment.Center) { Text("▶", color = Accent, fontSize = 58.sp) }; Text("Playback source will appear here after the provider resolves a stream.", color = Muted, modifier = Modifier.padding(18.dp)); Spacer(Modifier.height(12.dp)); Text("━━━●━━━━━━━━", color = Accent, fontSize = 22.sp, modifier = Modifier.padding(horizontal = 18.dp)); Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) { Text("↶", fontSize = 28.sp, color = Color.White, modifier = Modifier.padding(18.dp)); Text("▶", fontSize = 42.sp, color = Accent, modifier = Modifier.padding(12.dp)); Text("↷", fontSize = 28.sp, color = Color.White, modifier = Modifier.padding(18.dp)) } } }
 
 @Composable private fun HeroCard(item: MediaItem?, onOpen: (MediaItem) -> Unit) { Box(Modifier.fillMaxWidth().padding(16.dp).height(230.dp).clip(RoundedCornerShape(22.dp)).background(Brush.linearGradient(listOf(Color(0xFF39212A), Color(0xFF152F42)))).clickable(enabled = item != null) { item?.let(onOpen) }) { Column(Modifier.align(Alignment.BottomStart).padding(18.dp)) { Text("FEATURED TONIGHT", color = Cyan, fontSize = 11.sp, fontWeight = FontWeight.Bold); Text(item?.title ?: "Your catalogue awaits", color = Color.White, fontSize = 28.sp, fontWeight = FontWeight.ExtraBold); Text(item?.year?.toString() ?: "Configure a provider source", color = Muted, fontSize = 12.sp); if (item != null) Button({ onOpen(item) }, Modifier.padding(top = 8.dp)) { Text("Watch now") } } } }
