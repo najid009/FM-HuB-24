@@ -201,4 +201,4 @@ fun AppRoot(container: com.fmhub24.app.data.AppContainer) {
 @Composable private fun EmptyState(message: String, onBack: (() -> Unit)? = null) { Column(Modifier.fillMaxWidth().padding(32.dp), horizontalAlignment = Alignment.CenterHorizontally) { Text("○", color = Cyan, fontSize = 36.sp); Text(message, color = Muted, fontSize = 14.sp, modifier = Modifier.padding(top = 10.dp)); onBack?.let { TextButton(it) { Text("Go back", color = Accent) } } } }
 
 @Composable
-private fun <T> StateFlow<T>.collectAsStateCompat(): androidx.compose.runtime.State<T> = androidx.compose.runtime.collectAsState()
+private fun <T> StateFlow<T>.collectAsStateCompat(): androidx.compose.runtime.State<T> = this.collectAsState()
