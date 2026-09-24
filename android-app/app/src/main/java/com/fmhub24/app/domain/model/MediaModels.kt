@@ -8,6 +8,7 @@ enum class MediaKind { MOVIE, SERIES, EPISODE, UNKNOWN }
 @Serializable
 data class MediaItem(
     val id: String,
+    val externalId: String? = null,
     val title: String,
     val posterUrl: String? = null,
     val backdropUrl: String? = null,

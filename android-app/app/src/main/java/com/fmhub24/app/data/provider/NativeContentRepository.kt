@@ -93,7 +93,7 @@ internal object ProviderJsonCodec {
     fun streams(payload: String) = parse<List<StreamWire>, List<Stream>>(payload) { it.map { s -> Stream(s.url, s.quality, s.mimeType, s.referer, s.headers.mapNotNull { p -> p.takeIf { it.size >= 2 }?.let { it[0] to it[1] } }.toMap()) } }
     fun subtitles(payload: String) = parse<List<SubtitleWire>, List<Subtitle>>(payload) { it.map { s -> Subtitle(s.url, s.language, s.format) } }
 
-    private fun item(item: ItemWire) = MediaItem(item.id, item.title, item.posterUrl, item.backdropUrl, item.year, when (item.kind.lowercase()) { "movie" -> MediaKind.MOVIE; "series" -> MediaKind.SERIES; "episode" -> MediaKind.EPISODE; else -> MediaKind.UNKNOWN }, item.rating, item.description)
+    private fun item(item: ItemWire) = MediaItem(id = item.id, title = item.title, posterUrl = item.posterUrl, backdropUrl = item.backdropUrl, year = item.year, kind = when (item.kind.lowercase()) { "movie" -> MediaKind.MOVIE; "series" -> MediaKind.SERIES; "episode" -> MediaKind.EPISODE; else -> MediaKind.UNKNOWN }, rating = item.rating, description = item.description)
     private fun episode(e: EpisodeWire) = Episode(e.id, e.number, e.title, e.description)
 
     private inline fun <reified T, R> parse(payload: String, transform: (T) -> R): RepositoryResult<R> = try {
