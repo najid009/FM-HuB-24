@@ -105,20 +105,22 @@ class MovieboxApiRepository : ContentRepository, ProviderConfigurator {
     private suspend fun request(path: String): RepositoryResult<JsonObject> = withContext(Dispatchers.IO) {
         val configured = baseUrl
         if (configured.isBlank()) return@withContext RepositoryResult.Failure("Configure the Moviebox API URL in Settings first.", false)
-        runCatching {
+        runCatching<RepositoryResult<JsonObject>> {
             val connection = (URL(configured + path).openConnection() as HttpURLConnection).apply {
                 requestMethod = "GET"
                 connectTimeout = 15_000
                 readTimeout = 25_000
                 setRequestProperty("Accept", "application/json")
             }
-            connection.use { response ->
-                val body = response.inputStream.bufferedReader().use { it.readText() }
-                if (response.responseCode !in 200..299) error("Moviebox API returned HTTP ${response.responseCode}")
-                json.parseToJsonElement(body).jsonObject
+            try {
+                if (connection.responseCode !in 200..299) error("Moviebox API returned HTTP ${connection.responseCode}")
+                val body = connection.inputStream.bufferedReader().use { it.readText() }
+                RepositoryResult.Success(json.parseToJsonElement(body).jsonObject)
+            } finally {
+                connection.disconnect()
             }
         }.fold(
-            onSuccess = { RepositoryResult.Success(it) },
+            onSuccess = { it },
             onFailure = { RepositoryResult.Failure(it.message ?: "Moviebox API request failed") },
         )
     }
@@ -170,4 +172,3 @@ class MovieboxApiRepository : ContentRepository, ProviderConfigurator {
         is RepositoryResult.Failure -> this
     }
 }
-EOF
