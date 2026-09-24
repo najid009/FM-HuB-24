@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: fmhub24-moviebox-api
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /
+    envVars:
+      - key: ALLOWED_ORIGINS
+        sync: false

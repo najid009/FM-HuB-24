@@ -1,6 +1,7 @@
 import os
 import re
 import json
+import os
 import httpx
 import asyncio
 from fastapi import FastAPI, HTTPException, Query
@@ -13,9 +14,15 @@ app = FastAPI(
     version="2.1.5"
 )
 
+_allowed_origins = [
+    origin.strip()
+    for origin in os.getenv("ALLOWED_ORIGINS", "*").split(",")
+    if origin.strip()
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=_allowed_origins or ["*"],
     allow_methods=["*"],
     allow_headers=["*"],
 )
